@@ -12,7 +12,7 @@ return new class extends Migration
         $table->id();
         $table->foreignId('ticket_id')->constrained();
         $table->string('status');
-        $table->foreignId('changed_by')->constrained('users');
+        $table->foreignId('changed_by')->nullable()->constrained('users');
         $table->text('note')->nullable();
         $table->timestamps();
     });

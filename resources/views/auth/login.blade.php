@@ -118,31 +118,29 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5">
-                    <div class="grid grid-cols-2 gap-2.5">
-    <button type="button" onclick="fillCredentials('superadmin@rsud.test')"
-        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all">
-        <span class="text-xs font-bold text-purple-900 block">👑 Super Admin</span>
-        <span class="text-[11px] text-purple-700/80 truncate block mt-0.5">superadmin@rsud.test</span>
-    </button>
+                    <button type="button" onclick="fillCredentials('superadmin@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all">
+                        <span class="text-xs font-bold text-purple-900 block">👑 Super Admin</span>
+                        <span class="text-[11px] text-purple-700/80 truncate block mt-0.5">superadmin@rsud.test</span>
+                    </button>
 
-    <button type="button" onclick="fillCredentials('admin@rsud.test')"
-        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all">
-        <span class="text-xs font-bold text-blue-900 block">📋 Admin</span>
-        <span class="text-[11px] text-blue-700/80 truncate block mt-0.5">admin@rsud.test</span>
-    </button>
+                    <button type="button" onclick="fillCredentials('admin@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all">
+                        <span class="text-xs font-bold text-blue-900 block">📋 Admin</span>
+                        <span class="text-[11px] text-blue-700/80 truncate block mt-0.5">admin@rsud.test</span>
+                    </button>
 
-    <button type="button" onclick="fillCredentials('teknisi@rsud.test')"
-        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all">
-        <span class="text-xs font-bold text-emerald-900 block">🔧 Teknisi</span>
-        <span class="text-[11px] text-emerald-700/80 truncate block mt-0.5">teknisi@rsud.test</span>
-    </button>
+                    <button type="button" onclick="fillCredentials('teknisi@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all">
+                        <span class="text-xs font-bold text-emerald-900 block">🔧 Teknisi</span>
+                        <span class="text-[11px] text-emerald-700/80 truncate block mt-0.5">teknisi@rsud.test</span>
+                    </button>
 
-    <button type="button" onclick="fillCredentials('supervisor@rsud.test')"
-        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all">
-        <span class="text-xs font-bold text-amber-900 block">📊 Supervisor</span>
-        <span class="text-[11px] text-amber-700/80 truncate block mt-0.5">supervisor@rsud.test</span>
-    </button>
-</div>
+                    <button type="button" onclick="fillCredentials('supervisor@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all">
+                        <span class="text-xs font-bold text-amber-900 block">📊 Supervisor</span>
+                        <span class="text-[11px] text-amber-700/80 truncate block mt-0.5">supervisor@rsud.test</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -154,10 +152,16 @@
 </div>
 
 <script>
-    function fillCredentials(email) {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = 'password';
+    function fillCredentials(email, password) {
         const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        emailInput.value = email;
+        passwordInput.value = password || 'password';
+
+        emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+        passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
+
         emailInput.classList.add('ring-2', 'ring-teal-500');
         setTimeout(() => emailInput.classList.remove('ring-2', 'ring-teal-500'), 600);
     }

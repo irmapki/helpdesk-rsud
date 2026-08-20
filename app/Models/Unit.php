@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Role extends Model
+class Unit extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
+        'description',
+        'location',
     ];
 
     public function users(): HasMany
@@ -19,14 +21,8 @@ class Role extends Model
         return $this->hasMany(User::class);
     }
 
-    public function getLabelAttribute(): string
+    public function tickets(): HasMany
     {
-        return match ($this->name) {
-            'super_admin' => 'Super Admin',
-            'admin' => 'Admin Helpdesk',
-            'teknisi' => 'Teknisi IT',
-            'supervisor' => 'Supervisor IT',
-            default => ucfirst($this->name),
-        };
+        return $this->hasMany(Ticket::class);
     }
 }
