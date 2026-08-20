@@ -1,7 +1,18 @@
 @extends('layouts.auth')
 
 @section('content')
-<div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+<div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20 relative">
+    
+    <!-- Tombol Kembali ke Welcome -->
+    <div class="absolute top-4 right-4 z-10">
+        <a href="{{ url('/') }}" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Kembali ke Beranda</span>
+        </a>
+    </div>
+
     <!-- Left Column: Branding -->
     <div class="lg:col-span-5 bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-900 p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden">
         <div class="absolute -right-20 -top-20 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -52,7 +63,7 @@
     </div>
 
     <!-- Right Column: Login Form -->
-    <div class="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white">
+    <div class="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white pt-14 lg:pt-12">
         <div>
             <div class="flex items-center justify-between mb-6">
                 <div>
