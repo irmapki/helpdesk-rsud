@@ -1,138 +1,67 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div>
-            <h2 class="font-bold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Prioritas Tiket & Konfigurasi SLA') }}
-            </h2>
-            <p class="text-xs text-gray-500 mt-1">Pengaturan Service Level Agreement (SLA) waktu respon dan target penyelesaian masalah IT di RSUD</p>
-        </div>
+    <x-slot name="pageTitle">
+        Konfigurasi Prioritas &amp; SLA
+    </x-slot>
+    <x-slot name="breadcrumb">
+        Super Admin &rsaquo; Sistem &rsaquo; Konfigurasi SLA
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add Priority Form (1 col) -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-150 dark:border-gray-700 shadow-sm p-6 space-y-4">
-                    <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-teal-50 text-teal-700 text-xs flex items-center justify-center font-bold">+</span>
-                        Tambah Prioritas & SLA Baru
-                    </h3>
+    <div class="p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Konfigurasi Prioritas &amp; Target SLA</h1>
+                <p class="text-xs text-slate-500 mt-1">Atur target Service Level Agreement (SLA) dalam satuan jam untuk setiap tingkatan urgensi.</p>
+            </div>
+        </div>
 
-                    <form action="{{ route('superadmin.priorities.store') }}" method="POST" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach ($priorities as $pri)
+                @php
+                    $dotColor = match (strtolower($pri->name)) {
+                        'high', 'tinggi', 'critical' => 'bg-rose-500 text-rose-700 bg-rose-50 border-rose-200',
+                        'medium', 'sedang' => 'bg-amber-500 text-amber-700 bg-amber-50 border-amber-200',
+                        'low', 'rendah' => 'bg-emerald-500 text-emerald-700 bg-emerald-50 border-emerald-200',
+                        default => 'bg-slate-400 text-slate-700 bg-slate-50 border-slate-200',
+                    };
+                @endphp
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between">
+                    <form action="{{ route('superadmin.priorities.update', $pri) }}" method="POST" class="space-y-4">
                         @csrf
-                        <div>
-                            <label for="name" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Nama Prioritas <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" id="name" required placeholder="Contoh: Critical / Urgent / High" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-teal-500 focus:border-teal-500 @error('name') border-red-500 @enderror">
-                            @error('name') <p class="text-[11px] text-red-500 mt-1">{{ $message }}</p> @enderror
+                        @method('PUT')
+
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold border {{ $dotColor }}">
+                                Prioritas {{ $pri->name }}
+                            </span>
+                            <span class="text-xs font-mono font-black text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg">
+                                {{ $pri->sla_hours }} JAM
+                            </span>
                         </div>
 
                         <div>
-                            <label for="sla_hours" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Target SLA Maksimal (Jam) <span class="text-red-500">*</span></label>
-                            <input type="number" name="sla_hours" id="sla_hours" required min="1" max="720" placeholder="Contoh: 2 atau 4 atau 8" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-teal-500 focus:border-teal-500 @error('sla_hours') border-red-500 @enderror">
-                            @error('sla_hours') <p class="text-[11px] text-red-500 mt-1">{{ $message }}</p> @enderror
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Tingkat</label>
+                            <input type="text" name="name" value="{{ $pri->name }}" required class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-500 focus:border-teal-500">
                         </div>
 
                         <div>
-                            <label for="color" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Warna Badge</label>
-                            <select name="color" id="color" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-teal-500 focus:border-teal-500">
-                                <option value="red">Merah (Darurat / High)</option>
-                                <option value="yellow">Kuning / Oranye (Medium / Sedang)</option>
-                                <option value="green">Hijau (Low / Rendah)</option>
-                                <option value="blue">Biru (Normal)</option>
-                                <option value="purple">Ungu (Khusus)</option>
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Batas Waktu SLA (Satuan Jam)</label>
+                            <input type="number" name="sla_hours" value="{{ $pri->sla_hours }}" min="1" required class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-500 focus:border-teal-500 font-mono font-bold">
+                            <span class="text-[11px] text-slate-400 mt-1 block">Waktu hitung mundur otomatis sejak tiket dibuat.</span>
                         </div>
 
                         <div>
-                            <label for="description" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Keterangan / Kriteria Kendala</label>
-                            <textarea name="description" id="description" rows="2" placeholder="Contoh: Digunakan untuk sistem pelayanan pasien IGD & ICU yang terhenti..." class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-teal-500 focus:border-teal-500"></textarea>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan / Kriteria</label>
+                            <textarea name="description" rows="2" class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-500 focus:border-teal-500">{{ $pri->description }}</textarea>
                         </div>
 
-                        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm transition">
-                            Simpan Prioritas & SLA
-                        </button>
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-[#0a252a] hover:bg-[#0e353c] text-white font-bold text-xs py-2.5 rounded-xl shadow-xs transition">
+                                Simpan SLA {{ $pri->name }}
+                            </button>
+                        </div>
                     </form>
                 </div>
-
-                <!-- Priorities List (2 cols) -->
-                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-150 dark:border-gray-700 shadow-sm p-6">
-                    <h3 class="font-bold text-sm text-gray-900 dark:text-white mb-4">Daftar Konfigurasi SLA & Prioritas</h3>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 uppercase tracking-wider font-semibold border-b border-gray-100 dark:border-gray-700">
-                                <tr>
-                                    <th class="px-4 py-3">Tingkat Prioritas</th>
-                                    <th class="px-4 py-3">Batas SLA</th>
-                                    <th class="px-4 py-3">Keterangan Kriteria</th>
-                                    <th class="px-4 py-3 text-center">Jumlah Tiket</th>
-                                    <th class="px-4 py-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                                @forelse ($priorities as $pri)
-                                    <tr x-data="{ edit: false }" class="hover:bg-gray-50/70 dark:hover:bg-gray-750 transition">
-                                        <td class="px-4 py-3">
-                                            <div x-show="!edit">
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg font-bold border {{ $pri->badge_class }}">
-                                                    {{ $pri->name }}
-                                                </span>
-                                            </div>
-                                            <div x-show="edit">
-                                                <input type="text" form="edit-pri-form-{{ $pri->id }}" name="name" value="{{ $pri->name }}" class="text-xs rounded-lg border-gray-200 p-1.5 w-full">
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <div x-show="!edit" class="font-bold text-gray-900 dark:text-white">
-                                                {{ $pri->sla_hours }} Jam ({{ $pri->sla_hours * 60 }} Menit)
-                                            </div>
-                                            <div x-show="edit">
-                                                <input type="number" form="edit-pri-form-{{ $pri->id }}" name="sla_hours" value="{{ $pri->sla_hours }}" class="text-xs rounded-lg border-gray-200 p-1.5 w-24">
-                                                <input type="hidden" form="edit-pri-form-{{ $pri->id }}" name="color" value="{{ $pri->color }}">
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-3 text-gray-500">
-                                            <div x-show="!edit">{{ $pri->description ?: '-' }}</div>
-                                            <div x-show="edit">
-                                                <input type="text" form="edit-pri-form-{{ $pri->id }}" name="description" value="{{ $pri->description }}" class="text-xs rounded-lg border-gray-200 p-1.5 w-full">
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-3 text-center font-bold text-teal-600">
-                                            {{ $pri->tickets_count }}
-                                        </td>
-                                        <td class="px-4 py-3 text-right space-x-2">
-                                            <form id="edit-pri-form-{{ $pri->id }}" action="{{ route('superadmin.priorities.update', $pri) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PUT')
-                                            </form>
-
-                                            <div x-show="!edit" class="inline space-x-2">
-                                                <button @click="edit = true" class="font-bold text-teal-600 hover:text-teal-800">Edit</button>
-                                                @if ($pri->tickets_count == 0)
-                                                    <form action="{{ route('superadmin.priorities.destroy', $pri) }}" method="POST" class="inline" onsubmit="return confirm('Hapus prioritas ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="font-bold text-red-500 hover:text-red-700">Hapus</button>
-                                                    </form>
-                                                @endif
-                                            </div>
-
-                                            <div x-show="edit" class="inline space-x-1">
-                                                <button type="submit" form="edit-pri-form-{{ $pri->id }}" class="font-bold text-emerald-600 hover:text-emerald-800 text-[11px] bg-emerald-50 px-2 py-1 rounded">Simpan</button>
-                                                <button @click="edit = false" type="button" class="text-gray-500 text-[11px] bg-gray-100 px-2 py-1 rounded">Batal</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center py-6 text-gray-400">Belum ada prioritas SLA.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </x-app-layout>

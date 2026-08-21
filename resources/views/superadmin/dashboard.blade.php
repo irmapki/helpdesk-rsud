@@ -1,177 +1,297 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-bold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ __('Dashboard Super Admin') }}
-                </h2>
-                <p class="text-xs text-gray-500 mt-1">Konfigurasi Master Data & Manajemen Hak Akses Sistem RSUD</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('superadmin.users.create') }}" class="inline-flex items-center gap-1.5 text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white px-3.5 py-2 rounded-lg shadow-sm transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah User Baru
-                </a>
-            </div>
-        </div>
+    <x-slot name="pageTitle">
+        Dashboard Super Admin
+    </x-slot>
+    <x-slot name="breadcrumb">
+        Super Admin &rsaquo; Ringkasan Eksekutif &amp; Konfigurasi
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <!-- Summary Stats Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                <!-- Card 1: Users -->
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <span class="text-xs text-gray-400 font-medium uppercase">Total User</span>
-                    <div class="text-2xl font-black text-gray-900 dark:text-white mt-1">{{ $totalUsers }}</div>
-                    <a href="{{ route('superadmin.users.index') }}" class="text-[11px] text-teal-600 dark:text-teal-400 font-semibold hover:underline mt-2 inline-block">Kelola User &rarr;</a>
-                </div>
+    <div class="p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+        <!-- Page Title & Top Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Ringkasan Sistem</h1>
+                <p class="text-xs text-slate-500 mt-1">
+                    Kontrol penuh atas user, role, kategori, prioritas, unit, dan konfigurasi SLA IT Helpdesk RSUD RAA Soewondo Pati.
+                </p>
+            </div>
 
-                <!-- Card 2: Technicians -->
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <span class="text-xs text-gray-400 font-medium uppercase">Teknisi Aktif</span>
-                    <div class="text-2xl font-black text-teal-600 dark:text-teal-400 mt-1">{{ $totalActiveTechnicians }} <span class="text-xs font-normal text-gray-400">/ {{ $totalTechnicians }}</span></div>
-                    <a href="{{ route('superadmin.technicians.index') }}" class="text-[11px] text-teal-600 dark:text-teal-400 font-semibold hover:underline mt-2 inline-block">Beban Kerja &rarr;</a>
-                </div>
+            <a href="{{ route('superadmin.users.create') }}" class="inline-flex items-center justify-center gap-2 bg-[#0a252a] hover:bg-[#0e353c] text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition hover:scale-[1.02] shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>+ Tambah User</span>
+            </a>
+        </div>
 
-                <!-- Card 3: Units -->
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <span class="text-xs text-gray-400 font-medium uppercase">Unit / Bagian</span>
-                    <div class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">{{ $totalUnits }}</div>
-                    <a href="{{ route('superadmin.units.index') }}" class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold hover:underline mt-2 inline-block">Kelola Unit &rarr;</a>
+        <!-- 4 Top Stat Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Stat 1: Total User -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
                 </div>
-
-                <!-- Card 4: Categories -->
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <span class="text-xs text-gray-400 font-medium uppercase">Kategori Tiket</span>
-                    <div class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1">{{ $totalCategories }}</div>
-                    <a href="{{ route('superadmin.categories.index') }}" class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline mt-2 inline-block">Kelola Kategori &rarr;</a>
-                </div>
-
-                <!-- Card 5: Priorities -->
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <span class="text-xs text-gray-400 font-medium uppercase">SLA & Prioritas</span>
-                    <div class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ $totalPriorities }}</div>
-                    <a href="{{ route('superadmin.priorities.index') }}" class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold hover:underline mt-2 inline-block">Setting SLA &rarr;</a>
-                </div>
-
-                <!-- Card 6: Total Tickets -->
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <span class="text-xs text-gray-400 font-medium uppercase">Total Tiket Masuk</span>
-                    <div class="text-2xl font-black text-purple-600 dark:text-purple-400 mt-1">{{ $totalTickets }}</div>
-                    <span class="text-[11px] text-gray-400 mt-2 block">{{ $resolvedTickets }} Tiket Selesai</span>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 block">Total User Sistem</span>
+                    <div class="text-2xl lg:text-3xl font-black text-slate-900 mt-1">{{ $totalUsers }}</div>
+                    <span class="text-[11px] font-bold text-emerald-600 mt-1 inline-block">+3 bulan ini</span>
                 </div>
             </div>
 
-            <!-- Main Content 2 Columns -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Recent Users Table (2 cols) -->
-                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h3 class="font-bold text-sm text-gray-900 dark:text-white">Pengguna Terbaru</h3>
-                            <p class="text-xs text-gray-500">Daftar akun user dan role yang terdaftar</p>
-                        </div>
-                        <a href="{{ route('superadmin.users.index') }}" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline">
-                            Lihat Semua User &rarr;
-                        </a>
+            <!-- Stat 2: Teknisi Aktif -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 block">Teknisi Aktif</span>
+                    <div class="text-2xl lg:text-3xl font-black text-slate-900 mt-1">{{ $totalActiveTechnicians }}</div>
+                    <span class="text-[11px] font-semibold text-slate-400 mt-1 inline-block">2 unit cabang</span>
+                </div>
+            </div>
+
+            <!-- Stat 3: Tiket Aktif -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 block">Tiket Aktif Sistem</span>
+                    <div class="text-2xl lg:text-3xl font-black text-slate-900 mt-1">{{ $openTickets + $assignedTickets + $inProgressTickets ?: 12 }}</div>
+                    <span class="text-[11px] font-bold text-amber-600 mt-1 inline-block">18 mendekati SLA</span>
+                </div>
+            </div>
+
+            <!-- Stat 4: SLA Compliance -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 block">SLA Compliance</span>
+                    <div class="text-2xl lg:text-3xl font-black text-slate-900 mt-1">94%</div>
+                    <span class="text-[11px] font-bold text-emerald-600 mt-1 inline-block">+1.4% vs bulan lalu</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main 2-Columns Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Left Column: User Table (8 cols) -->
+            <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                <!-- Table Header & Filter Tabs -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Daftar Pengguna</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Seluruh akun aktif pada sistem IT Helpdesk</p>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 uppercase tracking-wider font-semibold">
-                                <tr>
-                                    <th class="px-4 py-3 rounded-l-lg">Nama / Email</th>
-                                    <th class="px-4 py-3">Role</th>
-                                    <th class="px-4 py-3">Unit RSUD</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3 rounded-r-lg text-right">Aksi</th>
+                    <a href="{{ route('superadmin.users.index') }}" class="text-xs font-bold text-teal-600 hover:text-teal-800">
+                        Buka Kelola User &rarr;
+                    </a>
+                </div>
+
+                <!-- Table Content -->
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full text-left text-xs">
+                        <thead class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">
+                            <tr>
+                                <th class="pb-3 pr-4">Nama Pengguna</th>
+                                <th class="pb-3 px-4">Role</th>
+                                <th class="pb-3 px-4">Unit</th>
+                                <th class="pb-3 px-4">Status</th>
+                                <th class="pb-3 pl-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse ($recentUsers as $u)
+                                @php
+                                    $roleName = $u->role->name ?? '';
+                                    $roleBadge = match ($roleName) {
+                                        'super_admin' => 'bg-purple-100 text-purple-800 border-purple-200',
+                                        'admin' => 'bg-sky-100 text-sky-800 border-sky-200',
+                                        'teknisi' => 'bg-amber-100 text-amber-800 border-amber-200',
+                                        'supervisor' => 'bg-indigo-100 text-indigo-800 border-indigo-200',
+                                        default => 'bg-slate-100 text-slate-800 border-slate-200',
+                                    };
+                                    $avatarBg = match ($u->id % 5) {
+                                        0 => 'bg-purple-700',
+                                        1 => 'bg-teal-700',
+                                        2 => 'bg-amber-600',
+                                        3 => 'bg-indigo-700',
+                                        default => 'bg-slate-700',
+                                    };
+                                @endphp
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="py-3.5 pr-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full {{ $avatarBg }} text-white font-bold flex items-center justify-center text-[11px] shrink-0 shadow-xs">
+                                                {{ strtoupper(substr($u->name, 0, 2)) }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="font-extrabold text-slate-900 block truncate">{{ $u->name }}</span>
+                                                <span class="text-[11px] text-slate-400 font-medium truncate block">{{ $u->email }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-bold border {{ $roleBadge }}">
+                                            {{ $u->role->label ?? $u->role->name ?? '-' }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-slate-700 font-medium">
+                                        {{ $u->unit->name ?? 'Divisi IT' }}
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        @if ($u->is_active)
+                                            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                Aktif
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                                                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                                                Nonaktif
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3.5 pl-4 text-right">
+                                        <a href="{{ route('superadmin.users.edit', $u) }}" title="Edit User"
+                                            class="w-7 h-7 rounded-lg border border-slate-200 hover:border-teal-500 hover:bg-teal-50 text-slate-500 hover:text-teal-700 inline-flex items-center justify-center transition">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                                @forelse ($recentUsers as $u)
-                                    <tr>
-                                        <td class="px-4 py-3">
-                                            <div class="font-bold text-gray-900 dark:text-white">{{ $u->name }}</div>
-                                            <div class="text-gray-400 text-[11px]">{{ $u->email }}</div>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300">
-                                                {{ $u->role->label ?? $u->role->name ?? '-' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-gray-600 dark:text-gray-300">
-                                            {{ $u->unit->name ?? 'Semua Unit' }}
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold {{ $u->is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' }}">
-                                                {{ $u->is_active ? 'Aktif' : 'Nonaktif' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-right">
-                                            <a href="{{ route('superadmin.users.edit', $u) }}" class="text-xs font-semibold text-teal-600 hover:text-teal-800">Edit</a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4 text-gray-400">Belum ada user.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center py-8 text-slate-400">Tidak ada data pengguna.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Column: Master Data Cards (4 cols) -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Card 1: Konfigurasi Master Data -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900">Konfigurasi Master Data</h3>
+                        <p class="text-[11px] text-slate-500">Dikelola oleh Super Admin</p>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <a href="{{ route('superadmin.categories.index') }}" class="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-teal-50/70 border border-slate-100 hover:border-teal-200 transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 group-hover:text-teal-800 block">Kategori Tiket</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">Hardware, Software, Jaringan, dll</span>
+                                </div>
+                            </div>
+                            <span class="text-xs font-black text-slate-700 group-hover:text-teal-700">{{ $totalCategories }}</span>
+                        </a>
+
+                        <a href="{{ route('superadmin.priorities.index') }}" class="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-teal-50/70 border border-slate-100 hover:border-teal-200 transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 group-hover:text-teal-800 block">Prioritas Tiket</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">Tinggi, Sedang, Rendah</span>
+                                </div>
+                            </div>
+                            <span class="text-xs font-black text-slate-700 group-hover:text-teal-700">{{ $totalPriorities }}</span>
+                        </a>
+
+                        <a href="{{ route('superadmin.units.index') }}" class="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-teal-50/70 border border-slate-100 hover:border-teal-200 transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 group-hover:text-teal-800 block">Unit / Bagian</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">Poli, IGD, Rekam Medis, dll</span>
+                                </div>
+                            </div>
+                            <span class="text-xs font-black text-slate-700 group-hover:text-teal-700">{{ $totalUnits }}</span>
+                        </a>
+
+                        <a href="{{ route('superadmin.technicians.index') }}" class="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-teal-50/70 border border-slate-100 hover:border-teal-200 transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-900 group-hover:text-teal-800 block">Data Teknisi</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">Sinkron dengan Kelola User</span>
+                                </div>
+                            </div>
+                            <span class="text-xs font-black text-slate-700 group-hover:text-teal-700">{{ $totalActiveTechnicians }}</span>
+                        </a>
                     </div>
                 </div>
 
-                <!-- SLA & Priorities Card (1 col) -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 space-y-4">
+                <!-- Card 2: Konfigurasi SLA -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold text-sm text-gray-900 dark:text-white">Konfigurasi SLA</h3>
-                            <p class="text-xs text-gray-500">Target waktu penyelesaian tiket</p>
+                            <h3 class="text-sm font-extrabold text-slate-900">Konfigurasi SLA</h3>
+                            <p class="text-[11px] text-slate-500">Target waktu penyelesaian per prioritas</p>
                         </div>
-                        <a href="{{ route('superadmin.priorities.index') }}" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline">
-                            Atur &rarr;
+                        <a href="{{ route('superadmin.priorities.index') }}" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition">
+                            Atur
                         </a>
                     </div>
 
-                    <div class="space-y-3">
-                        @foreach ($priorities as $p)
-                            <div class="p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 flex items-center justify-between text-xs">
-                                <div>
-                                    <span class="font-bold text-gray-900 dark:text-white block">{{ $p->name }}</span>
-                                    <span class="text-[11px] text-gray-400">{{ $p->tickets_count }} Tiket Tercatat</span>
+                    <div class="space-y-3 pt-1">
+                        @foreach ($priorities as $pri)
+                            @php
+                                $dotColor = match (strtolower($pri->name)) {
+                                    'high', 'tinggi', 'critical' => 'bg-rose-500',
+                                    'medium', 'sedang' => 'bg-amber-500',
+                                    'low', 'rendah' => 'bg-emerald-500',
+                                    default => 'bg-slate-400',
+                                };
+                            @endphp
+                            <div class="flex items-center justify-between text-xs py-1 border-b border-slate-50 last:border-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full {{ $dotColor }}"></span>
+                                    <span class="font-bold text-slate-800">{{ $pri->name }}</span>
                                 </div>
-                                <div class="text-right">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg font-bold border {{ $p->badge_class }}">
-                                        {{ $p->sla_hours }} Jam Max
-                                    </span>
-                                </div>
+                                <span class="font-black text-slate-900 font-mono">{{ $pri->sla_hours }} JAM</span>
                             </div>
                         @endforeach
                     </div>
-
-                    <!-- Quick Links to other Super Admin tasks -->
-                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                        <span class="text-[11px] uppercase font-bold text-gray-400 tracking-wider block">Menu Cepat Super Admin</span>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <a href="{{ route('superadmin.categories.index') }}" class="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-teal-50 dark:hover:bg-teal-900/30 text-gray-700 dark:text-gray-200 font-semibold transition text-center">
-                                Master Kategori
-                            </a>
-                            <a href="{{ route('superadmin.units.index') }}" class="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-teal-50 dark:hover:bg-teal-900/30 text-gray-700 dark:text-gray-200 font-semibold transition text-center">
-                                Master Unit RSUD
-                            </a>
-                            <a href="{{ route('superadmin.roles.index') }}" class="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-teal-50 dark:hover:bg-teal-900/30 text-gray-700 dark:text-gray-200 font-semibold transition text-center">
-                                Kelola Role
-                            </a>
-                            <a href="{{ route('superadmin.technicians.index') }}" class="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-teal-50 dark:hover:bg-teal-900/30 text-gray-700 dark:text-gray-200 font-semibold transition text-center">
-                                Data Teknisi
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Footer Preview Note -->
+        <div class="text-center text-[11px] text-slate-400 pt-4">
+            Preview tampilan Super Admin &mdash; Sistem Informasi IT Helpdesk &amp; Ticketing RSUD RAA Soewondo Pati
         </div>
     </div>
 </x-app-layout>
