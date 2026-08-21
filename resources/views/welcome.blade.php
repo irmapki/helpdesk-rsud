@@ -17,14 +17,12 @@
     <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-teal-700 to-teal-500 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
+                <div class="w-11 h-11 flex items-center justify-center">
+                    <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-11 h-11 object-contain">
                 </div>
                 <div>
                     <span class="text-lg font-black tracking-tight text-slate-900">HELPDESK RSUD <span class="text-teal-600"> RAA. SOEWONDO</span></span>
-                    <p class="text-xs text-slate-500 font-medium">Instalasi TI & SIMRS</p>
+                    <p class="text-xs text-slate-500 font-medium">Sistem Pengaduan & Layanan IT Rumah Sakit</p>
                 </div>
             </div>
 
@@ -55,7 +53,7 @@
             </div>
 
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight max-w-3xl mx-auto">
-                Pusat Bantuan & Pengaduan Layanan <span class="text-teal-600">IT RSUD</span>
+                Pusat Bantuan & Pengaduan Layanan IT <span class="text-teal-600">RSUD RAA. SOEWONDO</span>
             </h1>
 
             <p class="mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -183,9 +181,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
                 <div class="w-6 h-6 rounded-md bg-teal-600 flex items-center justify-center text-white font-bold text-xs">IT</div>
-                <span class="font-semibold text-slate-700">Instalasi Teknologi Informasi & Komunikasi RSUD</span>
+                <span class="font-semibold text-slate-700">Instalasi Teknologi Informasi & Komunikasi RSUD RAA. Soewondo</span>
             </div>
-            <p>&copy; {{ date('Y') }} RSUD IT Helpdesk System. Layanan Cepat & Terpadu.</p>
+            <p>&copy; {{ date('Y') }} RSUD RAA. Soewondo IT Helpdesk System. Layanan Cepat & Terpadu.</p>
         </div>
     </footer>
 </body>
