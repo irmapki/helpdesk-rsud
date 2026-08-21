@@ -51,7 +51,7 @@
                     $role = Auth::user()->role->name ?? '';
                 @endphp
 
-                <!-- Super Admin Menu -->
+                <!-- 1. Super Admin Menu -->
                 @if ($role === 'super_admin')
                     <!-- Section: Menu Utama -->
                     <div class="space-y-1">
@@ -148,7 +148,7 @@
                         </a>
                     </div>
 
-                <!-- Admin Helpdesk Menu -->
+                <!-- 2. Admin Helpdesk Menu -->
                 @elseif ($role === 'admin')
                     <div class="space-y-1">
                         <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-teal-500/70 block mb-2">
@@ -201,8 +201,94 @@
                             <span>Pengaturan Akun</span>
                         </a>
                     </div>
+
+                <!-- 3. Teknisi Menu -->
+                @elseif ($role === 'teknisi')
+                    <div class="space-y-1">
+                        <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-teal-500/70 block mb-2">
+                            Menu Utama
+                        </span>
+
+                        <a href="{{ route('teknisi.dashboard') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('teknisi.dashboard') ? 'bg-[#12424b] text-white shadow-sm border-l-4 border-teal-400' : 'text-slate-300 hover:bg-[#0e333a] hover:text-white' }}">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4" />
+                            </svg>
+                            <span>Tiket Saya</span>
+                            <span class="ml-auto bg-teal-800 text-[10px] font-bold px-2 py-0.5 rounded-full text-white">5</span>
+                        </a>
+
+                        <a href="{{ route('teknisi.riwayat') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('teknisi.riwayat') ? 'bg-[#12424b] text-white shadow-sm border-l-4 border-teal-400' : 'text-slate-300 hover:bg-[#0e333a] hover:text-white' }}">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Riwayat Penanganan</span>
+                        </a>
+                    </div>
+
+                    <div class="space-y-1 pt-4 border-t border-[#0e353c]">
+                        <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-teal-500/70 block mb-2">
+                            Sistem
+                        </span>
+
+                        <a href="{{ route('guest.landing') }}" target="_blank"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-[#0e333a] hover:text-white transition">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            <span>Portal Pengaduan</span>
+                        </a>
+
+                        <a href="{{ route('profile.edit') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-[#0e333a] hover:text-white transition">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Pengaturan Akun</span>
+                        </a>
+                    </div>
+
+                <!-- 4. Supervisor Menu -->
+                @elseif ($role === 'supervisor')
+                    <div class="space-y-1">
+                        <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-teal-500/70 block mb-2">
+                            Menu Utama
+                        </span>
+
+                        <a href="{{ route('supervisor.dashboard') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('supervisor.dashboard') ? 'bg-[#12424b] text-white shadow-sm border-l-4 border-teal-400' : 'text-slate-300 hover:bg-[#0e333a] hover:text-white' }}">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <span>Dashboard Supervisor</span>
+                        </a>
+                    </div>
+
+                    <div class="space-y-1 pt-4 border-t border-[#0e353c]">
+                        <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-teal-500/70 block mb-2">
+                            Sistem
+                        </span>
+
+                        <a href="{{ route('guest.landing') }}" target="_blank"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-[#0e333a] hover:text-white transition">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            <span>Portal Pengaduan</span>
+                        </a>
+
+                        <a href="{{ route('profile.edit') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-[#0e333a] hover:text-white transition">
+                            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Pengaturan Akun</span>
+                        </a>
+                    </div>
+
                 @else
-                    <!-- Partner's Links -->
+                    <!-- Fallback General Menu -->
                     <div class="space-y-1">
                         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#12424b]">
                             <span>Dashboard</span>

@@ -12,7 +12,7 @@ use App\Http\Controllers\SuperAdmin\TechnicianController as SuperAdminTechnician
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\TicketController as AdminTicketController;
 
-use App\Http\Controllers\Teknisi\DashboardController as TeknisiDashboard;
+use App\Http\Controllers\Teknisi\TeknisiController;
 use App\Http\Controllers\Supervisor\DashboardController as SupervisorDashboard;
 
 use App\Http\Controllers\Guest\GuestTicketController;
@@ -103,15 +103,25 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 /*
 |--------------------------------------------------------------------------
-| Partner's Scope (Teknisi & Supervisor IT) - Preserved & Untouched
+| C. Teknisi Routes (Updated with Named Routes & Riwayat Page)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->group(function () {
-    Route::get('/dashboard', [TeknisiDashboard::class, 'index'])->name('teknisi.dashboard');
+Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')->group(function () {
+    Route::get('/dashboard', [TeknisiController::class, 'index'])->name('dashboard');
+    
+    // Halaman Riwayat Penanganan (langsung mengarah ke view riwayat.blade.php)
+    Route::get('/riwayat', function () {
+        return view('teknisi.riwayat');
+    })->name('riwayat');
 });
 
-Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->group(function () {
-    Route::get('/dashboard', [SupervisorDashboard::class, 'index'])->name('supervisor.dashboard');
+/*
+|--------------------------------------------------------------------------
+| D. Supervisor IT Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supervisor.')->group(function () {
+    Route::get('/dashboard', [SupervisorDashboard::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/auth.php';
