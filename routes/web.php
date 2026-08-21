@@ -122,6 +122,9 @@ Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')
 */
 Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supervisor.')->group(function () {
     Route::get('/dashboard', [SupervisorDashboard::class, 'index'])->name('dashboard');
+    
+    // TAMBAHAN: Route Monitoring SLA
+    Route::get('/monitoring-sla', [SupervisorDashboard::class, 'monitoringSla'])->name('monitoring-sla');
 });
 
 require __DIR__.'/auth.php';
