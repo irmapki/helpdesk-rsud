@@ -36,7 +36,7 @@
 
         <!-- Konten Grid: Daftar Tiket & Detail -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <!-- Kolom Kiri: Daftar Tiket (8 cols) -->
+            <!-- Kolom Kiri: Daftar Tiket (7 cols) -->
             <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
                     <div>
@@ -171,4 +171,3 @@
         </div>
     </div>
 </x-app-layout>
-
