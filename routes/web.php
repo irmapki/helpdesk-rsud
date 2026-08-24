@@ -104,7 +104,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 /*
 |--------------------------------------------------------------------------
-| C. Teknisi Routes (Updated with Named Routes & Riwayat Page)
+| C. Teknisi Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')->group(function () {
@@ -122,8 +122,17 @@ Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')
 Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supervisor.')->group(function () {
     Route::get('/dashboard', [SupervisorDashboard::class, 'index'])->name('dashboard');
     
-    // TAMBAHAN: Route Monitoring SLA
+    // Monitoring SLA
     Route::get('/monitoring-sla', [SupervisorDashboard::class, 'monitoringSla'])->name('monitoring-sla');
+    
+    // Laporan Tiket
+    Route::get('/laporan-tiket', [SupervisorDashboard::class, 'laporanTiket'])->name('laporan-tiket');
+
+    // Statistik Penanganan Tiket
+    Route::get('/statistik', [SupervisorDashboard::class, 'statistik'])->name('statistik');
+
+    // Filter Periode
+    Route::get('/filter-periode', [SupervisorDashboard::class, 'filterPeriode'])->name('filter-periode');
 });
 
 require __DIR__.'/auth.php';
