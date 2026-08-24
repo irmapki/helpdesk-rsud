@@ -173,19 +173,26 @@
                                 @enderror
                             </div>
 
-                            <!-- Upload dengan multiple file (Foto & Video) -->
+                            <!-- Upload dengan multiple file (Foto & Video) & Preview Interaktif -->
                             <div>
                                 <label for="attachments" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Unggah Bukti Kendala (Foto &amp; Video) - Bisa Pilih Banyak
                                 </label>
-                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*"
-                                    class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5 focus:outline-none">
+                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*" onchange="handleFileSelect(event)"
+                                    class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5 focus:outline-none cursor-pointer">
+                                
                                 <p class="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>Mendukung upload <strong>Foto (JPG, PNG, WEBP)</strong> dan <strong>Video (MP4, MOV, WEBM)</strong> sekaligus.</span>
+                                    <span>Mendukung upload <strong>Foto (JPG, PNG, WEBP)</strong> dan <strong>Video (MP4, MOV, WEBM)</strong> sekaligus. (Tombol "Choose Files" otomatis menyesuaikan bahasa browser/sistem).</span>
                                 </p>
+
+                                <!-- Container Pratinjau (Preview) Berkas yang Dipilih -->
+                                <div id="preview-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 hidden">
+                                    <!-- Dynamic thumbnails will be injected here -->
+                                </div>
+
                                 @error('attachments')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
@@ -215,6 +222,8 @@
     </div>
 
     <script>
+        let selectedFiles = []; // Menyimpan daftar objek File secara global di frontend
+
         function toggleCustomUnitInput(value) {
             const wrapper = document.getElementById('custom_unit_wrapper');
             const customInput = document.getElementById('custom_unit_name');
@@ -226,6 +235,97 @@
                 wrapper.classList.add('hidden');
                 customInput.removeAttribute('required');
             }
+        }
+
+        function handleFileSelect(event) {
+            const input = event.target;
+            const files = Array.from(input.files);
+
+            // Tambahkan file baru ke array global (mendukung multi-upload bertahap jika diinginkan)
+            files.forEach(file => {
+                selectedFiles.push(file);
+            });
+
+            updateFileInputAndPreview();
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileInputAndPreview();
+        }
+
+        function updateFileInputAndPreview() {
+            const input = document.getElementById('attachments');
+            const container = document.getElementById('preview-container');
+            
+            // Perbarui objek file pada input form menggunakan DataTransfer
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            input.files = dataTransfer.files;
+
+            // Kosongkan container preview
+            container.innerHTML = '';
+
+            if (selectedFiles.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            // Render ulang pratinjau thumbnail
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                const wrapperDiv = document.createElement('div');
+                wrapperDiv.className = 'relative group bg-slate-50 border border-slate-200 rounded-xl p-2 flex flex-col items-center justify-center h-28 overflow-hidden shadow-xs';
+
+                reader.onload = function(e) {
+                    if (file.type.startsWith('image/')) {
+                        wrapperDiv.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-20 object-cover rounded-lg">
+                            <span class="text-[10px] text-slate-500 font-medium truncate w-full text-center mt-1">${file.name}</span>
+                            <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        `;
+                    } else if (file.type.startsWith('video/')) {
+                        wrapperDiv.innerHTML = `
+                            <div class="w-full h-20 bg-slate-900 rounded-lg flex items-center justify-center text-white">
+                                <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-[10px] text-slate-500 font-medium truncate w-full text-center mt-1">${file.name}</span>
+                            <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        `;
+                    }
+                }
+
+                if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+                    reader.readAsDataURL(file);
+                } else {
+                    wrapperDiv.innerHTML = `
+                        <div class="w-full h-20 bg-slate-200 rounded-lg flex items-center justify-center text-slate-600 font-bold text-xs">FILE</div>
+                        <span class="text-[10px] text-slate-500 font-medium truncate w-full text-center mt-1">${file.name}</span>
+                        <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    `;
+                }
+
+                container.appendChild(wrapperDiv);
+            });
         }
     </script>
 </x-guest-portal-layout>

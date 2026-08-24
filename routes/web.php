@@ -134,5 +134,4 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
     // Filter Periode
     Route::get('/filter-periode', [SupervisorDashboard::class, 'filterPeriode'])->name('filter-periode');
 });
-
 require __DIR__.'/auth.php';
