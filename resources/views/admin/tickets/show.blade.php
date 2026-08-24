@@ -144,7 +144,7 @@
                                             </a>
                                         @endif
                                     </div>
-                                endforeach
+                                @endforeach
                             </div>
                         </div>
                     @endif
