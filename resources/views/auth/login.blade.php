@@ -1,24 +1,33 @@
 @extends('layouts.auth')
 
 @section('content')
-<div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+<div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20 relative">
+    
+    <!-- Tombol Kembali ke Welcome -->
+    <div class="absolute top-4 right-4 z-10">
+        <a href="{{ url('/') }}" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Kembali ke Beranda</span>
+        </a>
+    </div>
+
     <!-- Left Column: Branding -->
     <div class="lg:col-span-5 bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-900 p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden">
         <div class="absolute -right-20 -top-20 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
+      <div>
+    <div class="flex items-center space-x-3 mb-8">
+        <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center border border-white/30 shadow-md overflow-hidden">
+            <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-100 h-100 object-contain">
+        </div>
         <div>
-            <div class="flex items-center space-x-3 mb-8">
-                <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
-                    <svg class="w-7 h-7 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-widest text-teal-300 block">Sistem Informasi PKL</span>
-                    <h2 class="text-xl font-bold tracking-tight text-white">RSUD IT HELPDESK</h2>
-                </div>
-            </div>
+            <span class="text-xs font-bold uppercase tracking-widest text-teal-300 block">Sistem Informasi PKL</span>
+            <h2 class="text-xl font-bold tracking-tight text-white">RSUD IT HELPDESK</h2>
+        </div>
+    </div>
 
             <div class="space-y-4 my-8">
                 <h1 class="text-2xl lg:text-3xl font-extrabold text-white leading-tight">
@@ -52,7 +61,7 @@
     </div>
 
     <!-- Right Column: Login Form -->
-    <div class="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white">
+    <div class="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white pt-14 lg:pt-12">
         <div>
             <div class="flex items-center justify-between mb-6">
                 <div>
@@ -118,31 +127,29 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5">
-                    <div class="grid grid-cols-2 gap-2.5">
-    <button type="button" onclick="fillCredentials('superadmin@rsud.test')"
-        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all">
-        <span class="text-xs font-bold text-purple-900 block">👑 Super Admin</span>
-        <span class="text-[11px] text-purple-700/80 truncate block mt-0.5">superadmin@rsud.test</span>
-    </button>
+                    <button type="button" onclick="fillCredentials('superadmin@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all">
+                        <span class="text-xs font-bold text-purple-900 block">👑 Super Admin</span>
+                        <span class="text-[11px] text-purple-700/80 truncate block mt-0.5">superadmin@rsud.test</span>
+                    </button>
 
-    <button type="button" onclick="fillCredentials('admin@rsud.test')"
-        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all">
-        <span class="text-xs font-bold text-blue-900 block">📋 Admin</span>
-        <span class="text-[11px] text-blue-700/80 truncate block mt-0.5">admin@rsud.test</span>
-    </button>
+                    <button type="button" onclick="fillCredentials('admin@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all">
+                        <span class="text-xs font-bold text-blue-900 block">📋 Admin</span>
+                        <span class="text-[11px] text-blue-700/80 truncate block mt-0.5">admin@rsud.test</span>
+                    </button>
 
-    <button type="button" onclick="fillCredentials('teknisi@rsud.test')"
-        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all">
-        <span class="text-xs font-bold text-emerald-900 block">🔧 Teknisi</span>
-        <span class="text-[11px] text-emerald-700/80 truncate block mt-0.5">teknisi@rsud.test</span>
-    </button>
+                    <button type="button" onclick="fillCredentials('teknisi@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all">
+                        <span class="text-xs font-bold text-emerald-900 block">🔧 Teknisi</span>
+                        <span class="text-[11px] text-emerald-700/80 truncate block mt-0.5">teknisi@rsud.test</span>
+                    </button>
 
-    <button type="button" onclick="fillCredentials('supervisor@rsud.test')"
-        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all">
-        <span class="text-xs font-bold text-amber-900 block">📊 Supervisor</span>
-        <span class="text-[11px] text-amber-700/80 truncate block mt-0.5">supervisor@rsud.test</span>
-    </button>
-</div>
+                    <button type="button" onclick="fillCredentials('supervisor@rsud.test', 'password')"
+                        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all">
+                        <span class="text-xs font-bold text-amber-900 block">📊 Supervisor</span>
+                        <span class="text-[11px] text-amber-700/80 truncate block mt-0.5">supervisor@rsud.test</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -154,10 +161,16 @@
 </div>
 
 <script>
-    function fillCredentials(email) {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = 'password';
+    function fillCredentials(email, password) {
         const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        emailInput.value = email;
+        passwordInput.value = password || 'password';
+
+        emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+        passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
+
         emailInput.classList.add('ring-2', 'ring-teal-500');
         setTimeout(() => emailInput.classList.remove('ring-2', 'ring-teal-500'), 600);
     }

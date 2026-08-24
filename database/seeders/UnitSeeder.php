@@ -10,9 +10,15 @@ class UnitSeeder extends Seeder
     public function run(): void
     {
         DB::table('units')->insert([
-            ['name' => 'Rekam Medis', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Farmasi', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'IGD', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Instalasi Gawat Darurat (IGD)', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Instalasi Farmasi & Depo Obat', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Rekam Medis & Admisi', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Poli Rawat Jalan', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Laboratorium & Bank Darah', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Instalasi Radiologi', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Ruang Rawat Inap', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kamar Operasi (OK) & ICU', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kasir & Keuangan', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

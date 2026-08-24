@@ -19,7 +19,7 @@ return new class extends Migration
         $table->foreignId('category_id')->constrained();
         $table->foreignId('priority_id')->constrained();
         $table->foreignId('unit_id')->constrained();
-        $table->foreignId('created_by')->constrained('users');
+        $table->foreignId('created_by')->nullable()->constrained('users');
         $table->foreignId('assigned_to')->nullable()->constrained('users');
         $table->string('status')->default('open');
         $table->timestamp('assigned_at')->nullable();
