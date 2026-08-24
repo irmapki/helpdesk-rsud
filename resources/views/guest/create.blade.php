@@ -24,7 +24,7 @@
                             Data Identitas Pelapor
                         </h2>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
                                 <label for="guest_name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Nama Lengkap Pelapor <span class="text-rose-500">*</span>
@@ -148,7 +148,7 @@
                             Rincian Pengaduan &amp; Lampiran
                         </h2>
 
-                        <div class="space-y-4">
+                        <div class="space-y-5">
                             <div>
                                 <label for="title" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Judul Ringkas Masalah <span class="text-rose-500">*</span>
@@ -173,6 +173,7 @@
                                 @enderror
                             </div>
 
+                            <!-- Upload dengan multiple file (Foto & Video) -->
                             <div>
                                 <label for="attachments" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Unggah Bukti Kendala (Foto &amp; Video) - Bisa Pilih Banyak

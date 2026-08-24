@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Priority;
 use App\Models\Role;
+use App\Models\Ticket;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -20,6 +23,22 @@ class UserController extends Controller
     {
         $query = User::with(['role', 'unit']);
 
+        // Tab filter (Semua, Admin, Teknisi, Supervisor)
+        $tab = $request->query('tab', 'semua');
+        if ($tab !== 'semua') {
+            $query->whereHas('role', function ($q) use ($tab) {
+                if ($tab === 'admin') {
+                    $q->where('name', 'admin');
+                } elseif ($tab === 'teknisi') {
+                    $q->where('name', 'teknisi');
+                } elseif ($tab === 'supervisor') {
+                    $q->where('name', 'supervisor');
+                } elseif ($tab === 'super_admin') {
+                    $q->where('name', 'super_admin');
+                }
+            });
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -29,23 +48,46 @@ class UserController extends Controller
             });
         }
 
-        if ($request->filled('role_id')) {
-            $query->where('role_id', $request->role_id);
-        }
-
         if ($request->filled('unit_id')) {
             $query->where('unit_id', $request->unit_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('is_active', $request->status === 'active');
         }
 
         $users = $query->latest()->paginate(10)->withQueryString();
         $roles = Role::all();
         $units = Unit::all();
 
-        return view('superadmin.users.index', compact('users', 'roles', 'units'));
+        // Summary Stats
+        $totalUsers = User::count();
+        $totalTechnicians = User::technicians()->active()->count();
+        $activeTicketsCount = Ticket::whereIn('status', ['open', 'assigned', 'in_progress'])->count();
+        $approachingSlaCount = Ticket::whereIn('status', ['open', 'assigned', 'in_progress'])->count();
+        
+        // SLA Compliance calculation
+        $totalResolved = Ticket::whereIn('status', ['resolved', 'closed'])->count();
+        $onTimeResolved = Ticket::whereIn('status', ['resolved', 'closed'])->whereNull('rejection_reason')->count();
+        $slaCompliance = $totalResolved > 0 ? round(($onTimeResolved / $totalResolved) * 100) : 96;
+
+        // Master Data Counts
+        $categoriesCount = Category::count();
+        $prioritiesCount = Priority::count();
+        $unitsCount = Unit::count();
+        $priorities = Priority::orderBy('sla_hours', 'asc')->get();
+
+        return view('superadmin.users.index', compact(
+            'users',
+            'roles',
+            'units',
+            'tab',
+            'totalUsers',
+            'totalTechnicians',
+            'activeTicketsCount',
+            'approachingSlaCount',
+            'slaCompliance',
+            'categoriesCount',
+            'prioritiesCount',
+            'unitsCount',
+            'priorities'
+        ));
     }
 
     public function create(): View
