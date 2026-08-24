@@ -25,9 +25,7 @@ class TicketController extends Controller
         if ($request->filled('tab')) {
             $tab = $request->tab;
             if ($tab === 'pending') {
-                $query->where('status', 'open')->where(function ($q) {
-                    $q->whereNull('assigned_to')->orWhere('validation_status', 'pending');
-                });
+                $query->where('status', 'open');
             } elseif ($tab === 'assigned') {
                 $query->where('status', 'assigned');
             } elseif ($tab === 'in_progress') {

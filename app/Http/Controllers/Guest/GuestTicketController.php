@@ -39,13 +39,35 @@ class GuestTicketController extends Controller
             'guest_name' => ['required', 'string', 'max:255'],
             'guest_phone' => ['required', 'string', 'max:30'],
             'guest_email' => ['nullable', 'email', 'max:255'],
-            'unit_id' => ['required', 'exists:units,id'],
+            'unit_id' => ['nullable'],
+            'custom_unit_name' => ['nullable', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
             'priority_id' => ['nullable', 'exists:priorities,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:10'],
-            'attachment' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], // Max 5MB image
+            'attachments' => ['nullable', 'array'],
+            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi,mkv,webm,3gp', 'max:51200'], // max 50MB per file
+            'attachment' => ['nullable'],
         ]);
+
+        // Handle custom unit if chosen or typed
+        if ($request->unit_id === 'other' || !empty($request->custom_unit_name)) {
+            $customName = trim((string) $request->custom_unit_name);
+            if (empty($customName)) {
+                return redirect()->back()->withInput()->withErrors(['custom_unit_name' => 'Silakan ketik nama ruangan / unit Anda.']);
+            }
+            $unit = Unit::firstOrCreate(
+                ['name' => $customName],
+                ['description' => 'Ruangan baru (ditambahkan pelapor)', 'location' => 'RSUD']
+            );
+            $validated['unit_id'] = $unit->id;
+        } else {
+            if (empty($validated['unit_id']) || !Unit::where('id', $validated['unit_id'])->exists()) {
+                return redirect()->back()->withInput()->withErrors(['unit_id' => 'Silakan pilih unit atau ketik nama ruangan Anda.']);
+            }
+        }
+
+        unset($validated['custom_unit_name']);
 
         // Default priority to Medium if not specified
         if (empty($validated['priority_id'])) {
@@ -53,11 +75,23 @@ class GuestTicketController extends Controller
             $validated['priority_id'] = $defaultPriority?->id;
         }
 
-        // Handle attachment upload
-        if ($request->hasFile('attachment')) {
-            $path = $request->file('attachment')->store('attachments', 'public');
-            $validated['attachment'] = $path;
+        // Handle multiple attachments (images & videos)
+        $storedPaths = [];
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $storedPaths[] = $file->store('attachments', 'public');
+            }
+        } elseif ($request->hasFile('attachment')) {
+            $storedPaths[] = $request->file('attachment')->store('attachments', 'public');
         }
+
+        if (!empty($storedPaths)) {
+            $validated['attachment'] = json_encode($storedPaths);
+        } else {
+            $validated['attachment'] = null;
+        }
+
+        unset($validated['attachments']);
 
         $ticketNumber = Ticket::generateTicketNumber();
         $validated['ticket_number'] = $ticketNumber;
@@ -93,12 +127,42 @@ class GuestTicketController extends Controller
         $searchNumber = $request->query('ticket_number');
 
         if ($searchNumber) {
-            $ticket = Ticket::with(['unit', 'category', 'priority', 'technician', 'statusLogs'])
+            $ticket = Ticket::with(['unit', 'category', 'priority', 'technician', 'statusLogs.user'])
                 ->where('ticket_number', trim($searchNumber))
                 ->first();
         }
 
         return view('guest.track', compact('ticket', 'searchNumber'));
+    }
+
+    public function uploadAttachment(Request $request, string $ticket_number): RedirectResponse
+    {
+        $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
+
+        $request->validate([
+            'attachments' => ['required', 'array', 'min:1'],
+            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi,mkv,webm,3gp', 'max:51200'],
+        ]);
+
+        $existing = $ticket->attachments_list;
+        $newPaths = [];
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $newPaths[] = $file->store('attachments', 'public');
+            }
+        }
+
+        $merged = array_merge($existing, $newPaths);
+        $ticket->update(['attachment' => json_encode($merged)]);
+
+        TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => $ticket->status,
+            'changed_by' => null,
+            'note' => 'Pelapor mengunggah ' . count($newPaths) . ' berkas bukti kendala baru (foto/video).',
+        ]);
+
+        return redirect()->back()->with('success', 'Bukti kendala tambahan berhasil diunggah.');
     }
 
     public function submitFeedback(Request $request, string $ticket_number): RedirectResponse

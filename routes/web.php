@@ -28,6 +28,7 @@ Route::get('/guest/ticket/create', [GuestTicketController::class, 'create'])->na
 Route::post('/guest/ticket', [GuestTicketController::class, 'store'])->name('guest.ticket.store');
 Route::get('/guest/ticket/success/{ticket_number}', [GuestTicketController::class, 'success'])->name('guest.ticket.success');
 Route::get('/guest/ticket/track', [GuestTicketController::class, 'track'])->name('guest.ticket.track');
+Route::post('/guest/ticket/{ticket_number}/attachment', [GuestTicketController::class, 'uploadAttachment'])->name('guest.ticket.attachment');
 Route::post('/guest/ticket/{ticket_number}/feedback', [GuestTicketController::class, 'submitFeedback'])->name('guest.ticket.feedback');
 
 /*
@@ -108,11 +109,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 */
 Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')->group(function () {
     Route::get('/dashboard', [TeknisiController::class, 'index'])->name('dashboard');
-    
-    // Halaman Riwayat Penanganan (langsung mengarah ke view riwayat.blade.php)
-    Route::get('/riwayat', function () {
-        return view('teknisi.riwayat');
-    })->name('riwayat');
+    Route::post('/tickets/{ticket}/status', [TeknisiController::class, 'updateStatus'])->name('status.update');
+    Route::post('/tickets/{ticket}/notes', [TeknisiController::class, 'addNote'])->name('notes.store');
+    Route::get('/riwayat', [TeknisiController::class, 'riwayat'])->name('riwayat');
 });
 
 /*

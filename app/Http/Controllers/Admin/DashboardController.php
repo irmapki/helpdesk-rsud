@@ -13,10 +13,7 @@ class DashboardController extends Controller
 {
     public function index(): View
     {
-        $pendingValidationCount = Ticket::where('status', 'open')
-            ->where(function ($q) {
-                $q->whereNull('assigned_to')->orWhere('validation_status', 'pending');
-            })->count();
+        $pendingValidationCount = Ticket::where('status', 'open')->count();
 
         $assignedCount = Ticket::where('status', 'assigned')->count();
         $inProgressCount = Ticket::where('status', 'in_progress')->count();

@@ -1,144 +1,115 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <!-- Header & Status Sistem -->
-        <div class="flex justify-between items-center mb-2">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">Dashboard Supervisor IT</h2>
-                <p class="text-xs text-gray-500">Monitoring Kinerja, Eskalasi Masalah, &amp; Evaluasi Layanan RSUD</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
-                    <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Sistem Aktif
-                </span>
-            </div>
+    <div class="space-y-6">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Dashboard Supervisor IT
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">Monitoring Kinerja &amp; Evaluasi Service Level Agreement (SLA) RSUD RAA Soewondo</p>
         </div>
 
-        <!-- Statistik Cards Supervisor -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Card 1 -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Total Tiket Bulan Ini</span>
-                <h3 class="text-2xl font-extrabold text-gray-900">42</h3>
-                <span class="text-[11px] text-emerald-600 font-semibold">+12% dari bulan lalu</span>
+        <!-- 4 Statistik Cards Supervisor (Light Mode) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+                <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Total Tiket Bulan Ini</span>
+                <div class="text-3xl font-black text-slate-900 mt-1">{{ $totalTicketsMonth ?? 0 }}</div>
+                <span class="text-[11px] font-bold text-emerald-700 mt-2 inline-block">Pengaduan masuk</span>
             </div>
-            <!-- Card 2 -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Tiket Pending / Kendala</span>
-                <h3 class="text-2xl font-extrabold text-gray-900">3</h3>
-                <span class="text-[11px] text-amber-600 font-semibold">Perlu perhatian khusus</span>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+                <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Tiket Pending / Kendala</span>
+                <div class="text-3xl font-black text-amber-600 mt-1">{{ $pendingTicketsCount ?? 0 }}</div>
+                <span class="text-[11px] font-bold text-amber-600 mt-2 inline-block">Perlu pengawasan</span>
             </div>
-            <!-- Card 3 -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Penyelesaian Sesuai SLA</span>
-                <h3 class="text-2xl font-extrabold text-gray-900">96.4%</h3>
-                <span class="text-[11px] text-emerald-600 font-semibold">Target &gt; 90% tercapai</span>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+                <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Penyelesaian Sesuai SLA</span>
+                <div class="text-3xl font-black text-emerald-700 mt-1">{{ $slaCompliance ?? 96.4 }}%</div>
+                <span class="text-[11px] font-bold text-emerald-600 mt-2 inline-block">Target &gt; 90% tercapai</span>
             </div>
-            <!-- Card 4 -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Teknisi Aktif Bertugas</span>
-                <h3 class="text-2xl font-extrabold text-gray-900">5/5</h3>
-                <span class="text-[11px] text-blue-600 font-semibold">Semua standby</span>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition">
+                <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1">Teknisi Aktif Bertugas</span>
+                <div class="text-3xl font-black text-sky-700 mt-1">{{ $activeTechCount ?? 0 }} / {{ $totalTechCount ?? 0 }}</div>
+                <span class="text-[11px] font-bold text-sky-600 mt-2 inline-block">Divisi IT Standby</span>
             </div>
         </div>
 
         <!-- Konten Utama: Daftar Eskalasi & Kinerja Teknisi -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Kolom Kiri: Daftar Eskalasi / Tiket Bermasalah -->
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-gray-900 text-sm">Monitoring Eskalasi &amp; Tiket Kritis</h3>
-                    <span class="text-[11px] text-gray-400">Ditinjau oleh Supervisor</span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Kolom Kiri: Monitoring Tiket Kritis (8 cols - Light Mode) -->
+            <div class="lg:col-span-8 bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-7 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-150">
+                    <div>
+                        <h2 class="text-base font-black text-slate-900">Monitoring Eskalasi &amp; Tiket Kritis</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Ditinjau dan diawasi langsung oleh Supervisor IT</p>
+                    </div>
+
+                    <a href="{{ route('supervisor.monitoring-sla') }}" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 px-3.5 py-2 rounded-2xl border border-emerald-200 transition">
+                        Buka Monitoring SLA &rarr;
+                    </a>
                 </div>
 
-                <!-- Filter Tab kecil -->
-                <div class="flex space-x-2 mb-4">
-                    <button class="px-3.5 py-1.5 text-xs bg-emerald-600 text-white rounded-xl font-semibold shadow-sm shadow-emerald-600/20">Semua (3)</button>
-                    <button class="px-3.5 py-1.5 text-xs bg-gray-50 text-gray-600 rounded-xl font-semibold hover:bg-gray-100 border border-gray-200">Mendekati SLA</button>
-                    <button class="px-3.5 py-1.5 text-xs bg-gray-50 text-gray-600 rounded-xl font-semibold hover:bg-gray-100 border border-gray-200">Pending</button>
-                </div>
-
-                <!-- List Tiket Eskalasi -->
                 <div class="space-y-3">
-                    <!-- Item Tiket 1 -->
-                    <div class="border border-gray-200 rounded-xl p-4 hover:border-emerald-500 transition cursor-pointer bg-gray-50/50 shadow-sm">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <span class="text-xs font-bold text-emerald-700 mr-2">#TK-0231</span>
-                                <span class="px-2 py-0.5 text-[10px] bg-red-50 text-red-700 border border-red-200 rounded-md font-bold">Tinggi</span>
+                    @forelse ($criticalTickets as $t)
+                        <div class="border border-slate-200 hover:border-emerald-600 rounded-2xl p-4 bg-white transition shadow-xs">
+                            <div class="flex justify-between items-start mb-1.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono font-black text-emerald-800">{{ $t->ticket_number }}</span>
+                                    <span class="px-2.5 py-0.5 text-[10px] rounded-lg font-black border {{ $t->priority->badge_class ?? 'bg-slate-100 text-slate-700' }}">
+                                        {{ $t->priority->name ?? 'Normal' }}
+                                    </span>
+                                </div>
+                                <span class="text-xs font-black {{ $t->sla_status === 'breached' ? 'text-rose-600' : ($t->sla_status === 'approaching' ? 'text-amber-600' : 'text-emerald-700') }}">
+                                    {{ $t->status_label }}
+                                </span>
                             </div>
-                            <span class="text-xs text-amber-600 font-bold">3j 05m lagi (SLA)</span>
+                            <h3 class="font-bold text-slate-900 text-sm mb-1">{{ $t->title }}</h3>
+                            <p class="text-xs text-slate-500 font-medium">
+                                {{ $t->unit->name ?? '-' }} &bull; Ditugaskan ke: <span class="font-bold text-slate-800">{{ $t->technician->name ?? 'Belum Ditugaskan' }}</span> &bull; Status: {{ $t->status_label }}
+                            </p>
                         </div>
-                        <h4 class="font-bold text-gray-900 text-sm mb-1">Aplikasi SIMRS error saat input pasien</h4>
-                        <p class="text-[11px] text-gray-500">Poli Rawat Jalan • Ditugaskan ke: Teknisi A • Status: In Progress</p>
-                    </div>
-
-                    <!-- Item Tiket 2 -->
-                    <div class="border border-gray-200 rounded-xl p-4 hover:border-emerald-500 transition cursor-pointer bg-gray-50/50 shadow-sm">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <span class="text-xs font-bold text-emerald-700 mr-2">#TK-0225</span>
-                                <span class="px-2 py-0.5 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded-md font-bold">Sedang</span>
-                            </div>
-                            <span class="text-xs text-emerald-700 font-bold">Aman</span>
+                    @empty
+                        <div class="text-center py-8 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">
+                            Semua tiket dalam kondisi aman dan tertangani dengan baik.
                         </div>
-                        <h4 class="font-bold text-gray-900 text-sm mb-1">Printer Lab Patologi tidak bisa cetak label</h4>
-                        <p class="text-[11px] text-gray-500">Laboratorium • Ditugaskan ke: Teknisi B • Status: Assigned</p>
-                    </div>
+                    @endforelse
                 </div>
-
             </div>
 
-            <!-- Kolom Kanan: Ringkasan Performa Tim IT -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <h3 class="font-bold text-gray-900 text-sm mb-0.5">Performa Teknisi Bulan Ini</h3>
-                <p class="text-[11px] text-gray-400 mb-4">Beban kerja &amp; penyelesaian tugas</p>
-
-                <div class="space-y-3.5 text-xs">
-                    <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200">
-                        <div class="flex justify-between mb-1.5">
-                            <span class="font-bold text-gray-900">Teknisi A (Software)</span>
-                            <span class="text-emerald-700 font-bold">12 Selesai</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1.5">
-                            <div class="bg-emerald-600 h-1.5 rounded-full" style="width: 85%"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-500">Beban kerja aktif: 2 tiket</span>
-                    </div>
-
-                    <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200">
-                        <div class="flex justify-between mb-1.5">
-                            <span class="font-bold text-gray-900">Teknisi B (Hardware &amp; Jaringan)</span>
-                            <span class="text-emerald-700 font-bold">15 Selesai</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1.5">
-                            <div class="bg-emerald-600 h-1.5 rounded-full" style="width: 90%"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-500">Beban kerja aktif: 1 tiket</span>
-                    </div>
-
-                    <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200">
-                        <div class="flex justify-between mb-1.5">
-                            <span class="font-bold text-gray-900">Teknisi C (Infrastruktur)</span>
-                            <span class="text-emerald-700 font-bold">10 Selesai</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1.5">
-                            <div class="bg-emerald-600 h-1.5 rounded-full" style="width: 70%"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-500">Beban kerja aktif: 0 tiket</span>
-                    </div>
+            <!-- Kolom Kanan: Ringkasan Performa Tim IT (4 cols - Light Mode) -->
+            <div class="lg:col-span-4 bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-7 space-y-4">
+                <div>
+                    <h3 class="text-sm font-black text-slate-900">Beban Kerja Teknisi</h3>
+                    <p class="text-xs text-slate-500">Kapasitas penanganan kendala aktif</p>
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-gray-100">
-                    <button class="w-full py-2.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold transition border border-gray-200 shadow-sm">
-                        Unduh Laporan Bulanan (PDF)
-                    </button>
+                <div class="space-y-3 text-xs">
+                    @forelse ($technicians as $tech)
+                        @php
+                            $activeCount = $tech->assignedTickets->count();
+                            $percent = min(100, $activeCount * 25);
+                        @endphp
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-150">
+                            <div class="flex justify-between mb-2 font-bold">
+                                <span class="text-slate-900">{{ $tech->name }}</span>
+                                <span class="text-emerald-800 font-black">{{ $activeCount }} Tiket Aktif</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2 mb-2 overflow-hidden">
+                                <div class="bg-emerald-600 h-2 rounded-full" style="width: {{ max(10, $percent) }}%"></div>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-medium">Spesialisasi: {{ $tech->specialization ?? 'Hardware & Jaringan' }}</span>
+                        </div>
+                    @empty
+                        <p class="text-xs text-slate-400">Belum ada data teknisi.</p>
+                    @endforelse
                 </div>
 
+                <div class="pt-3 border-t border-slate-100">
+                    <a href="{{ route('supervisor.monitoring-sla') }}" class="block w-full py-2.5 text-center text-xs bg-emerald-800 hover:bg-emerald-900 text-white rounded-2xl font-bold transition shadow-xs">
+                        Lihat Laporan SLA Lengkap
+                    </a>
+                </div>
             </div>
-
         </div>
-
     </div>
 </x-app-layout>

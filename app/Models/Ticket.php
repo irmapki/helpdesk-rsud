@@ -113,6 +113,30 @@ class Ticket extends Model
         return $this->guest_phone ?: ($this->creator?->phone ?: ($this->guest_email ?: ($this->creator?->email ?: '-')));
     }
 
+    public function getAttachmentsListAttribute(): array
+    {
+        if (empty($this->attachment)) {
+            return [];
+        }
+
+        if (is_array($this->attachment)) {
+            return $this->attachment;
+        }
+
+        $decoded = json_decode($this->attachment, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        return [$this->attachment];
+    }
+
+    public static function isVideoFile(string $path): bool
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        return in_array($extension, ['mp4', 'mov', 'avi', 'mkv', 'webm', '3gp', 'ogg']);
+    }
+
     public function getSlaDeadlineAttribute(): ?Carbon
     {
         if (!$this->created_at || !$this->priority) {
@@ -173,16 +197,16 @@ class Ticket extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         if ($this->status === 'rejected' || $this->validation_status === 'rejected') {
-            return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800';
+            return 'bg-rose-100 text-rose-700 font-bold';
         }
 
         return match ($this->status) {
-            'open' => 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800',
-            'assigned' => 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800',
-            'in_progress' => 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-800',
-            'resolved' => 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800',
-            'closed' => 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600',
-            default => 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600',
+            'open' => 'bg-amber-100 text-amber-800 font-bold',
+            'assigned' => 'bg-sky-100 text-sky-700 font-bold',
+            'in_progress' => 'bg-indigo-100 text-indigo-700 font-bold',
+            'resolved' => 'bg-emerald-100 text-emerald-700 font-bold',
+            'closed' => 'bg-slate-100 text-slate-700 font-bold',
+            default => 'bg-slate-100 text-slate-700 font-bold',
         };
     }
 }

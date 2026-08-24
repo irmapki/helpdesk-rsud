@@ -1,54 +1,80 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <!-- Header Halaman -->
-        <div class="flex justify-between items-center mb-2">
+    <div class="space-y-6">
+        <!-- Header & Action -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Arsip Riwayat Penanganan Tiket</h2>
-                <p class="text-xs text-gray-500">Teknisi &gt; Riwayat Penanganan</p>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Riwayat Penanganan Tiket Selesai</h1>
+                <p class="text-xs text-slate-500 mt-1">Seluruh arsip tiket yang telah Anda tangani dan selesaikan.</p>
             </div>
+            <a href="{{ route('teknisi.dashboard') }}" class="text-xs font-bold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 rounded-2xl transition shadow-xs">
+                &larr; Kembali ke Tiket Saya
+            </a>
         </div>
 
-        <!-- Tabel Riwayat Penanganan -->
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex justify-between items-center mb-6">
+        <!-- Tabel Riwayat Penanganan (Light Mode) -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-7">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h3 class="font-bold text-gray-900 text-sm">Daftar Tiket Selesai</h3>
-                    <p class="text-[11px] text-gray-500">Seluruh riwayat penanganan tiket yang telah ditandai resolved oleh Anda.</p>
+                    <h3 class="font-black text-slate-900 text-base">Daftar Tiket Selesai (Resolved / Closed)</h3>
+                    <p class="text-xs text-slate-500">Histori penanganan teknis pada unit-unit RSUD</p>
                 </div>
-                <div>
-                    <input type="text" placeholder="Cari tiket..." class="text-xs bg-gray-50 text-gray-800 border-gray-200 rounded-xl px-3.5 py-2 focus:border-emerald-600 focus:ring-emerald-600 shadow-sm">
-                </div>
+                <form action="{{ route('teknisi.riwayat') }}" method="GET">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID tiket / unit / judul..."
+                        class="text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 placeholder-slate-400 px-3.5 py-2 font-medium">
+                </form>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-gray-600">
-                    <thead class="bg-gray-50 text-gray-400 uppercase text-[10px] border-b border-gray-200">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-extrabold text-[10px] border-b border-slate-100">
                         <tr>
-                            <th class="p-3.5 rounded-l-xl font-bold">ID Tiket</th>
-                            <th class="p-3.5 font-bold">Judul Masalah &amp; Unit</th>
-                            <th class="p-3.5 font-bold">Kategori</th>
-                            <th class="p-3.5 font-bold">Waktu Selesai</th>
-                            <th class="p-3.5 rounded-r-xl text-right font-bold">Status</th>
+                            <th class="px-4 py-3.5 rounded-l-xl">ID TIKET</th>
+                            <th class="px-4 py-3.5">JUDUL MASALAH &amp; UNIT</th>
+                            <th class="px-4 py-3.5">KATEGORI</th>
+                            <th class="px-4 py-3.5">WAKTU SELESAI</th>
+                            <th class="px-4 py-3.5">PENILAIAN GUEST</th>
+                            <th class="px-4 py-3.5 rounded-r-xl text-right">STATUS</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <tr class="hover:bg-gray-50/80 transition">
-                            <td class="p-3.5 font-extrabold text-emerald-700">#TK-0219</td>
-                            <td class="p-3.5">
-                                <span class="block font-bold text-gray-900">Printer label obat sering macet</span>
-                                <span class="text-[10px] text-gray-500">Instalasi Farmasi</span>
-                            </td>
-                            <td class="p-3.5">Hardware</td>
-                            <td class="p-3.5 text-gray-500">Kemarin, 14:30 WIB</td>
-                            <td class="p-3.5 text-right">
-                                <span class="px-2.5 py-1 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold">Resolved</span>
-                            </td>
-                        </tr>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($tickets as $t)
+                            <tr class="hover:bg-slate-50/80 transition">
+                                <td class="px-4 py-3.5 font-mono font-bold text-emerald-800">{{ $t->ticket_number }}</td>
+                                <td class="px-4 py-3.5">
+                                    <span class="block font-bold text-slate-900">{{ $t->title }}</span>
+                                    <span class="text-xs text-slate-500 font-medium">{{ $t->unit->name ?? '-' }}</span>
+                                </td>
+                                <td class="px-4 py-3.5 text-slate-700 font-medium">{{ $t->category->name ?? '-' }}</td>
+                                <td class="px-4 py-3.5 text-slate-500 font-mono">{{ $t->resolved_at ? $t->resolved_at->format('d M Y, H:i') : $t->updated_at->format('d M Y, H:i') }} WIB</td>
+                                <td class="px-4 py-3.5">
+                                    @if ($t->rating)
+                                        <span class="font-bold text-amber-600">{{ $t->rating }} ★</span>
+                                    @else
+                                        <span class="text-slate-400 text-[11px]">-</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3.5 text-right">
+                                    <span class="px-3 py-1 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full font-black">
+                                        {{ $t->status_label }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-400 text-xs">
+                                    Belum ada riwayat tiket yang diselesaikan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
 
+            @if ($tickets->hasPages())
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    {{ $tickets->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>
