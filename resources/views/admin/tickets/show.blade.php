@@ -130,6 +130,22 @@
                                             <a href="{{ asset('storage/' . $att) }}" target="_blank" class="text-[11px] text-teal-800 font-bold mt-2 block text-center hover:underline">
                                                 Buka Video di Tab Baru &rarr;
                                             </a>
+                                        @elseif (\App\Models\Ticket::isHeicFile($att))
+                                            <div class="mb-1.5">
+                                                <span class="inline-block text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+                                                    Foto iPhone (HEIC)
+                                                </span>
+                                            </div>
+                                            <div class="w-full h-44 bg-amber-50/70 border border-amber-200 rounded-lg flex flex-col items-center justify-center p-3 text-center">
+                                                <svg class="w-8 h-8 text-amber-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <span class="text-xs font-bold text-slate-800">Foto Format HEIC</span>
+                                                <span class="text-[10px] text-slate-400">Format bawaan Apple iPhone</span>
+                                            </div>
+                                            <a href="{{ asset('storage/' . $att) }}" download class="text-[11px] text-teal-800 font-bold mt-2 block text-center hover:underline">
+                                                Unduh / Buka Foto HEIC &rarr;
+                                            </a>
                                         @else
                                             <div class="mb-1.5">
                                                 <span class="inline-block text-[10px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">

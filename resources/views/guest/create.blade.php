@@ -178,7 +178,7 @@
                                 <label for="attachments" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Unggah Bukti Kendala (Foto &amp; Video) - Bisa Pilih Banyak
                                 </label>
-                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*" onchange="handleFileSelect(event)"
+                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*,.heic,.heif" onchange="handleFileSelect(event)"
                                     class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5 focus:outline-none cursor-pointer">
                                 
                                 <p class="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5">

@@ -46,7 +46,7 @@ class GuestTicketController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:10'],
             'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi,mkv,webm,3gp', 'max:51200'], // max 50MB per file
+            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,heic,heif,mp4,mov,avi,mkv,webm,3gp', 'max:51200'], // max 50MB per file
             'attachment' => ['nullable'],
         ]);
 
@@ -141,7 +141,7 @@ class GuestTicketController extends Controller
 
         $request->validate([
             'attachments' => ['required', 'array', 'min:1'],
-            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,mp4,mov,avi,mkv,webm,3gp', 'max:51200'],
+            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,heic,heif,mp4,mov,avi,mkv,webm,3gp', 'max:51200'],
         ]);
 
         $existing = $ticket->attachments_list;

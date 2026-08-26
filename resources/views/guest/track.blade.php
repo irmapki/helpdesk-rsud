@@ -232,6 +232,22 @@
                                                     <a href="{{ asset('storage/' . $att) }}" target="_blank" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 mt-2 block text-center">
                                                         Buka Video di Tab Baru &rarr;
                                                     </a>
+                                                @elseif (\App\Models\Ticket::isHeicFile($att))
+                                                    <div>
+                                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md mb-2">
+                                                            Foto iPhone (HEIC)
+                                                        </span>
+                                                        <div class="w-full h-40 bg-amber-50/70 border border-amber-200 rounded-xl flex flex-col items-center justify-center p-3 text-center">
+                                                            <svg class="w-8 h-8 text-amber-600 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                            <span class="text-[11px] font-bold text-slate-800">Foto Format HEIC</span>
+                                                            <span class="text-[10px] text-slate-400">Format bawaan Apple iPhone</span>
+                                                        </div>
+                                                    </div>
+                                                    <a href="{{ asset('storage/' . $att) }}" download class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 mt-2 block text-center">
+                                                        Unduh / Buka Foto HEIC &rarr;
+                                                    </a>
                                                 @else
                                                     <div>
                                                         <span class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md mb-2">
@@ -267,7 +283,7 @@
 
                                     <form action="{{ route('guest.ticket.attachment', ['ticket_number' => $ticket->ticket_number]) }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-center gap-3">
                                         @csrf
-                                        <input type="file" name="attachments[]" multiple accept="image/*,video/*" required
+                                        <input type="file" name="attachments[]" multiple accept="image/*,video/*,.heic,.heif" required
                                             class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-emerald-800 hover:file:bg-emerald-100 border border-emerald-200 rounded-xl p-1 bg-white focus:outline-none">
                                         <button type="submit" class="w-full sm:w-auto shrink-0 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-xs">
                                             Unggah Bukti

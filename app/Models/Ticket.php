@@ -137,6 +137,12 @@ class Ticket extends Model
         return in_array($extension, ['mp4', 'mov', 'avi', 'mkv', 'webm', '3gp', 'ogg']);
     }
 
+    public static function isHeicFile(string $path): bool
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        return in_array($extension, ['heic', 'heif']);
+    }
+
     public static function getVideoMimeType(string $path): string
     {
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
