@@ -89,19 +89,27 @@ class TeknisiController extends Controller
 
         $validated = $request->validate([
             'status' => ['required', 'in:assigned,in_progress,resolved'],
-            'note' => ['nullable', 'string', 'max:1000'],
+            'resolution_notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $status = $validated['status'];
+        $resolutionNote = $validated['resolution_notes'] ?? null;
+        
         $updateData = ['status' => $status];
 
         if ($status === 'resolved') {
             $updateData['resolved_at'] = now();
         }
 
+        // Jika ada catatan solusi teknis, kita simpan juga ke kolom resolution_notes jika kolomnya ada pada tabel tickets
+        if (!empty($resolutionNote)) {
+            $updateData['resolution_notes'] = $resolutionNote;
+        }
+
         $ticket->update($updateData);
 
-        $noteText = $validated['note'] ?: match ($status) {
+        // Tentukan teks log status
+        $noteText = $resolutionNote ?: match ($status) {
             'in_progress' => 'Teknisi memulai pengerjaan penanganan kendala di lokasi.',
             'resolved' => 'Kendala teknis telah berhasil diselesaikan oleh Teknisi.',
             default => 'Status tiket diperbarui oleh Teknisi.',
@@ -163,10 +171,10 @@ class TeknisiController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('ticket_number', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%")
-                  ->orWhereHas('unit', function ($qu) use ($search) {
-                      $qu->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhereHas('unit', function ($qu) use ($search) {
+                        $qu->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 

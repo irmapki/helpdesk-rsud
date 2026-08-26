@@ -1,36 +1,69 @@
 <x-app-layout>
     <div class="space-y-6">
+        <!-- Top Title -->
         <div>
             <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
                 Tiket Penanganan Kendala (Teknisi IT)
             </h1>
-            <p class="text-xs text-slate-500 mt-1">Daftar tiket pengaduan aktif yang ditugaskan kepada Anda oleh Tim Dispatch Helpdesk</p>
+            <p class="text-xs text-slate-500 font-normal mt-1">Daftar tiket pengaduan aktif yang ditugaskan kepada Anda oleh Tim Dispatch Helpdesk</p>
         </div>
 
         <!-- 4 Statistik Cards Teknisi -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between">
-                <span class="text-xs font-semibold text-slate-500 block mb-1">Baru Ditugaskan</span>
-                <div class="text-3xl font-black text-slate-900">{{ $assignedCount ?? 0 }}</div>
-                <span class="text-[11px] font-bold text-rose-500 mt-1 inline-block">Belum dikerjakan</span>
+            <!-- Card 1: Baru Ditugaskan -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="mt-3">
+                    <span class="text-xs font-semibold text-slate-600 block">Baru Ditugaskan</span>
+                    <div class="text-3xl font-black text-slate-900 mt-1">{{ $assignedCount ?? 0 }}</div>
+                    <span class="text-xs font-bold text-rose-500 mt-2 inline-block">Belum dikerjakan</span>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between">
-                <span class="text-xs font-semibold text-slate-500 block mb-1">Sedang Dikerjakan</span>
-                <div class="text-3xl font-black text-sky-700">{{ $inProgressCount ?? 0 }}</div>
-                <span class="text-[11px] font-bold text-sky-600 mt-1 inline-block">In progress di lokasi</span>
+            <!-- Card 2: Sedang Dikerjakan -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                </div>
+                <div class="mt-3">
+                    <span class="text-xs font-semibold text-slate-600 block">Sedang Dikerjakan</span>
+                    <div class="text-3xl font-black text-sky-700 mt-1">{{ $inProgressCount ?? 0 }}</div>
+                    <span class="text-xs font-bold text-sky-600 mt-2 inline-block">In progress di lokasi</span>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between">
-                <span class="text-xs font-semibold text-slate-500 block mb-1">Selesai Bulan Ini</span>
-                <div class="text-3xl font-black text-emerald-600">{{ $resolvedThisMonth ?? 0 }}</div>
-                <span class="text-[11px] font-bold text-emerald-600 mt-1 inline-block">Tiket tuntas</span>
+            <!-- Card 3: Selesai Bulan Ini -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="mt-3">
+                    <span class="text-xs font-semibold text-slate-600 block">Selesai Bulan Ini</span>
+                    <div class="text-3xl font-black text-emerald-600 mt-1">{{ $resolvedThisMonth ?? 0 }}</div>
+                    <span class="text-xs font-bold text-emerald-600 mt-2 inline-block">Tiket tuntas</span>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between">
-                <span class="text-xs font-semibold text-slate-500 block mb-1">Mendekati SLA</span>
-                <div class="text-3xl font-black text-amber-500">{{ $approachingSlaCount ?? 0 }}</div>
-                <span class="text-[11px] font-bold text-amber-600 mt-1 inline-block">Prioritas penanganan</span>
+            <!-- Card 4: Mendekati SLA -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="mt-3">
+                    <span class="text-xs font-semibold text-slate-600 block">Mendekati SLA</span>
+                    <div class="text-3xl font-black text-amber-500 mt-1">{{ $approachingSlaCount ?? 0 }}</div>
+                    <span class="text-xs font-bold text-amber-600 mt-2 inline-block">Prioritas penanganan</span>
+                </div>
             </div>
         </div>
 
@@ -41,7 +74,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                     <div>
                         <h2 class="text-base font-bold text-slate-900">Daftar Tiket Ditugaskan</h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Tiket kendala yang dialokasikan Admin kepada Anda</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Tiket kendala yang dialokasikan Admin kepada Anda</p>
                     </div>
 
                     <!-- Filter Tab -->
@@ -112,7 +145,7 @@
                                 <h3 class="font-bold text-slate-900 text-sm">Detail Tiket Terpilih</h3>
                                 <span class="text-[11px] font-mono text-teal-800 font-bold">{{ $selectedTicket->ticket_number }}</span>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $selectedTicket->status_badge_class }}">
+                            <span class="px-3 py-1 rounded-xl text-xs font-bold {{ $selectedTicket->status_badge_class }}">
                                 {{ $selectedTicket->status_label }}
                             </span>
                         </div>
