@@ -60,12 +60,12 @@
 
                 <!-- Main Heading -->
                 <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
-                    Pusat Bantuan &amp; Pengaduan Layanan <span class="text-emerald-700">IT RSUD</span>
+                    Pusat Bantuan &amp; Pengaduan Layanan <span class="text-emerald-700">IT RSUD RAA. SOEWONDO</span>
                 </h1>
 
                 <!-- Subtitle -->
                 <p class="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">
-                    Laporkan kendala SIMRS, komputer, jaringan, printer, atau sistem rekam medis di unit Anda dengan cepat tanpa perlu login. Tim IT siap melayani 24/7.
+                    Selamat datang! Laporkan kendala SIMRS, komputer, jaringan, printer, atau sistem rekam medis di unit Anda dengan mudah. Tim IT kami siap membantu dan menindaklanjuti setiap kendala Anda.
                 </p>
 
                 <!-- Quick Action Cards Grid (Harmonized Colors) -->
@@ -115,7 +115,7 @@
         <section class="py-16 bg-white border-t border-slate-200/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-2xl mx-auto mb-12">
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Kategori Layanan IT RSUD</h2>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Kategori Layanan IT RSUD RAA. SOEWONDO</h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-2 font-medium">Dukungan komprehensif untuk seluruh operasional ruangan dan instalasi rumah sakit.</p>
                 </div>
 

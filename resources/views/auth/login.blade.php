@@ -24,7 +24,7 @@
             <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-100 h-100 object-contain">
         </div>
         <div>
-            <span class="text-xs font-bold uppercase tracking-widest text-teal-300 block">Sistem Informasi PKL</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-teal-300 block">Sistem Informasi Helpdesk</span>
             <h2 class="text-xl font-bold tracking-tight text-white">RSUD IT HELPDESK</h2>
         </div>
     </div>
@@ -34,7 +34,7 @@
                     Pusat Layanan & Penanganan Masalah TI RSUD
                 </h1>
                 <p class="text-teal-100/80 text-sm leading-relaxed">
-                    Sistem terpadu pengelolaan tiket insiden, permintaan layanan teknis, monitoring SLA, dan pelaporan performa divisi IT Rumah Sakit Umum Daerah.
+                   Sistem terpadu untuk pengelolaan tiket insiden dan permintaan layanan teknis, pemantauan SLA, serta pelaporan kinerja layanan IT RSUD RAA. Soewondo.
                 </p>
             </div>
 
@@ -55,7 +55,7 @@
         </div>
 
         <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-teal-200/70">
-            <span>Versi 1.0.0 (PKL Project)</span>
+            <span>Versi 1.0.0</span>
             <span>&copy; {{ date('Y') }} Tim IT RSUD</span>
         </div>
     </div>
@@ -155,7 +155,7 @@
         </div>
 
         <div class="mt-6 text-center text-xs text-slate-400">
-            Aplikasi Praktik Kerja Lapangan (PKL) &bull; Sistem Informasi IT Helpdesk RSUD
+            Sistem Informasi IT Helpdesk RSUD
         </div>
     </div>
 </div>

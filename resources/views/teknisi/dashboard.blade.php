@@ -200,6 +200,19 @@
                             <div class="flex justify-between"><span class="text-slate-500 font-medium">Prioritas:</span> <span class="font-bold text-rose-600">{{ $selectedTicket->priority->name ?? 'Normal' }} (SLA: {{ $selectedTicket->priority->sla_hours ?? '-' }} jam)</span></div>
                         </div>
 
+                        @if ($selectedTicket->rating)
+                            <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs">
+                                <span class="text-[10px] text-amber-800 font-bold uppercase tracking-wider block mb-1">Penilaian dari Pelapor / Ruangan</span>
+                                <div class="flex items-center gap-1 text-amber-600 font-bold text-sm">
+                                    <span>{{ $selectedTicket->rating }} ★</span>
+                                    <span class="text-xs text-amber-800 font-medium">({{ $selectedTicket->rating }} dari 5 Bintang)</span>
+                                </div>
+                                @if ($selectedTicket->feedback)
+                                    <p class="text-slate-700 mt-1 italic font-medium">"{{ $selectedTicket->feedback }}"</p>
+                                @endif
+                            </div>
+                        @endif
+
                         <!-- Form Aksi / Ubah Status & Catatan -->
                         <form action="{{ route('teknisi.status.update', $selectedTicket->id) }}" method="POST" class="space-y-3 pt-2">
                             @csrf
