@@ -124,7 +124,7 @@
                                                 </span>
                                             </div>
                                             <video controls preload="metadata" class="w-full h-44 rounded-lg bg-black object-cover">
-                                                <source src="{{ asset('storage/' . $att) }}">
+                                                <source src="{{ asset('storage/' . $att) }}" type="{{ \App\Models\Ticket::getVideoMimeType($att) }}">
                                                 Browser tidak mendukung video.
                                             </video>
                                             <a href="{{ asset('storage/' . $att) }}" target="_blank" class="text-[11px] text-teal-800 font-bold mt-2 block text-center hover:underline">

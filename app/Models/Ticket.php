@@ -137,6 +137,20 @@ class Ticket extends Model
         return in_array($extension, ['mp4', 'mov', 'avi', 'mkv', 'webm', '3gp', 'ogg']);
     }
 
+    public static function getVideoMimeType(string $path): string
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        return match ($extension) {
+            'webm' => 'video/webm',
+            'ogg' => 'video/ogg',
+            '3gp' => 'video/3gpp',
+            'mov' => 'video/quicktime',
+            'avi' => 'video/x-msvideo',
+            'mkv' => 'video/x-matroska',
+            default => 'video/mp4',
+        };
+    }
+
     public function getSlaDeadlineAttribute(): ?Carbon
     {
         if (!$this->created_at || !$this->priority) {
