@@ -1,12 +1,12 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-6 px-3 sm:px-0">
         <!-- Top Title & Action Button -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Ringkasan Sistem</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Ringkasan Sistem</h1>
                 <p class="text-xs text-slate-500 font-normal mt-1">Kontrol penuh atas user, role, kategori, prioritas, unit, dan konfigurasi SLA IT Helpdesk RSUD RAA Soewondo Pati.</p>
             </div>
-            <a href="{{ route('superadmin.users.create') }}" class="inline-flex items-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02]">
+            <a href="{{ route('superadmin.users.create') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02] shrink-0">
                 <span class="text-sm font-bold">+</span>
                 <span>Tambah User</span>
             </a>
@@ -15,7 +15,7 @@
         <!-- 4 Summary Stats Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Card 1: Total User Sistem -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -23,13 +23,13 @@
                 </div>
                 <div class="mt-3">
                     <span class="text-xs font-semibold text-slate-600 block">Total User Sistem</span>
-                    <div class="text-3xl font-black text-slate-900 mt-1">{{ $totalUsers }}</div>
+                    <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">{{ $totalUsers }}</div>
                     <span class="text-xs font-bold text-emerald-600 mt-2 inline-block">+3 bulan ini</span>
                 </div>
             </div>
 
             <!-- Card 2: Teknisi Aktif -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -37,13 +37,13 @@
                 </div>
                 <div class="mt-3">
                     <span class="text-xs font-semibold text-slate-600 block">Teknisi Aktif</span>
-                    <div class="text-3xl font-black text-slate-900 mt-1">{{ $totalActiveTechnicians }}</div>
+                    <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">{{ $totalActiveTechnicians }}</div>
                     <span class="text-xs font-medium text-slate-400 mt-2 inline-block">{{ $totalTechnicians }} terdaftar</span>
                 </div>
             </div>
 
             <!-- Card 3: Tiket Aktif Sistem -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -51,13 +51,13 @@
                 </div>
                 <div class="mt-3">
                     <span class="text-xs font-semibold text-slate-600 block">Tiket Aktif Sistem</span>
-                    <div class="text-3xl font-black text-slate-900 mt-1">{{ $totalTickets }}</div>
+                    <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">{{ $totalTickets }}</div>
                     <span class="text-xs font-bold text-amber-600 mt-2 inline-block">{{ $resolvedTickets }} tiket selesai</span>
                 </div>
             </div>
 
             <!-- Card 4: SLA Compliance -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
                 <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -65,7 +65,7 @@
                 </div>
                 <div class="mt-3">
                     <span class="text-xs font-semibold text-slate-600 block">SLA Compliance</span>
-                    <div class="text-3xl font-black text-slate-900 mt-1">92%</div>
+                    <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">92%</div>
                     <span class="text-xs font-bold text-emerald-600 mt-2 inline-block">+1.4% vs bulan lalu</span>
                 </div>
             </div>
@@ -74,40 +74,41 @@
         <!-- 2-Columns Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <!-- Kolom Kiri: Daftar Pengguna (8 cols) -->
-            <div x-data="{ filterRole: 'all' }" class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-4">
+            <div x-data="{ filterRole: 'all' }" class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
                     <div>
                         <h2 class="text-base font-bold text-slate-900">Daftar Pengguna</h2>
                         <p class="text-xs text-slate-400 mt-0.5">Seluruh akun aktif pada sistem IT Helpdesk</p>
                     </div>
 
-                    <!-- Role Filter Tabs -->
-                    <div class="flex items-center gap-1">
+                    <!-- Role Filter Tabs (Scrollable on small mobile screens) -->
+                    <div class="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto scrollbar-none">
                         <button type="button" @click="filterRole = 'all'"
                             :class="filterRole === 'all' ? 'bg-sky-100 text-sky-900 font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                            class="px-3 py-1 rounded-lg text-xs transition">
+                            class="px-3 py-1.5 rounded-lg text-xs transition shrink-0">
                             Semua
                         </button>
                         <button type="button" @click="filterRole = 'admin'"
                             :class="filterRole === 'admin' ? 'bg-sky-100 text-sky-900 font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                            class="px-3 py-1 rounded-lg text-xs transition">
+                            class="px-3 py-1.5 rounded-lg text-xs transition shrink-0">
                             Admin
                         </button>
                         <button type="button" @click="filterRole = 'teknisi'"
                             :class="filterRole === 'teknisi' ? 'bg-sky-100 text-sky-900 font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                            class="px-3 py-1 rounded-lg text-xs transition">
+                            class="px-3 py-1.5 rounded-lg text-xs transition shrink-0">
                             Teknisi
                         </button>
                         <button type="button" @click="filterRole = 'supervisor'"
                             :class="filterRole === 'supervisor' ? 'bg-sky-100 text-sky-900 font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                            class="px-3 py-1 rounded-lg text-xs transition">
+                            class="px-3 py-1.5 rounded-lg text-xs transition shrink-0">
                             Supervisor
                         </button>
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                <!-- Scrollable Table wrapper with touch hint -->
+                <div class="w-full overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                    <table class="w-full text-left text-xs min-w-[500px]">
                         <thead class="text-slate-400 uppercase font-bold text-[11px] border-b border-slate-100">
                             <tr>
                                 <th class="py-3 px-2">NAMA PENGGUNA</th>
@@ -123,7 +124,6 @@
                                     $roleName = strtolower($u->role->name ?? '');
                                     $roleLabel = $u->role->label ?? $u->role->name ?? '-';
 
-                                    // Avatar color mapping matching reference
                                     $avatarClass = 'bg-slate-600';
                                     $roleBadgeClass = 'bg-slate-100 text-slate-700';
 
@@ -141,39 +141,38 @@
                                         $roleBadgeClass = 'bg-blue-100 text-blue-700';
                                     }
 
-                                    // Get 2 letter initials
                                     $words = explode(' ', trim($u->name));
                                     $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : substr($words[0], 1, 1)));
                                 @endphp
                                 <tr x-show="filterRole === 'all' || '{{ $roleName }}'.includes(filterRole)" class="hover:bg-slate-50/80 transition">
                                     <td class="py-3.5 px-2">
-                                        <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-2.5">
                                             <div class="w-8 h-8 rounded-full {{ $avatarClass }} text-white font-bold text-xs flex items-center justify-center shrink-0">
                                                 {{ $initials }}
                                             </div>
-                                            <div>
-                                                <div class="font-bold text-slate-900 text-sm">{{ $u->name }}</div>
-                                                <div class="text-[11px] text-slate-400 font-mono">{{ $u->email }}</div>
+                                            <div class="min-w-0">
+                                                <div class="font-bold text-slate-900 text-xs truncate max-w-[120px] sm:max-w-none">{{ $u->name }}</div>
+                                                <div class="text-[10px] text-slate-400 font-mono truncate max-w-[120px] sm:max-w-none">{{ $u->email }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="py-3.5 px-2">
-                                        <span class="inline-block px-3 py-1 rounded-xl text-xs font-bold {{ $roleBadgeClass }}">
+                                        <span class="inline-block px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-bold whitespace-nowrap {{ $roleBadgeClass }}">
                                             {{ $roleLabel }}
                                         </span>
                                     </td>
-                                    <td class="py-3.5 px-2 text-slate-700 font-medium text-xs">
+                                    <td class="py-3.5 px-2 text-slate-700 font-medium text-xs whitespace-nowrap">
                                         {{ $u->unit->name ?? 'Divisi IT' }}
                                     </td>
-                                    <td class="py-3.5 px-2">
+                                    <td class="py-3.5 px-2 whitespace-nowrap">
                                         @if ($u->is_active)
                                             <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
                                                 Aktif
                                             </span>
                                         @else
                                             <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
                                                 Nonaktif
                                             </span>
                                         @endif
@@ -207,12 +206,15 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="text-[10px] text-slate-400 text-center sm:hidden italic pt-1">
+                    ← Geser tabel ke samping untuk melihat detail lengkap →
+                </div>
             </div>
 
             <!-- Kolom Kanan: Master Data & SLA (4 cols) -->
             <div class="lg:col-span-4 space-y-6">
                 <!-- Card 1: Konfigurasi Master Data -->
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
                     <div>
                         <h3 class="font-bold text-sm text-slate-900">Konfigurasi Master Data</h3>
                         <p class="text-[11px] text-slate-400">Dikelola oleh Super Admin</p>
@@ -286,7 +288,7 @@
                 </div>
 
                 <!-- Card 2: Konfigurasi SLA -->
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="font-bold text-sm text-slate-900">Konfigurasi SLA</h3>
@@ -311,7 +313,7 @@
                             @endphp
                             <div class="flex items-center justify-between py-1">
                                 <div class="flex items-center gap-2 font-bold text-slate-800">
-                                    <span class="w-2 h-2 rounded-full {{ $dotColor }}"></span>
+                                    <span class="w-2 h-2 rounded-full {{ $dotColor }} shrink-0"></span>
                                     <span>{{ $p->name }}</span>
                                 </div>
                                 <span class="font-black text-slate-900">{{ $p->sla_hours }} <span class="text-[10px] text-slate-500">JAM</span></span>
