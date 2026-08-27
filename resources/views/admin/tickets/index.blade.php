@@ -3,17 +3,17 @@
         <!-- Top Title & Action Button -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Manajemen Tiket Masuk</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Manajemen Tiket Masuk</h1>
                 <p class="text-xs text-slate-500 font-normal mt-1">Inbox keluhan masuk, validasi pengaduan, penyesuaian SLA, dan penugasan ke teknisi IT RSUD.</p>
             </div>
-            <a href="{{ route('guest.ticket.create') }}" target="_blank" class="inline-flex items-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02]">
+            <a href="{{ route('guest.ticket.create') }}" target="_blank" class="inline-flex items-center justify-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02]">
                 <span class="text-sm font-bold">+</span>
                 <span>Buat Tiket Baru</span>
             </a>
         </div>
 
         <!-- Status Filter Tabs -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
             @php
                 $currentTab = request('tab', 'all');
                 $tabs = [
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Filter & Search Card -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs">
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs">
             <form method="GET" action="{{ route('admin.tickets.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
                 <input type="hidden" name="tab" value="{{ $currentTab }}">
 
@@ -73,16 +73,68 @@
                     <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-xs">
                         Filter Tiket
                     </button>
-                    <a href="{{ route('admin.tickets.index', ['tab' => $currentTab]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-3 rounded-xl transition">
+                    <a href="{{ route('admin.tickets.index', ['tab' => $currentTab]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-3 rounded-xl transition text-center flex items-center justify-center">
                         Reset
                     </a>
                 </div>
             </form>
         </div>
 
-        <!-- Tickets Table Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 overflow-hidden">
-            <div class="overflow-x-auto">
+        <!-- Tickets Responsive Container (Card View on Mobile, Table View on Desktop) -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 overflow-hidden">
+            
+            @forelse ($tickets as $ticket)
+                <!-- MOBILE CARD VIEW (Tampil di layar kecil / HP) -->
+                <div class="block sm:hidden bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-3 space-y-3 shadow-xs">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <a href="{{ route('admin.tickets.show', $ticket) }}" class="font-mono font-bold text-teal-800 text-xs hover:underline">
+                                {{ $ticket->ticket_number }}
+                            </a>
+                            <span class="text-slate-400 text-[10px] block font-mono">{{ $ticket->created_at->format('d/m/Y H:i') }} WIB</span>
+                        </div>
+                        <span class="inline-block px-2.5 py-0.5 rounded-lg text-[10px] font-bold {{ $ticket->status_badge_class }}">
+                            {{ $ticket->status_label }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <a href="{{ route('admin.tickets.show', $ticket) }}" class="font-bold text-slate-900 text-xs hover:text-teal-800 line-clamp-2">
+                            {{ $ticket->title }}
+                        </a>
+                        <span class="text-slate-500 text-[11px] block mt-0.5 font-medium">Unit: {{ $ticket->unit->name }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 text-[11px]">
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Pelapor</span>
+                            <span class="font-bold text-slate-800 truncate block">{{ $ticket->reporter_name }}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Teknisi</span>
+                            <span class="font-bold text-slate-800 truncate block">{{ $ticket->technician->name ?? '-' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-200/60">
+                        <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold {{ $ticket->priority->badge_class }}">
+                            {{ $ticket->priority->name }} ({{ $ticket->priority->sla_hours }}j)
+                        </span>
+                        <a href="{{ route('admin.tickets.show', $ticket) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs bg-white shadow-xs">
+                            <span>Triage</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <!-- Empty State for Mobile -->
+                <div class="block sm:hidden text-center py-8 text-slate-400 text-xs">
+                    Tidak ada tiket pada tab / filter ini.
+                </div>
+            @endforelse
+
+            <!-- DESKTOP TABLE VIEW (Tampil di layar Tablet / Laptop ke atas) -->
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead class="text-slate-400 uppercase font-bold text-[11px] border-b border-slate-100">
                         <tr>
