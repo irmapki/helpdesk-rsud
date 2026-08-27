@@ -1,58 +1,177 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi IT Helpdesk & Ticketing RSUD RAA Soewondo Pati
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi berbasis web untuk mengelola layanan dan penanganan masalah Teknologi Informasi (IT) di lingkungan RSUD RAA Soewondo Pati. Sistem ini mencatat, mengelola, menugaskan, memantau, dan melaporkan tiket layanan IT secara terpusat — mulai dari pengaduan pegawai unit, penanganan oleh teknisi, hingga monitoring SLA oleh Supervisor IT.
 
-## About Laravel
+Proyek ini dikembangkan sebagai bagian dari Praktik Kerja Lapangan (PKL) Program Studi Informatika, STT Pati.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Guest Portal Publik** — Pegawai unit dapat mengajukan pengaduan IT tanpa perlu registrasi/login yang rumit, melacak progres penanganan secara *real-time* via nomor tiket, serta memberikan rating & ulasan bintang setelah pengerjaan selesai.
+- **Dukungan Berkas Lengkap (Foto, Video & HEIC)** — Mendukung unggah banyak bukti kendala sekaligus: Foto (JPG/PNG/WEBP), Rekaman Video (MP4/WebM), hingga format kamera iPhone (`.heic`/`.heif`).
+- **Integrasi WhatsApp 1-Klik** — Pelapor dapat langsung menghubungi teknisi yang ditugaskan melalui tautan WhatsApp otomatis dengan *pre-filled text* nomor tiket.
+- **Multi-Role Access (5 Peran)** — Hak akses terpisah dan tampilan dasbor khusus: Super Admin, Admin Helpdesk, Teknisi IT, Supervisor IT, dan Guest.
+- **Manajemen & Triage Tiket** — Validasi laporan, penyesuaian kategori & prioritas SLA, penugasan teknisi berbasis beban kerja (*workload balancing*), serta catatan koordinasi internal.
+- **Monitoring SLA Real-Time** — Perhitungan tenggat waktu otomatis berbasis prioritas (Critical, High, Medium, Low) lengkap dengan indikator kepatuhan (*On Track, Approaching, Breached*).
+- **Audit Trail & Status History** — Riwayat log pergerakan status tiket tercatat detail dengan waktu (WIB) dan penanggung jawabnya.
+- **Statistik & Laporan Eksekutif** — Visualisasi sebaran kategori kendala, performa teknisi, unit teraktif, dan filter laporan tiket per periode tanggal.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 👥 Peran Pengguna (Role)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Role | Deskripsi & Hak Akses |
+|---|---|
+| **Guest / Pegawai Unit** | Mengajukan tiket, mengunggah foto/video, melacak progres, dan memberi rating kepuasan. |
+| **Super Admin** | Mengelola seluruh data master: user, role, unit/ruangan, kategori, prioritas SLA, dan data teknisi. |
+| **Admin Helpdesk** | Validasi tiket masuk, triase prioritas/kategori, dan mendisposisikan tugas ke teknisi. |
+| **Teknisi IT** | Menerima tugas, update progres pengerjaan (*In Progress / Resolved*), dan mengisi solusi teknis. |
+| **Supervisor IT** | Mengawasi kepatuhan SLA secara *real-time*, analisis beban kerja, dan rekap laporan berkala. |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🛠️ Teknologi yang Digunakan
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Backend:** Laravel 13 (PHP 8.3)
+- **Autentikasi:** Laravel Breeze
+- **Frontend & Styling:** Blade Templates, Alpine.js, Tailwind CSS
+- **Database:** MySQL
+- **Tooling:** Vite, Composer, NPM
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
+## 💻 Instalasi & Menjalankan Proyek
+
+### Prasyarat Sistem
+- PHP >= 8.2
+- Composer
+- MySQL (via Laragon / XAMPP)
+- Node.js & NPM
+
+### Langkah Instalasi
+
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/irmapki/helpdesk-rsud.git
+   cd helpdesk-rsud
+   ```
+
+2. **Install dependency PHP & JavaScript**
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. **Salin file konfigurasi environment**
+   ```bash
+   cp .env.example .env
+   ```
+   *(Pengguna Windows: `copy .env.example .env`)*
+
+4. **Generate Application Key**
+   ```bash
+   php artisan key:generate
+   ```
+
+5. **Konfigurasi Database**
+   Buat database baru di MySQL (contoh: `helpdesk_rsud`), lalu sesuaikan pengaturan pada file `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=helpdesk_rsud
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+6. **Jalankan Migration & Seeder Master Data**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+
+7. **Hubungkan Storage Link (Wajib untuk Foto & Video)**
+   ```bash
+   php artisan storage:link
+   ```
+
+8. **Build Asset Frontend**
+   ```bash
+   npm run build
+   ```
+
+9. **Jalankan Server Lokal**
+   ```bash
+   php artisan serve
+   ```
+   Aplikasi siap diakses melalui browser di: **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
+
+---
+
+## 🔑 Akun Demo (Hasil Seeder)
+
+| Role | Email Login | Password Default | Keterangan |
+|---|---|---|---|
+| **Super Admin** | `superadmin@rsud.test` | `password` | Akses penuh master data & user |
+| **Admin Helpdesk** | `admin@rsud.test` | `password` | Triage, validasi, & disposisi tiket |
+| **Teknisi IT 1** | `teknisi@rsud.test` | `password` | Rian (Hardware & Jaringan) |
+| **Teknisi IT 2** | `teknisi2@rsud.test` | `password` | Bayu (SIMRS & Database) |
+| **Supervisor IT** | `supervisor@rsud.test` | `password` | Monitoring SLA & Laporan Eksekutif |
+
+---
+
+## 📁 Struktur Direktori Utama
+
+```text
+app/Http/Controllers/
+├── SuperAdmin/    # CRUD master data (user, unit, kategori, prioritas, teknisi)
+├── Admin/         # Validasi tiket, triage prioritas, disposisi teknisi, catatan internal
+├── Teknisi/       # Update status penanganan (In Progress, Resolved), histori tugas
+├── Supervisor/    # Dashboard analitik, monitoring SLA, laporan rekap tiket
+└── Guest/         # Pengajuan tiket publik, pelacakan real-time, upload lampiran, rating
+
+app/Models/
+├── Ticket.php          # Model utama tiket, kalkulasi SLA otomatis & mutator
+├── TicketStatusLog.php # Audit trail riwayat pergerakan status
+├── TicketNote.php      # Catatan koordinasi internal tim IT
+└── User.php, Role.php, Unit.php, Category.php, Priority.php
+
+database/seeders/       # Master seeder: role, unit RSUD, kategori, prioritas SLA, akun demo
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## 🔄 Alur Kerja Sistem (Workflow)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```text
+[Pelapor / Ruangan] Melaporkan kendala (+ bukti foto/video/HEIC)
+        │
+        ▼
+[Admin Helpdesk] Validasi & Triage Prioritas SLA ──► Disposisikan ke Teknisi
+        │
+        ▼
+[Teknisi IT] Mulai Pengerjaan (In Progress) ──► Selesai Perbaikan (Resolved + Solusi)
+        │
+        ▼
+[Pelapor] Konfirmasi Penyelesaian & Beri Rating Bintang (1 - 5 ★)
+        │
+        ▼
+[Supervisor IT] Mengawasi Kepatuhan SLA & Rekapitulasi Laporan Kinerja
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 👥 Kontributor
 
-## Security Vulnerabilities
+Proyek Praktik Kerja Lapangan (PKL) — Program Studi Informatika, STT Pati di RSUD RAA Soewondo Pati.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Nama | Kontribusi Modul |
+|---|---|
+| **Irma Fatimatuz Zahro** | Super Admin, Admin Helpdesk & Guest Portal |
+| **Alden Muhammad Rafael** | Teknisi IT & Supervisor IT |
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📄 Lisensi
+
+Proyek ini dikembangkan khusus untuk keperluan akademik (Praktik Kerja Lapangan) dan implementasi internal RSUD RAA Soewondo Pati.
