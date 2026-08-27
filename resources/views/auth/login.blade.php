@@ -1,160 +1,160 @@
 @extends('layouts.auth')
 
 @section('content')
-<div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20 relative">
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-white/25 relative min-w-0">
     
-    <!-- Tombol Kembali ke Welcome -->
-    <div class="absolute top-4 right-4 z-10">
-        <a href="{{ url('/') }}" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 shadow-sm">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            <span>Kembali ke Beranda</span>
-        </a>
-    </div>
-
     <!-- Left Column: Branding -->
-    <div class="lg:col-span-5 bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-900 p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+    <div class="lg:col-span-5 bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-900 p-5 sm:p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden min-w-0">
         <div class="absolute -right-20 -top-20 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div>
-    <div class="flex items-center space-x-3 mb-8">
-        <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center border border-white/30 shadow-md overflow-hidden">
-            <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-100 h-100 object-contain">
-        </div>
-        <div>
-            <span class="text-xs font-bold uppercase tracking-widest text-teal-300 block">Sistem Informasi Helpdesk</span>
-            <h2 class="text-xl font-bold tracking-tight text-white">RSUD IT HELPDESK</h2>
-        </div>
-    </div>
+        <div class="min-w-0">
+            <!-- Tombol Kembali ke Beranda -->
+            <div class="mb-5 min-w-0">
+                <a href="{{ url('/') }}" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all border border-white/20 shadow-sm shrink-0 backdrop-blur-md">
+                    <svg class="w-3.5 h-3.5 text-teal-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span class="break-words">Kembali ke Beranda</span>
+                </a>
+            </div>
 
-            <div class="space-y-4 my-8">
-                <h1 class="text-2xl lg:text-3xl font-extrabold text-white leading-tight">
+            <div class="flex items-center space-x-3 mb-6 sm:mb-8 min-w-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white flex items-center justify-center border border-white/30 shadow-md overflow-hidden shrink-0">
+                    <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain p-1">
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-teal-300 block truncate">Sistem Informasi Helpdesk</span>
+                    <h2 class="text-base sm:text-xl font-bold tracking-tight text-white break-words">RSUD IT HELPDESK</h2>
+                </div>
+            </div>
+
+            <div class="space-y-3 sm:space-y-4 my-6 sm:my-8 min-w-0">
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-tight break-words">
                     Pusat Layanan & Penanganan Masalah TI RSUD
                 </h1>
-                <p class="text-teal-100/80 text-sm leading-relaxed">
+                <p class="text-teal-100/80 text-xs sm:text-sm leading-relaxed break-words">
                    Sistem terpadu untuk pengelolaan tiket insiden dan permintaan layanan teknis, pemantauan SLA, serta pelaporan kinerja layanan IT RSUD RAA. Soewondo.
                 </p>
             </div>
 
-            <div class="space-y-3 pt-2 text-xs text-teal-100/90 font-medium">
-                <div class="flex items-center space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300">✓</span>
-                    <span>Multi-Role Access (Super Admin, Admin, Teknisi, Supervisor)</span>
+            <div class="space-y-2.5 sm:space-y-3 pt-2 text-[11px] sm:text-xs text-teal-100/90 font-medium min-w-0">
+                <div class="flex items-start sm:items-center space-x-2.5 sm:space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
+                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
+                    <span class="break-words">Multi-Role Access (Super Admin, Admin, Teknisi, Supervisor)</span>
                 </div>
-                <div class="flex items-center space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300">✓</span>
-                    <span>Monitoring Target Waktu SLA & Insiden Kritis RSUD</span>
+                <div class="flex items-start sm:items-center space-x-2.5 sm:space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
+                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
+                    <span class="break-words">Monitoring Target Waktu SLA & Insiden Kritis RSUD</span>
                 </div>
-                <div class="flex items-center space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300">✓</span>
-                    <span>Distribusi & Tracking Penugasan Teknisi Real-Time</span>
+                <div class="flex items-start sm:items-center space-x-2.5 sm:space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
+                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
+                    <span class="break-words">Distribusi & Tracking Penugasan Teknisi Real-Time</span>
                 </div>
             </div>
         </div>
 
-        <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-teal-200/70">
-            <span>Versi 1.0.0</span>
-            <span>&copy; {{ date('Y') }} Tim IT RSUD</span>
+        <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] sm:text-xs text-teal-200/70 gap-1 min-w-0">
+            <span class="break-words">Versi 1.0.0</span>
+            <span class="break-words">&copy; {{ date('Y') }} Tim IT RSUD</span>
         </div>
     </div>
 
     <!-- Right Column: Login Form -->
-    <div class="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white pt-14 lg:pt-12">
-        <div>
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Masuk ke Sistem</h3>
-                    <p class="text-sm text-slate-500 mt-1">Silakan masukkan kredensial akun Anda</p>
+    <div class="lg:col-span-7 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white pt-10 lg:pt-12 min-w-0">
+        <div class="min-w-0">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6 min-w-0">
+                <div class="min-w-0">
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-800 break-words">Masuk ke Sistem</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 break-words">Silakan masukkan kredensial akun Anda</p>
                 </div>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
-                    <span class="w-2 h-2 rounded-full bg-teal-500 mr-2 animate-pulse"></span> Sistem Aktif
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 shrink-0 self-start sm:self-auto">
+                    <span class="w-2 h-2 rounded-full bg-teal-500 mr-1.5 animate-pulse shrink-0"></span> Sistem Aktif
                 </span>
             </div>
 
             @if(session('status'))
-                <div class="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm">
+                <div class="mb-4 sm:mb-5 p-3.5 sm:p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm break-words min-w-0">
                     {{ session('status') }}
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">
-                    <div class="font-bold flex items-center space-x-2 mb-1">
+                <div class="mb-4 sm:mb-5 p-3.5 sm:p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm min-w-0">
+                    <div class="font-bold flex items-center space-x-2 mb-1 break-words">
                         <span>Gagal Masuk:</span>
                     </div>
-                    <ul class="list-disc list-inside text-xs space-y-0.5 ml-1">
+                    <ul class="list-disc list-inside text-xs space-y-0.5 ml-1 min-w-0">
                         @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li class="break-words">{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
-            <form action="{{ route('login') }}" method="POST" class="space-y-4">
+            <form action="{{ route('login') }}" method="POST" class="space-y-3.5 sm:space-y-4 min-w-0">
                 @csrf
-                <div>
-                    <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Alamat Email</label>
+                <div class="min-w-0">
+                    <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2 break-words">Alamat Email</label>
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@rsud.go.id"
-                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all font-medium">
+                        class="block w-full px-3.5 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all font-medium min-w-0">
                 </div>
 
-                <div>
-                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Kata Sandi</label>
+                <div class="min-w-0">
+                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2 break-words">Kata Sandi</label>
                     <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••"
-                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all font-medium">
+                        class="block w-full px-3.5 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all font-medium min-w-0">
                 </div>
 
-                <div class="flex items-center justify-between pt-1">
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
-                        <span class="ml-2 text-xs font-semibold text-slate-600">Ingat sesi saya</span>
+                <div class="flex items-center justify-between pt-1 min-w-0">
+                    <label class="flex items-center cursor-pointer min-w-0">
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500 shrink-0">
+                        <span class="ml-2 text-xs font-semibold text-slate-600 break-words">Ingat sesi saya</span>
                     </label>
                 </div>
 
                 <button type="submit"
-                    class="w-full mt-2 py-3.5 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40 transition-all transform active:scale-[0.99] flex items-center justify-center space-x-2 text-sm">
+                    class="w-full mt-2 py-3 sm:py-3.5 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40 transition-all transform active:scale-[0.99] flex items-center justify-center space-x-2 text-xs sm:text-sm text-center shrink-0">
                     <span>Masuk ke Dashboard</span>
                 </button>
             </form>
 
             <!-- Demo credentials -->
-            <div class="mt-8 pt-6 border-t border-slate-100">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">⚡ Akun demo (klik untuk isi otomatis)</span>
-                    <span class="text-[11px] text-teal-600 font-semibold bg-teal-50 px-2 py-0.5 rounded-full">Password: password</span>
+            <div class="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-slate-100 min-w-0">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 mb-3 min-w-0">
+                    <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-500 break-words">⚡ Akun demo (klik untuk isi otomatis)</span>
+                    <span class="text-[10px] sm:text-[11px] text-teal-600 font-semibold bg-teal-50 px-2 py-0.5 rounded-full shrink-0 self-start sm:self-auto">Password: password</span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
                     <button type="button" onclick="fillCredentials('superadmin@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all">
-                        <span class="text-xs font-bold text-purple-900 block">👑 Super Admin</span>
-                        <span class="text-[11px] text-purple-700/80 truncate block mt-0.5">superadmin@rsud.test</span>
+                        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all min-w-0">
+                        <span class="text-xs font-bold text-purple-900 block break-words">👑 Super Admin</span>
+                        <span class="text-[11px] text-purple-700/80 block mt-0.5 break-all">superadmin@rsud.test</span>
                     </button>
 
                     <button type="button" onclick="fillCredentials('admin@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all">
-                        <span class="text-xs font-bold text-blue-900 block">📋 Admin</span>
-                        <span class="text-[11px] text-blue-700/80 truncate block mt-0.5">admin@rsud.test</span>
+                        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all min-w-0">
+                        <span class="text-xs font-bold text-blue-900 block break-words">📋 Admin</span>
+                        <span class="text-[11px] text-blue-700/80 block mt-0.5 break-all">admin@rsud.test</span>
                     </button>
 
                     <button type="button" onclick="fillCredentials('teknisi@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all">
-                        <span class="text-xs font-bold text-emerald-900 block">🔧 Teknisi</span>
-                        <span class="text-[11px] text-emerald-700/80 truncate block mt-0.5">teknisi@rsud.test</span>
+                        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all min-w-0">
+                        <span class="text-xs font-bold text-emerald-900 block break-words">🔧 Teknisi</span>
+                        <span class="text-[11px] text-emerald-700/80 block mt-0.5 break-all">teknisi@rsud.test</span>
                     </button>
 
                     <button type="button" onclick="fillCredentials('supervisor@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all">
-                        <span class="text-xs font-bold text-amber-900 block">📊 Supervisor</span>
-                        <span class="text-[11px] text-amber-700/80 truncate block mt-0.5">supervisor@rsud.test</span>
+                        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all min-w-0">
+                        <span class="text-xs font-bold text-amber-900 block break-words">📊 Supervisor</span>
+                        <span class="text-[11px] text-amber-700/80 block mt-0.5 break-all">supervisor@rsud.test</span>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="mt-6 text-center text-xs text-slate-400">
+        <div class="mt-6 text-center text-[11px] sm:text-xs text-slate-400 break-words">
             Sistem Informasi IT Helpdesk RSUD
         </div>
     </div>
