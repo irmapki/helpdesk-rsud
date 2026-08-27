@@ -1,56 +1,56 @@
 <x-guest-portal-layout>
-    <div class="py-10">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-10">
+        <div class="max-w-3xl mx-auto px-2.5 sm:px-6 lg:px-8 w-full min-w-0">
             <!-- Header Card -->
-            <div class="mb-8 text-center">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100 mb-3 shadow-xs">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mb-6 sm:mb-8 text-center px-1 sm:px-2 min-w-0">
+                <div class="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100 mb-3 shadow-xs shrink-0">
+                    <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Formulir Pengaduan Layanan IT RSUD RAA. SOEWONDO</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-2 font-medium">Sampaikan kendala teknis Anda. Tim Helpdesk IT RSUD akan segera memverifikasi dan menugaskan teknisi.</p>
+                <h1 class="text-base sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug break-words">Formulir Pengaduan Layanan IT RSUD RAA. SOEWONDO</h1>
+                <p class="text-[11px] sm:text-sm text-slate-500 mt-2 font-medium max-w-xl mx-auto px-1">Sampaikan kendala teknis Anda. Tim Helpdesk IT RSUD akan segera memverifikasi dan menugaskan teknisi.</p>
             </div>
 
             <!-- Form Card -->
-            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-md p-6 sm:p-9">
-                <form action="{{ route('guest.ticket.store') }}" method="POST" enctype="multipart/form-data" class="space-y-7">
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md p-3.5 sm:p-9 min-w-0 overflow-hidden">
+                <form action="{{ route('guest.ticket.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 sm:space-y-7 min-w-0">
                     @csrf
 
                     <!-- Section 1: Data Pelapor -->
-                    <div class="border-b border-slate-100 pb-7">
-                        <h2 class="text-sm font-extrabold text-slate-900 mb-4 flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs flex items-center justify-center font-black">1</span>
+                    <div class="border-b border-slate-100 pb-6 sm:pb-7 min-w-0">
+                        <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+                            <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-100 text-emerald-800 text-[11px] sm:text-xs flex items-center justify-center font-black shrink-0">1</span>
                             Data Identitas Pelapor
                         </h2>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div>
-                                <label for="guest_name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 min-w-0">
+                            <div class="min-w-0">
+                                <label for="guest_name" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Nama Lengkap Pelapor <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text" name="guest_name" id="guest_name" value="{{ old('guest_name') }}" required
-                                    placeholder="Contoh: dr. Ahmad / Ns. Siti / Bpk. Rudi"
+                                    placeholder="Contoh: dr. Ahmad / Ns. Siti"
                                     class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('guest_name') border-rose-500 @enderror">
                                 @error('guest_name')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div>
-                                <label for="guest_phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <div class="min-w-0">
+                                <label for="guest_phone" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     No. WhatsApp / HP Aktif <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text" name="guest_phone" id="guest_phone" value="{{ old('guest_phone') }}" required
-                                    placeholder="Contoh: 081234567890 (untuk info progress)"
+                                    placeholder="Contoh: 081234567890"
                                     class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('guest_phone') border-rose-500 @enderror">
                                 @error('guest_phone')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div class="sm:col-span-2">
-                                <label for="guest_email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <div class="sm:col-span-2 min-w-0">
+                                <label for="guest_email" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Email (Opsional)
                                 </label>
                                 <input type="email" name="guest_email" id="guest_email" value="{{ old('guest_email') }}"
@@ -64,19 +64,19 @@
                     </div>
 
                     <!-- Section 2: Lokasi & Kategori -->
-                    <div class="border-b border-slate-100 pb-7">
-                        <h2 class="text-sm font-extrabold text-slate-900 mb-4 flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs flex items-center justify-center font-black">2</span>
+                    <div class="border-b border-slate-100 pb-6 sm:pb-7 min-w-0">
+                        <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+                            <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-100 text-emerald-800 text-[11px] sm:text-xs flex items-center justify-center font-black shrink-0">2</span>
                             Lokasi &amp; Kategori Kendala
                         </h2>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="sm:col-span-1">
-                                <label for="unit_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
+                            <div class="sm:col-span-1 min-w-0">
+                                <label for="unit_id" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Unit / Instalasi / Ruangan <span class="text-rose-500">*</span>
                                 </label>
                                 <select name="unit_id" id="unit_id" required onchange="toggleCustomUnitInput(this.value)"
-                                    class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('unit_id') border-rose-500 @enderror">
+                                    class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('unit_id') border-rose-500 @enderror truncate">
                                     <option value="">-- Pilih Unit / Ruangan RSUD --</option>
                                     @foreach ($units as $unit)
                                         <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
@@ -92,12 +92,12 @@
                                 @enderror
 
                                 <!-- Input Box Ketik Ruangan Manual -->
-                                <div id="custom_unit_wrapper" class="{{ old('unit_id') == 'other' || old('custom_unit_name') ? '' : 'hidden' }} mt-3 p-3 bg-emerald-50/80 border border-emerald-200 rounded-2xl">
-                                    <label for="custom_unit_name" class="block text-xs font-bold text-emerald-950 uppercase tracking-wider mb-1">
+                                <div id="custom_unit_wrapper" class="{{ old('unit_id') == 'other' || old('custom_unit_name') ? '' : 'hidden' }} mt-3 p-3 bg-emerald-50/80 border border-emerald-200 rounded-2xl min-w-0">
+                                    <label for="custom_unit_name" class="block text-[11px] sm:text-xs font-bold text-emerald-950 uppercase tracking-wider mb-1 truncate">
                                         Ketik Nama Ruangan / Unit Anda <span class="text-rose-500">*</span>
                                     </label>
                                     <input type="text" name="custom_unit_name" id="custom_unit_name" value="{{ old('custom_unit_name') }}"
-                                        placeholder="Contoh: Poli Eksekutif / Ruang ICU 2 / Farmasi Rawat Inap B"
+                                        placeholder="Contoh: Poli Eksekutif / Ruang ICU 2"
                                         class="w-full rounded-xl border-slate-200 bg-white text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('custom_unit_name') border-rose-500 @enderror">
                                     <p class="text-[10px] text-emerald-700 font-medium mt-1">Nama ruangan ini akan otomatis didaftarkan dan disimpan ke sistem.</p>
                                     @error('custom_unit_name')
@@ -106,12 +106,12 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label for="category_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <div class="min-w-0">
+                                <label for="category_id" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Kategori Masalah <span class="text-rose-500">*</span>
                                 </label>
                                 <select name="category_id" id="category_id" required
-                                    class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('category_id') border-rose-500 @enderror">
+                                    class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('category_id') border-rose-500 @enderror truncate">
                                     <option value="">-- Pilih Kategori Kendala --</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -124,74 +124,71 @@
                                 @enderror
                             </div>
 
-                            <div class="sm:col-span-2">
-                                <label for="priority_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <div class="sm:col-span-2 min-w-0">
+                                <label for="priority_id" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Perkiraan Tingkat Urgensi
                                 </label>
                                 <select name="priority_id" id="priority_id"
-                                    class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600">
+                                    class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 truncate">
                                     @foreach ($priorities as $priority)
                                         <option value="{{ $priority->id }}" {{ old('priority_id', 2) == $priority->id ? 'selected' : '' }}>
                                             {{ $priority->name }} (Target SLA: {{ $priority->sla_hours }} Jam)
                                         </option>
                                     @endforeach
                                 </select>
-                                <p class="text-[11px] text-slate-400 mt-1 font-medium">*Admin IT akan memvalidasi kembali tingkat prioritas akhir saat triage tiket.</p>
+                                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 font-medium">*Admin IT akan memvalidasi kembali tingkat prioritas akhir saat triage tiket.</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Section 3: Rincian Kendala -->
-                    <div class="pb-2">
-                        <h2 class="text-sm font-extrabold text-slate-900 mb-4 flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs flex items-center justify-center font-black">3</span>
+                    <div class="pb-2 min-w-0">
+                        <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+                            <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-100 text-emerald-800 text-[11px] sm:text-xs flex items-center justify-center font-black shrink-0">3</span>
                             Rincian Pengaduan &amp; Lampiran
                         </h2>
 
-                        <div class="space-y-5">
-                            <div>
-                                <label for="title" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        <div class="space-y-4 sm:space-y-5 min-w-0">
+                            <div class="min-w-0">
+                                <label for="title" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Judul Ringkas Masalah <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                                    placeholder="Contoh: Printer cetak resep di Farmasi Rawat Jalan error / Komputer Kasir mati total"
+                                    placeholder="Contoh: Printer resep error / Komputer kasir mati"
                                     class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('title') border-rose-500 @enderror">
                                 @error('title')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div>
-                                <label for="description" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <div class="min-w-0">
+                                <label for="description" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Deskripsi Lengkap Kendala <span class="text-rose-500">*</span>
                                 </label>
                                 <textarea name="description" id="description" rows="4" required
-                                    placeholder="Jelaskan secara detail kendala yang dialami, pesan error yang muncul, atau langkah yang sudah dicoba..."
+                                    placeholder="Jelaskan secara detail kendala yang dialami, pesan error, atau langkah yang sudah dicoba..."
                                     class="w-full rounded-xl border-slate-200 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 @error('description') border-rose-500 @enderror">{{ old('description') }}</textarea>
                                 @error('description')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Upload dengan multiple file (Foto & Video) & Preview Interaktif -->
-                            <div>
-                                <label for="attachments" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                    Unggah Bukti Kendala (Foto &amp; Video) - Bisa Pilih Banyak
+                            <!-- Upload multiple file (Foto & Video) & Preview -->
+                            <div class="min-w-0">
+                                <label for="attachments" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
+                                    Unggah Bukti Kendala (Foto &amp; Video)
                                 </label>
                                 <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*,.heic,.heif" onchange="handleFileSelect(event)"
-                                    class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5 focus:outline-none cursor-pointer">
+                                    class="w-full text-xs text-slate-500 file:mr-2 sm:file:mr-4 file:py-2 file:px-3 sm:file:py-2.5 sm:file:px-4 file:rounded-xl file:border-0 file:text-[11px] sm:file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5 focus:outline-none cursor-pointer">
                                 
-                                <p class="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1.5 font-medium flex items-start sm:items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>Mendukung upload <strong>Foto (JPG, PNG, WEBP)</strong> dan <strong>Video (MP4, MOV, WEBM)</strong> sekaligus. (Tombol "Choose Files" otomatis menyesuaikan bahasa browser/sistem).</span>
+                                    <span>Mendukung upload <strong>Foto (JPG, PNG)</strong> &amp; <strong>Video (MP4, MKV)</strong> sekaligus.</span>
                                 </p>
 
-                                <!-- Container Pratinjau (Preview) Berkas yang Dipilih -->
-                                <div id="preview-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 hidden">
-                                    <!-- Dynamic thumbnails will be injected here -->
-                                </div>
+                                <div id="preview-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-3 hidden min-w-0"></div>
 
                                 @error('attachments')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
@@ -204,13 +201,13 @@
                     </div>
 
                     <!-- Submit Actions -->
-                    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <a href="{{ route('guest.landing') }}" class="text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-700 order-2 sm:order-1 text-center">
+                    <div class="pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 min-w-0">
+                        <a href="{{ route('guest.landing') }}" class="text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-700 text-center sm:text-left py-2">
                             &larr; Kembali ke Beranda
                         </a>
 
-                        <button type="submit" class="order-1 sm:order-2 inline-flex items-center justify-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-emerald-900/25 transition hover:scale-[1.02] text-xs sm:text-sm">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold px-6 sm:px-8 py-3.5 rounded-2xl shadow-lg shadow-emerald-900/25 transition active:scale-95 text-xs sm:text-sm">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                             </svg>
                             <span>Kirim Pengaduan Sekarang</span>
@@ -222,7 +219,7 @@
     </div>
 
     <script>
-        let selectedFiles = []; // Menyimpan daftar objek File secara global di frontend
+        let selectedFiles = [];
 
         function toggleCustomUnitInput(value) {
             const wrapper = document.getElementById('custom_unit_wrapper');
@@ -240,12 +237,7 @@
         function handleFileSelect(event) {
             const input = event.target;
             const files = Array.from(input.files);
-
-            // Tambahkan file baru ke array global (mendukung multi-upload bertahap jika diinginkan)
-            files.forEach(file => {
-                selectedFiles.push(file);
-            });
-
+            files.forEach(file => selectedFiles.push(file));
             updateFileInputAndPreview();
         }
 
@@ -257,25 +249,17 @@
         function updateFileInputAndPreview() {
             const input = document.getElementById('attachments');
             const container = document.getElementById('preview-container');
-            
-            // Perbarui objek file pada input form menggunakan DataTransfer
             const dataTransfer = new DataTransfer();
-            selectedFiles.forEach(file => {
-                dataTransfer.items.add(file);
-            });
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
             input.files = dataTransfer.files;
 
-            // Kosongkan container preview
             container.innerHTML = '';
-
             if (selectedFiles.length === 0) {
                 container.classList.add('hidden');
                 return;
             }
-
             container.classList.remove('hidden');
 
-            // Render ulang pratinjau thumbnail
             selectedFiles.forEach((file, index) => {
                 const reader = new FileReader();
                 const wrapperDiv = document.createElement('div');
@@ -287,24 +271,17 @@
                             <img src="${e.target.result}" class="w-full h-20 object-cover rounded-lg">
                             <span class="text-[10px] text-slate-500 font-medium truncate w-full text-center mt-1">${file.name}</span>
                             <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         `;
                     } else if (file.type.startsWith('video/')) {
                         wrapperDiv.innerHTML = `
                             <div class="w-full h-20 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-                                <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
                             <span class="text-[10px] text-slate-500 font-medium truncate w-full text-center mt-1">${file.name}</span>
                             <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         `;
                     }
@@ -317,13 +294,10 @@
                         <div class="w-full h-20 bg-slate-200 rounded-lg flex items-center justify-center text-slate-600 font-bold text-xs">FILE</div>
                         <span class="text-[10px] text-slate-500 font-medium truncate w-full text-center mt-1">${file.name}</span>
                         <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     `;
                 }
-
                 container.appendChild(wrapperDiv);
             });
         }
