@@ -1,18 +1,18 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-6 px-3 sm:px-0">
         <!-- Top Title -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Unit &amp; Ruangan RSUD</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Unit &amp; Ruangan RSUD</h1>
                 <p class="text-xs text-slate-500 font-normal mt-1">Master data instalasi, ruangan, poli, dan departemen operasional RSUD RAA Soewondo.</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             <!-- Add Unit Form (1 col) -->
-            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">
                         +
                     </div>
                     <div>
@@ -27,7 +27,7 @@
                         <label for="name" class="block font-bold text-slate-700 uppercase tracking-wider text-[11px] mb-1">Nama Unit / Ruangan <span class="text-rose-500">*</span></label>
                         <input type="text" name="name" id="name" required placeholder="Contoh: Instalasi Gawat Darurat (IGD)"
                             class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 placeholder-slate-400 font-medium @error('name') border-rose-500 @enderror">
-                        @error('name') <p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p> @enderror
+                        @error('name') <p class="text-[11px] text-rose-500 mt-1 font-bold">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
@@ -42,18 +42,18 @@
                             class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 placeholder-slate-400 font-medium"></textarea>
                     </div>
 
-                    <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold py-2.5 px-4 rounded-xl shadow-xs transition">
+                    <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold py-3 sm:py-2.5 px-4 rounded-xl shadow-xs transition text-center">
                         Simpan Unit RSUD
                     </button>
                 </form>
             </div>
 
             <!-- Units List (2 cols) -->
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 overflow-hidden">
-                <h3 class="font-bold text-base text-slate-900 mb-4">Daftar Unit &amp; Ruangan RSUD</h3>
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 overflow-hidden">
+                <h3 class="font-bold text-sm sm:text-base text-slate-900 mb-4">Daftar Unit &amp; Ruangan RSUD</h3>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                    <table class="w-full text-left text-xs min-w-[550px]">
                         <thead class="text-slate-400 uppercase font-bold text-[11px] border-b border-slate-100">
                             <tr>
                                 <th class="py-3 px-2">NAMA UNIT</th>
@@ -69,22 +69,22 @@
                                     <td class="py-3.5 px-2">
                                         <div x-show="!edit" class="font-bold text-slate-900">{{ $unit->name }}</div>
                                         <div x-show="edit">
-                                            <input type="text" form="edit-unit-form-{{ $unit->id }}" name="name" value="{{ $unit->name }}" class="text-xs rounded-xl border-slate-200 bg-white text-slate-800 p-1.5 w-full">
+                                            <input type="text" form="edit-unit-form-{{ $unit->id }}" name="name" value="{{ $unit->name }}" class="text-xs rounded-xl border-slate-200 bg-white text-slate-800 p-1.5 w-full font-medium">
                                         </div>
                                     </td>
-                                    <td class="py-3.5 px-2 text-slate-500">
+                                    <td class="py-3.5 px-2 text-slate-500 whitespace-nowrap">
                                         <div x-show="!edit">{{ $unit->location ?: '-' }}</div>
                                         <div x-show="edit">
-                                            <input type="text" form="edit-unit-form-{{ $unit->id }}" name="location" value="{{ $unit->location }}" class="text-xs rounded-xl border-slate-200 bg-white text-slate-800 p-1.5 w-full">
+                                            <input type="text" form="edit-unit-form-{{ $unit->id }}" name="location" value="{{ $unit->location }}" class="text-xs rounded-xl border-slate-200 bg-white text-slate-800 p-1.5 w-full font-medium">
                                         </div>
                                     </td>
-                                    <td class="py-3.5 px-2 text-center font-bold text-slate-700">
+                                    <td class="py-3.5 px-2 text-center font-bold text-slate-700 whitespace-nowrap">
                                         {{ $unit->users_count ?? $unit->users->count() }}
                                     </td>
-                                    <td class="py-3.5 px-2 text-center font-bold text-emerald-700">
+                                    <td class="py-3.5 px-2 text-center font-bold text-emerald-700 whitespace-nowrap">
                                         {{ $unit->tickets_count ?? $unit->tickets->count() }}
                                     </td>
-                                    <td class="py-3.5 px-2 text-right">
+                                    <td class="py-3.5 px-2 text-right whitespace-nowrap">
                                         <form id="edit-unit-form-{{ $unit->id }}" action="{{ route('superadmin.units.update', $unit) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PUT')
@@ -120,6 +120,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="text-[10px] text-slate-400 text-center sm:hidden italic pt-3">
+                    ← Geser tabel ke samping untuk melihat detail lengkap →
                 </div>
             </div>
         </div>

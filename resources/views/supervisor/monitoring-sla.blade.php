@@ -1,19 +1,21 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-4 sm:space-y-6 max-w-full overflow-x-hidden pb-10">
         <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Monitoring Standar Layanan (SLA)</h1>
-                <p class="text-xs text-slate-500 mt-1">Daftar pemantauan batas waktu penanganan tiket di seluruh unit RSUD.</p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+            <div class="min-w-0">
+                <h1 class="text-lg sm:text-2xl font-black text-slate-900 tracking-tight break-words">Monitoring Standar Layanan (SLA)</h1>
+                <p class="text-xs text-slate-500 mt-1 break-words">Daftar pemantauan batas waktu penanganan tiket di seluruh unit RSUD.</p>
             </div>
-            <a href="{{ route('supervisor.dashboard') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 rounded-2xl transition shadow-xs">
+            <a href="{{ route('supervisor.dashboard') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 rounded-2xl transition shadow-xs text-center shrink-0">
                 &larr; Kembali ke Dashboard
             </a>
         </div>
 
-        <!-- Table Card (Light Mode) -->
-        <div class="bg-white overflow-hidden shadow-xs rounded-3xl border border-slate-200/80 p-6 sm:p-7">
-            <div class="overflow-x-auto">
+        <!-- Content Card -->
+        <div class="bg-white overflow-hidden shadow-xs rounded-3xl border border-slate-200/80 p-4 sm:p-7 min-w-0">
+            
+            <!-- DESKTOP VIEW: Tabel (Hidden di HP, Muncul di layar md ke atas) -->
+            <div class="hidden md:block overflow-x-auto min-w-0">
                 <table class="min-w-full text-xs text-left">
                     <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold text-[10px] border-b border-slate-100">
                         <tr>
@@ -71,6 +73,65 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- MOBILE VIEW: List Card Vertikal (Muncul khusus di HP/Tablet kecil, Hidden di md ke atas) -->
+            <div class="block md:hidden space-y-3 min-w-0">
+                @forelse($tickets as $ticket)
+                    <div class="border border-slate-200 rounded-2xl p-4 bg-white shadow-xs space-y-3 min-w-0">
+                        <!-- Baris Atas: Nomor Tiket & Status SLA -->
+                        <div class="flex flex-wrap items-start justify-between gap-2 min-w-0">
+                            <span class="font-mono font-bold text-xs text-emerald-800 shrink-0">{{ $ticket->ticket_number }}</span>
+                            <div>
+                                @php
+                                    $slaStatus = $ticket->sla_status;
+                                @endphp
+                                @if($slaStatus === 'breached')
+                                    <span class="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded-full text-[10px] font-black">Terlewati</span>
+                                @elseif($slaStatus === 'approaching')
+                                    <span class="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-[10px] font-black">Mendekati</span>
+                                @elseif($slaStatus === 'completed_late')
+                                    <span class="px-2.5 py-1 bg-orange-50 text-orange-800 border border-orange-200 rounded-full text-[10px] font-black">Selesai Telat</span>
+                                @elseif($slaStatus === 'completed_on_time')
+                                    <span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-[10px] font-black">Tepat Waktu</span>
+                                @else
+                                    <span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-[10px] font-black">Terjaga</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Judul Tiket -->
+                        <div class="min-w-0">
+                            <h3 class="font-bold text-slate-900 text-xs sm:text-sm break-words">{{ $ticket->title }}</h3>
+                        </div>
+
+                        <!-- Detail Informasi (Unit, Teknisi, Prioritas, Batas Waktu) -->
+                        <div class="bg-slate-50 p-3 rounded-xl space-y-2 text-xs text-slate-600 border border-slate-100 min-w-0">
+                            <div class="flex justify-between items-start gap-2 min-w-0">
+                                <span class="text-slate-400 shrink-0">Unit / Kategori:</span>
+                                <span class="font-semibold text-slate-900 text-right break-words">{{ $ticket->unit->name ?? '-' }} / {{ $ticket->category->name ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between items-start gap-2 min-w-0">
+                                <span class="text-slate-400 shrink-0">Teknisi:</span>
+                                <span class="font-semibold text-slate-900 text-right break-words">{{ $ticket->technician->name ?? 'Belum Ditugaskan' }}</span>
+                            </div>
+                            <div class="flex justify-between items-start gap-2 min-w-0">
+                                <span class="text-slate-400 shrink-0">Prioritas:</span>
+                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-black border {{ $ticket->priority->badge_class ?? 'bg-slate-100 text-slate-700' }}">
+                                    {{ $ticket->priority->name ?? 'Normal' }} ({{ $ticket->priority->sla_hours ?? 24 }}j)
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-start gap-2 min-w-0">
+                                <span class="text-slate-400 shrink-0">Batas Waktu:</span>
+                                <span class="font-mono font-medium text-slate-800 text-right">{{ $ticket->sla_deadline ? $ticket->sla_deadline->format('d M Y, H:i') : '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-8 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">
+                        Belum ada data tiket.
+                    </div>
+                @endforelse
             </div>
 
             <!-- Pagination -->

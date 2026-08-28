@@ -1,11 +1,11 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-6 px-3 sm:px-0">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Kelola Role Pengguna</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Kelola Role Pengguna</h1>
             <p class="text-xs text-slate-500 font-normal mt-1">Daftar peran akses dalam sistem Helpdesk IT RSUD RAA Soewondo beserta anggota user.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             @foreach ($roles as $role)
                 @php
                     $rName = strtolower($role->name);
@@ -26,13 +26,13 @@
                         $dotColor = 'bg-indigo-800';
                     }
                 @endphp
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                         <div>
                             <span class="text-[10px] font-mono uppercase text-slate-400 font-bold">{{ $role->name }}</span>
-                            <h3 class="text-base font-bold text-slate-900 mt-0.5">{{ $role->label }}</h3>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 mt-0.5">{{ $role->label }}</h3>
                         </div>
-                        <span class="inline-block px-3 py-1 rounded-xl text-xs font-bold {{ $badgeStyle }}">
+                        <span class="inline-block px-3 py-1 rounded-xl text-xs font-bold {{ $badgeStyle }} self-start sm:self-auto">
                             {{ $role->users_count ?? $role->users->count() }} Pengguna
                         </span>
                     </div>
@@ -48,17 +48,17 @@
                                     $words = explode(' ', trim($u->name));
                                     $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : substr($words[0], 1, 1)));
                                 @endphp
-                                <div class="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 text-xs transition">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full {{ $dotColor }} text-white font-bold flex items-center justify-center text-xs shadow-xs">
+                                <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 text-xs transition">
+                                    <div class="flex items-center gap-2.5 min-w-0">
+                                        <div class="w-8 h-8 rounded-full {{ $dotColor }} text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
                                             {{ $initials }}
                                         </div>
-                                        <div>
-                                            <div class="font-bold text-slate-900">{{ $u->name }}</div>
-                                            <div class="text-slate-400 text-[11px] font-mono">{{ $u->email }}</div>
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-slate-900 truncate">{{ $u->name }}</div>
+                                            <div class="text-slate-400 text-[10px] sm:text-[11px] font-mono truncate">{{ $u->email }}</div>
                                         </div>
                                     </div>
-                                    <span class="text-[11px] text-slate-600 font-medium">
+                                    <span class="text-[10px] sm:text-[11px] text-slate-600 font-medium shrink-0 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60">
                                         {{ $u->unit->name ?? 'Semua Unit' }}
                                     </span>
                                 </div>

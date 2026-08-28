@@ -1,20 +1,20 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <div class="space-y-6 px-3 sm:px-0">
         <!-- Top Title & Action Button -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Kelola Pengguna Sistem</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Kelola Pengguna Sistem</h1>
                 <p class="text-xs text-slate-500 font-normal mt-1">Daftar semua pengguna terdaftar, peran akses, dan unit penempatan pada Helpdesk RSUD RAA Soewondo.</p>
             </div>
-            <a href="{{ route('superadmin.users.create') }}" class="inline-flex items-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02]">
+            <a href="{{ route('superadmin.users.create') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02] shrink-0">
                 <span class="text-sm font-bold">+</span>
                 <span>Tambah Pengguna Baru</span>
             </a>
         </div>
 
         <!-- Filter & Search Card -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs">
-            <form method="GET" action="{{ route('superadmin.users.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs">
+            <form method="GET" action="{{ route('superadmin.users.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cari Nama / Email / HP</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik kata kunci..."
@@ -41,11 +41,11 @@
                     </select>
                 </div>
 
-                <div class="flex items-end gap-2">
-                    <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-xs">
+                <div class="flex items-end gap-2 pt-1 sm:pt-0">
+                    <button type="submit" class="flex-1 bg-[#0f333a] hover:bg-[#092227] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-xs">
                         Filter Data
                     </button>
-                    <a href="{{ route('superadmin.users.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-3 rounded-xl transition">
+                    <a href="{{ route('superadmin.users.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-3 rounded-xl transition text-center">
                         Reset
                     </a>
                 </div>
@@ -53,9 +53,9 @@
         </div>
 
         <!-- Users Table Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 overflow-hidden">
+            <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                <table class="w-full text-left text-xs min-w-[650px]">
                     <thead class="text-slate-400 uppercase font-bold text-[11px] border-b border-slate-100">
                         <tr>
                             <th class="py-3 px-2">NAMA PENGGUNA</th>
@@ -94,39 +94,39 @@
                             @endphp
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="py-3.5 px-2">
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-2.5">
                                         <div class="w-8 h-8 rounded-full {{ $avatarClass }} text-white font-bold text-xs flex items-center justify-center shrink-0">
                                             {{ $initials }}
                                         </div>
-                                        <div>
-                                            <div class="font-bold text-slate-900 text-sm">{{ $user->name }}</div>
-                                            <div class="text-[11px] text-slate-400 font-mono">{{ $user->email }} &bull; {{ $user->phone ?: 'No HP -' }}</div>
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[140px] sm:max-w-none">{{ $user->name }}</div>
+                                            <div class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate max-w-[140px] sm:max-w-none">{{ $user->email }} &bull; {{ $user->phone ?: 'No HP -' }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-3.5 px-2">
-                                    <span class="inline-block px-3 py-1 rounded-xl text-xs font-bold {{ $roleBadgeClass }}">
+                                <td class="py-3.5 px-2 whitespace-nowrap">
+                                    <span class="inline-block px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-bold {{ $roleBadgeClass }}">
                                         {{ $roleLabel }}
                                     </span>
                                 </td>
-                                <td class="py-3.5 px-2 text-slate-700 font-medium text-xs">
+                                <td class="py-3.5 px-2 text-slate-700 font-medium text-xs whitespace-nowrap">
                                     {{ $user->unit->name ?? 'Semua Unit (Pusat)' }}
                                 </td>
-                                <td class="py-3.5 px-2 text-slate-500 text-xs">
+                                <td class="py-3.5 px-2 text-slate-500 text-xs whitespace-nowrap">
                                     {{ $user->specialization ?: '-' }}
                                 </td>
-                                <td class="py-3.5 px-2">
+                                <td class="py-3.5 px-2 whitespace-nowrap">
                                     <form action="{{ route('superadmin.users.toggle-status', $user) }}" method="POST" class="inline">
-                                        @csrf
+                                    @csrf
                                         @method('PATCH')
                                         <button type="submit" onclick="return confirm('Ubah status user ini?')"
                                             class="inline-flex items-center gap-1.5 text-xs font-bold transition {{ $user->is_active ? 'text-emerald-600 hover:text-emerald-700' : 'text-slate-400 hover:text-slate-600' }}">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $user->is_active ? 'bg-emerald-500' : 'bg-slate-400' }}"></span>
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $user->is_active ? 'bg-emerald-500' : 'bg-slate-400' }} shrink-0"></span>
                                             {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
                                         </button>
                                     </form>
                                 </td>
-                                <td class="py-3.5 px-2 text-right">
+                                <td class="py-3.5 px-2 text-right whitespace-nowrap">
                                     <div class="inline-flex items-center gap-1.5 justify-end">
                                         <a href="{{ route('superadmin.users.edit', $user) }}" class="p-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-800 transition">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,9 +157,12 @@
                     </tbody>
                 </table>
             </div>
+            <div class="text-[10px] text-slate-400 text-center sm:hidden italic pt-3">
+                ← Geser tabel ke samping untuk melihat opsi lengkap →
+            </div>
 
             @if ($users->hasPages())
-                <div class="mt-4 pt-4 border-t border-slate-100">
+                <div class="mt-4 pt-4 border-t border-slate-100 overflow-x-auto">
                     {{ $users->links() }}
                 </div>
             @endif

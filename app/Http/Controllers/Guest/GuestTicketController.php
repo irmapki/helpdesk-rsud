@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use App\Events\TicketCreatedEvent;
 
 class GuestTicketController extends Controller
 {
@@ -99,6 +100,9 @@ class GuestTicketController extends Controller
         $validated['validation_status'] = 'pending';
 
         $ticket = Ticket::create($validated);
+        
+        // Broadcast notifikasi tiket baru ke Reverb
+        event(new TicketCreatedEvent($ticket));
 
         // Record initial status log
         TicketStatusLog::create([
