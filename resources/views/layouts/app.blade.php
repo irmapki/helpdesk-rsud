@@ -32,7 +32,7 @@
 
             <!-- SIDEBAR UTAMA KIRI -->
             <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
-                class="fixed inset-y-0 left-0 z-50 w-72 sm:w-64 flex flex-col justify-between flex-shrink-0 overflow-hidden bg-gradient-to-br from-teal-800 via-emerald-800 to-slate-950 text-white shadow-2xl transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-emerald-900/30">
+                class="fixed inset-y-0 left-0 z-50 w-72 sm:w-64 flex flex-col justify-between flex-shrink-0 overflow-hidden bg-gradient-to-br from-teal-800 via-emerald-800 to-slate-950 text-white shadow-2xl transition-transform duration-200 ease-out md:transition-none md:transform-none md:static md:translate-x-0 border-r border-emerald-900/30">
 
                 {{-- Dekorasi glow samar khas login --}}
                 <div class="pointer-events-none absolute -top-16 -right-16 w-64 h-64 bg-teal-400/10 rounded-full blur-2xl"></div>

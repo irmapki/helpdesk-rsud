@@ -3,73 +3,76 @@
 @section('content')
 <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-white/25 relative min-w-0">
     
-    <!-- Left Column: Branding -->
-    <div class="lg:col-span-5 bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-900 p-5 sm:p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden min-w-0">
+    <!-- Left Column: Branding (Compact on Mobile, Rich on Desktop) -->
+    <div class="lg:col-span-5 bg-gradient-to-br from-teal-700 via-emerald-800 to-slate-900 p-4 sm:p-6 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden min-w-0">
         <div class="absolute -right-20 -top-20 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="min-w-0">
-            <!-- Tombol Kembali ke Beranda -->
-            <div class="mb-5 min-w-0">
-                <a href="{{ url('/') }}" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all border border-white/20 shadow-sm shrink-0 backdrop-blur-md">
+            <!-- Header Bar (Logo + Kembali) -->
+            <div class="flex items-center justify-between gap-2 mb-3 lg:mb-8 min-w-0">
+                <div class="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center border border-white/30 shadow-md overflow-hidden shrink-0">
+                        <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain p-1">
+                    </div>
+                    <div class="min-w-0">
+                        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-teal-300 block truncate">Sistem Informasi Helpdesk</span>
+                        <h2 class="text-xs sm:text-base font-black tracking-tight text-white truncate">RSUD IT HELPDESK</h2>
+                    </div>
+                </div>
+
+                <!-- Tombol Kembali ke Beranda -->
+                <a href="{{ url('/') }}" class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white transition-all border border-white/20 shadow-xs shrink-0 backdrop-blur-md">
                     <svg class="w-3.5 h-3.5 text-teal-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
-                    <span class="break-words">Kembali ke Beranda</span>
+                    <span class="hidden sm:inline">Beranda</span>
                 </a>
             </div>
 
-            <div class="flex items-center space-x-3 mb-6 sm:mb-8 min-w-0">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white flex items-center justify-center border border-white/30 shadow-md overflow-hidden shrink-0">
-                    <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain p-1">
-                </div>
-                <div class="min-w-0">
-                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-teal-300 block truncate">Sistem Informasi Helpdesk</span>
-                    <h2 class="text-base sm:text-xl font-bold tracking-tight text-white break-words">RSUD IT HELPDESK</h2>
-                </div>
-            </div>
-
-            <div class="space-y-3 sm:space-y-4 my-6 sm:my-8 min-w-0">
-                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-tight break-words">
-                    Pusat Layanan & Penanganan Masalah TI RSUD
+            <!-- Descriptive Text (Hidden on small mobile to give instant priority to form) -->
+            <div class="hidden lg:block space-y-4 my-8 min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-extrabold text-white leading-tight break-words">
+                    Pusat Layanan &amp; Penanganan Masalah TI RSUD
                 </h1>
                 <p class="text-teal-100/80 text-xs sm:text-sm leading-relaxed break-words">
                    Sistem terpadu untuk pengelolaan tiket insiden dan permintaan layanan teknis, pemantauan SLA, serta pelaporan kinerja layanan IT RSUD RAA. Soewondo.
                 </p>
             </div>
 
-            <div class="space-y-2.5 sm:space-y-3 pt-2 text-[11px] sm:text-xs text-teal-100/90 font-medium min-w-0">
-                <div class="flex items-start sm:items-center space-x-2.5 sm:space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
-                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
+            <!-- Bullet Points (Desktop Only) -->
+            <div class="hidden lg:block space-y-3 pt-2 text-xs text-teal-100/90 font-medium min-w-0">
+                <div class="flex items-center space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
                     <span class="break-words">Multi-Role Access (Super Admin, Admin, Teknisi, Supervisor)</span>
                 </div>
-                <div class="flex items-start sm:items-center space-x-2.5 sm:space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
-                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
-                    <span class="break-words">Monitoring Target Waktu SLA & Insiden Kritis RSUD</span>
+                <div class="flex items-center space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
+                    <span class="break-words">Monitoring Target Waktu SLA &amp; Insiden Kritis RSUD</span>
                 </div>
-                <div class="flex items-start sm:items-center space-x-2.5 sm:space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
-                    <span class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
-                    <span class="break-words">Distribusi & Tracking Penugasan Teknisi Real-Time</span>
+                <div class="flex items-center space-x-3 bg-white/5 backdrop-blur-sm p-2.5 rounded-xl border border-white/10 min-w-0">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 text-xs font-bold">✓</span>
+                    <span class="break-words">Distribusi &amp; Tracking Penugasan Teknisi Real-Time</span>
                 </div>
             </div>
         </div>
 
-        <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] sm:text-xs text-teal-200/70 gap-1 min-w-0">
-            <span class="break-words">Versi 1.0.0</span>
-            <span class="break-words">&copy; {{ date('Y') }} Tim IT RSUD</span>
+        <div class="hidden lg:flex mt-8 pt-6 border-t border-white/10 items-center justify-between text-xs text-teal-200/70 min-w-0">
+            <span>Versi 1.0.0</span>
+            <span>&copy; {{ date('Y') }} Tim IT RSUD</span>
         </div>
     </div>
 
     <!-- Right Column: Login Form -->
-    <div class="lg:col-span-7 p-5 sm:p-8 lg:p-12 flex flex-col justify-between bg-white pt-10 lg:pt-12 min-w-0">
+    <div class="lg:col-span-7 p-4 sm:p-8 lg:p-12 flex flex-col justify-between bg-white pt-5 sm:pt-8 lg:pt-12 min-w-0">
         <div class="min-w-0">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6 min-w-0">
+            <div class="flex items-center justify-between gap-2 mb-4 sm:mb-6 min-w-0">
                 <div class="min-w-0">
-                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-800 break-words">Masuk ke Sistem</h3>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1 break-words">Silakan masukkan kredensial akun Anda</p>
+                    <h3 class="text-lg sm:text-2xl font-extrabold text-slate-800 break-words">Masuk ke Sistem</h3>
+                    <p class="text-[11px] sm:text-sm text-slate-500 mt-0.5 break-words">Silakan masukkan kredensial akun Anda</p>
                 </div>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 shrink-0 self-start sm:self-auto">
-                    <span class="w-2 h-2 rounded-full bg-teal-500 mr-1.5 animate-pulse shrink-0"></span> Sistem Aktif
+                <span class="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 shrink-0">
+                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-teal-500 mr-1.5 animate-pulse shrink-0"></span> Sistem Aktif
                 </span>
             </div>
 

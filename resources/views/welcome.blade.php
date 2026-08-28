@@ -13,35 +13,43 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-[#f8fafc] text-slate-900 selection:bg-emerald-600 selection:text-white min-h-screen flex flex-col justify-between">
-    <!-- Navbar Header -->
+    <!-- Navbar Header (Strictly 1 Single Row on All Screen Sizes) -->
     <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 min-w-0">
             <!-- Logo & Title -->
-            <a href="{{ url('/') }}" class="flex items-center gap-3.5 group">
-                <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center p-1 border border-slate-200/80 shadow-sm group-hover:shadow-md transition overflow-hidden shrink-0">
+            <a href="{{ url('/') }}" class="flex items-center gap-2.5 sm:gap-3.5 group min-w-0">
+                <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center p-1 border border-slate-200/80 shadow-xs group-hover:shadow-md transition overflow-hidden shrink-0">
                     <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD RAA Soewondo" class="w-full h-full object-contain">
                 </div>
-                <div>
-                    <span class="text-base sm:text-lg font-black tracking-tight text-slate-900 block leading-tight">
+                <div class="min-w-0">
+                    <span class="text-xs sm:text-lg font-black tracking-tight text-slate-900 block leading-tight truncate">
                         HELPDESK RSUD <span class="text-emerald-700">RAA. SOEWONDO</span>
                     </span>
-                    <p class="text-xs text-slate-500 font-medium tracking-wide">Instalasi TI &amp; SIMRS</p>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-semibold tracking-wide truncate">Instalasi TI &amp; SIMRS</p>
                 </div>
             </a>
 
-            <!-- Right Actions -->
-            <div class="flex items-center gap-3">
-                <a href="{{ route('guest.ticket.track') }}" class="text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-700 px-3.5 py-2 rounded-xl hover:bg-slate-100 transition">
-                    Lacak Status Tiket
+            <!-- Right Actions (Strictly 1 Row) -->
+            <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                <a href="{{ route('guest.ticket.track') }}" class="inline-flex items-center gap-1 text-[11px] sm:text-sm font-bold text-slate-700 hover:text-emerald-700 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl hover:bg-slate-100 transition shrink-0 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span class="hidden sm:inline">Lacak Status Tiket</span>
+                    <span class="sm:hidden">Lacak</span>
                 </a>
 
                 @auth
-                    <a href="{{ route('dashboard') }}" class="text-xs sm:text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 px-4 py-2.5 rounded-xl transition shadow-sm">
-                        Masuk Dashboard
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 text-[11px] sm:text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl transition shadow-xs shrink-0 whitespace-nowrap">
+                        <span>Dashboard</span>
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/80 px-4 py-2.5 rounded-xl transition shadow-xs">
-                        Login Petugas
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 text-[11px] sm:text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/80 px-2.5 py-1.5 sm:px-4 sm:py-2.5 rounded-xl transition shadow-xs shrink-0 whitespace-nowrap">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        <span class="hidden sm:inline">Login Petugas</span>
+                        <span class="sm:hidden">Login</span>
                     </a>
                 @endauth
             </div>
