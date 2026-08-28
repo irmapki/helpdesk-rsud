@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [GuestTicketController::class, 'landing'])->name('guest.landing');
+Route::get('/welcome', fn() => redirect()->route('guest.landing'))->name('welcome'); // Menambahkan rute 'welcome' agar tombol kembali berfungsi
 Route::get('/guest/ticket/create', [GuestTicketController::class, 'create'])->name('guest.ticket.create');
 Route::post('/guest/ticket', [GuestTicketController::class, 'store'])->name('guest.ticket.store');
 Route::get('/guest/ticket/success/{ticket_number}', [GuestTicketController::class, 'success'])->name('guest.ticket.success');

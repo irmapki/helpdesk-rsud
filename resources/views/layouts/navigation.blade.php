@@ -1,19 +1,19 @@
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex items-center">
+            <div class="flex items-center min-w-0">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center space-x-3">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 font-bold text-gray-800 dark:text-gray-100">
-                        <div class="h-9 w-9 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-md">
+                <div class="shrink-0 flex items-center min-w-0">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 font-bold text-gray-800 dark:text-gray-100 min-w-0">
+                        <div class="h-9 w-9 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-md shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <div class="flex flex-col">
-                            <span class="text-sm font-extrabold tracking-tight text-teal-700 dark:text-teal-400">HELPDESK RSUD RAA. SOEWONDO</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 font-normal">IT Support System</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-[11px] sm:text-sm font-extrabold tracking-tight text-teal-700 dark:text-teal-400 truncate">HELPDESK RSUD RAA. SOEWONDO</span>
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400 font-normal truncate">IT Support System</span>
                         </div>
                     </a>
                 </div>
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Hamburger for Mobile -->
-            <div class="-me-2 flex items-center sm:hidden">
+            <div class="-me-1 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -124,7 +124,7 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg">
         @auth
             @php $roleName = Auth::user()->role->name ?? ''; @endphp
             <div class="pt-2 pb-3 space-y-1">
@@ -157,19 +157,41 @@
                     <x-responsive-nav-link :href="route('admin.tickets.index')" :active="request()->routeIs('admin.tickets.*')">
                         {{ __('Tiket Masuk') }}
                     </x-responsive-nav-link>
+                @elseif ($roleName === 'teknisi')
+                    <x-responsive-nav-link :href="route('teknisi.dashboard')" :active="request()->routeIs('teknisi.dashboard')">
+                        {{ __('Dashboard Teknisi') }}
+                    </x-responsive-nav-link>
+                @elseif ($roleName === 'supervisor')
+                    <x-responsive-nav-link :href="route('supervisor.dashboard')" :active="request()->routeIs('supervisor.dashboard')">
+                        {{ __('Dashboard Supervisor') }}
+                    </x-responsive-nav-link>
+                @else
+                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
                 @endif
+
+                <!-- Link Cepat ke Portal Pengaduan di Mobile -->
+                <x-responsive-nav-link :href="route('guest.landing')" target="_blank">
+                    {{ __('Buka Portal Pengaduan') }}
+                </x-responsive-nav-link>
             </div>
 
             <!-- Responsive Settings Options -->
-            <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-700">
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            <div class="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50">
+                <div class="px-4 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-sm text-gray-800 dark:text-gray-200 truncate">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-xs text-gray-500 truncate">{{ Auth::user()->email }}</div>
+                    </div>
+                    <span class="text-[10px] bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300 px-2 py-0.5 rounded font-bold uppercase shrink-0">
+                        {{ Auth::user()->role->label ?? Auth::user()->role->name ?? 'User' }}
+                    </span>
                 </div>
 
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Profile') }}
+                        {{ __('Profile Saya') }}
                     </x-responsive-nav-link>
 
                     <!-- Authentication -->
@@ -178,7 +200,7 @@
                         <x-responsive-nav-link :href="route('logout')"
                                 onclick="event.preventDefault();
                                             this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                            {{ __('Keluar (Log Out)') }}
                         </x-responsive-nav-link>
                     </form>
                 </div>
