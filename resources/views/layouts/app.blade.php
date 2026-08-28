@@ -264,37 +264,107 @@
             </div>
 
         </div>
+        <!-- Container Floating Toast Notifikasi Real-Time -->
+        <div id="realtimeNotificationContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
         <!-- Listener WebSocket Reverb untuk Notifikasi Real-Time -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.Echo) {
-            console.log('✅ Laravel Echo Reverb siap mendengarkan tickets-channel');
-
-            const handleNewTicket = (data) => {
-                console.log('🔔 Ada Tiket Baru Masuk:', data);
-
-                // 1. Tampilkan notifikasi pop-up di layar
-                alert('🔔 PENGADUAN IT BARU MASUK!\n\n' +
-                      '• No. Tiket: ' + data.ticket_number + '\n' +
-                      '• Masalah: ' + data.title + '\n' +
-                      '• Unit: ' + data.unit + '\n' +
-                      '• Pelapor: ' + data.reporter);
-
-                // 2. Refresh halaman otomatis jika sedang berada di dashboard admin
-                if (window.location.pathname.includes('/admin')) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
+        <script>
+            // Audio Chime Notifikasi (Web Audio API)
+            function playNotificationSound() {
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioCtx) return;
+                    const ctx = new AudioCtx();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+                    
+                    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.5);
+                } catch(e) {
+                    console.log('Audio autoplay prevented:', e);
                 }
-            };
+            }
 
-            window.Echo.channel('tickets-channel')
-                .listen('.ticket.created', handleNewTicket)
-                .listen('TicketCreatedEvent', handleNewTicket);
-        } else {
-            console.warn('⚠️ window.Echo belum terdeteksi.');
-        }
-    });
-</script>
+            function showRealtimeToast(data) {
+                playNotificationSound();
+
+                const container = document.getElementById('realtimeNotificationContainer');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                toast.className = 'pointer-events-auto bg-white border-2 border-emerald-500 rounded-2xl shadow-2xl p-4 transition-all duration-300 transform translate-y-2 opacity-0 flex flex-col gap-2 min-w-0';
+                
+                toast.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            <span class="text-[11px] font-black text-emerald-800 uppercase tracking-wider">Tiket Baru Masuk!</span>
+                        </div>
+                        <button onclick="this.closest('div.pointer-events-auto').remove()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <div class="space-y-1 text-xs">
+                        <div class="font-mono font-bold text-teal-800 text-xs">${data.ticket_number || 'HD-NEW'}</div>
+                        <div class="font-black text-slate-900 line-clamp-2 text-xs">${data.title || 'Pengaduan IT Baru'}</div>
+                        <div class="text-slate-500 text-[11px] flex items-center justify-between pt-1">
+                            <span>📍 ${data.unit || 'Ruangan RSUD'}</span>
+                            <span class="font-semibold text-slate-600">👤 ${data.reporter || 'Pelapor'}</span>
+                        </div>
+                    </div>
+                    <div class="pt-2 flex gap-2">
+                        <button onclick="window.location.reload()" class="w-full text-center py-2 px-3 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs rounded-xl shadow-xs transition">
+                            Lihat Tiket Baru ➔
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(toast);
+
+                // Animasi Muncul
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                    toast.classList.add('translate-y-0', 'opacity-100');
+                }, 50);
+
+                // Auto Hilang setelah 10 detik
+                setTimeout(() => {
+                    if (toast && toast.parentElement) {
+                        toast.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 10000);
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                if (window.Echo) {
+                    console.log('✅ Laravel Echo Reverb siap mendengarkan tickets-channel');
+
+                    window.Echo.channel('tickets-channel')
+                        .listen('.ticket.created', (data) => {
+                            console.log('🔔 Ada Tiket Baru Masuk:', data);
+                            showRealtimeToast(data);
+                        })
+                        .listen('TicketCreatedEvent', (data) => {
+                            console.log('🔔 Ada Tiket Baru Masuk:', data);
+                            showRealtimeToast(data);
+                        });
+                } else {
+                    console.warn('⚠️ window.Echo belum terdeteksi.');
+                }
+            });
+        </script>
     </body>
 </html>

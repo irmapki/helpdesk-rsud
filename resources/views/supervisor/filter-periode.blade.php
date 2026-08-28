@@ -45,7 +45,7 @@
                 @endif
             </div>
 
-            <!-- DESKTOP VIEW: Tabel (Hidden di HP, Muncul di Layar md ke atas)[cite: 14] -->
+            <!-- DESKTOP VIEW: Tabel (Hidden di HP, Muncul di Layar md ke atas) -->
             <div class="hidden md:block overflow-x-auto min-w-0">
                 <table class="w-full text-left text-xs">
                     <thead class="text-slate-400 uppercase font-black text-[10px] tracking-wider border-b border-slate-100">
@@ -61,7 +61,7 @@
                         @if($tickets instanceof \Illuminate\Support\Collection && $tickets->isEmpty() && !request('start_date') && !request('end_date'))
                             <tr>
                                 <td colspan="5" class="text-center py-12 text-slate-400 text-xs">
-                                    Silakan pilih rentang tanggal mulai dan selesai untuk menampilkan data tiket.[cite: 14]
+                                    Silakan pilih rentang tanggal mulai dan selesai untuk menampilkan data tiket.
                                 </td>
                             </tr>
                         @else
@@ -72,7 +72,7 @@
                                         <span class="font-bold text-slate-900 text-xs line-clamp-1 mt-0.5">{{ $ticket->title }}</span>
                                     </td>
                                     <td class="py-3.5 px-3 text-slate-500 font-mono text-xs">
-                                        {{ $ticket->created_at->format('d/m/Y H:i') }} WIB[cite: 14]
+                                        {{ $ticket->created_at->format('d/m/Y H:i') }} WIB
                                     </td>
                                     <td class="py-3.5 px-3">
                                         <div class="font-bold text-slate-900 text-xs">{{ $ticket->reporter_name }}</div>
@@ -90,7 +90,7 @@
                             @empty
                                 <tr>
                                     <td colspan="5" class="text-center py-12 text-slate-400 text-xs">
-                                        Tidak ada data tiket ditemukan pada rentang periode tersebut.[cite: 14]
+                                        Tidak ada data tiket ditemukan pada rentang periode tersebut.
                                     </td>
                                 </tr>
                             @endforelse
@@ -103,7 +103,7 @@
             <div class="block md:hidden space-y-3 min-w-0">
                 @if($tickets instanceof \Illuminate\Support\Collection && $tickets->isEmpty() && !request('start_date') && !request('end_date'))
                     <div class="text-center py-8 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">
-                        Silakan pilih rentang tanggal mulai dan selesai untuk menampilkan data tiket.[cite: 14]
+                        Silakan pilih rentang tanggal mulai dan selesai untuk menampilkan data tiket.
                     </div>
                 @else
                     @forelse($tickets as $ticket)
@@ -125,7 +125,7 @@
                             <div class="bg-slate-50 p-3 rounded-xl space-y-2 text-xs text-slate-600 border border-slate-100 min-w-0">
                                 <div class="flex justify-between items-start gap-2 min-w-0">
                                     <span class="text-slate-400 shrink-0">Tanggal:</span>
-                                    <span class="font-mono font-medium text-slate-800 text-right">{{ $ticket->created_at->format('d/m/Y H:i') }} WIB[cite: 14]</span>
+                                    <span class="font-mono font-medium text-slate-800 text-right">{{ $ticket->created_at->format('d/m/Y H:i') }} WIB</span>
                                 </div>
                                 <div class="flex justify-between items-start gap-2 min-w-0">
                                     <span class="text-slate-400 shrink-0">Pelapor:</span>
@@ -139,16 +139,16 @@
                         </div>
                     @empty
                         <div class="text-center py-8 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">
-                            Tidak ada data tiket ditemukan pada rentang periode tersebut.[cite: 14]
+                            Tidak ada data tiket ditemukan pada rentang periode tersebut.
                         </div>
                     @endforelse
                 @endif
             </div>
 
-            <!-- Pagination if applicable[cite: 14] -->
+            <!-- Pagination if applicable -->
             @if($tickets instanceof \Illuminate\Pagination\LengthAwarePaginator && $tickets->hasPages())
                 <div class="pt-4 border-t border-slate-100">
-                    {{ $tickets->links() }}[cite: 14]
+                    {{ $tickets->links() }}
                 </div>
             @endif
         </div>

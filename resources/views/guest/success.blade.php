@@ -10,42 +10,42 @@
                     </svg>
                 </div>
 
-                <h1 class="text-base sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug break-words">Pengaduan Berhasil Dikirim![cite: 13]</h1>
-                <p class="text-[11px] sm:text-sm text-slate-500 mt-1.5 sm:mt-2 font-medium max-w-md mx-auto px-1">Laporan kendala Anda telah tercatat pada sistem IT Helpdesk RSUD.[cite: 13]</p>
+                <h1 class="text-base sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug break-words">Pengaduan Berhasil Dikirim!</h1>
+                <p class="text-[11px] sm:text-sm text-slate-500 mt-1.5 sm:mt-2 font-medium max-w-md mx-auto px-1">Laporan kendala Anda telah tercatat pada sistem IT Helpdesk RSUD.</p>
 
                 <!-- Ticket Number Card -->
                 <div class="mt-5 sm:mt-8 p-3.5 sm:p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 min-w-0">
-                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Nomor Tiket Anda[cite: 13]</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Nomor Tiket Anda</span>
                     <div class="text-base sm:text-2xl lg:text-3xl font-black font-mono text-emerald-800 tracking-wider select-all break-all" id="ticketNumberText">
-                        {{ $ticket->ticket_number }}[cite: 13]
+                        {{ $ticket->ticket_number }}
                     </div>
 
                     <button onclick="copyTicketNumber()" class="mt-3 inline-flex items-center justify-center gap-1.5 text-xs font-bold text-emerald-800 bg-white hover:bg-emerald-50 border border-slate-200 px-4 py-2.5 rounded-xl transition shadow-xs active:scale-95 w-full sm:w-auto">
                         <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
-                        <span id="copyBtnLabel">Salin Nomor Tiket[cite: 13]</span>
+                        <span id="copyBtnLabel">Salin Nomor Tiket</span>
                     </button>
                 </div>
 
                 <!-- Ticket Summary Info -->
                 <div class="mt-5 sm:mt-6 text-left bg-slate-50/70 p-3.5 sm:p-5 rounded-2xl border border-slate-100 text-xs space-y-3 min-w-0">
                     <div class="flex flex-col sm:flex-row sm:justify-between gap-0.5 sm:gap-2 min-w-0">
-                        <span class="text-slate-400 font-medium shrink-0">Judul Masalah:[cite: 13]</span>
-                        <span class="font-extrabold text-slate-900 sm:text-right break-words min-w-0">{{ $ticket->title }}[cite: 13]</span>
+                        <span class="text-slate-400 font-medium shrink-0">Judul Masalah:</span>
+                        <span class="font-extrabold text-slate-900 sm:text-right break-words min-w-0">{{ $ticket->title }}</span>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:justify-between gap-0.5 sm:gap-2 min-w-0">
-                        <span class="text-slate-400 font-medium shrink-0">Unit / Ruangan:[cite: 13]</span>
-                        <span class="font-bold text-slate-800 sm:text-right break-words min-w-0">{{ $ticket->unit->name }}[cite: 13]</span>
+                        <span class="text-slate-400 font-medium shrink-0">Unit / Ruangan:</span>
+                        <span class="font-bold text-slate-800 sm:text-right break-words min-w-0">{{ $ticket->unit->name }}</span>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:justify-between gap-0.5 sm:gap-2 min-w-0">
-                        <span class="text-slate-400 font-medium shrink-0">Kategori:[cite: 13]</span>
-                        <span class="font-bold text-slate-800 sm:text-right break-words min-w-0">{{ $ticket->category->name }}[cite: 13]</span>
+                        <span class="text-slate-400 font-medium shrink-0">Kategori:</span>
+                        <span class="font-bold text-slate-800 sm:text-right break-words min-w-0">{{ $ticket->category->name }}</span>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-1 sm:gap-2 pt-1 border-t border-slate-200/60 min-w-0">
-                        <span class="text-slate-400 font-medium shrink-0">Status Awal:[cite: 13]</span>
+                        <span class="text-slate-400 font-medium shrink-0">Status Awal:</span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
-                            Menunggu Validasi Admin[cite: 13]
+                            Menunggu Validasi Admin
                         </span>
                     </div>
                 </div>
@@ -57,11 +57,11 @@
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <span>Lacak Progres Tiket Ini[cite: 13]</span>
+                        <span>Lacak Progres Tiket Ini</span>
                     </a>
 
                     <a href="{{ route('guest.landing') }}" class="w-full text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-5 py-3.5 rounded-xl transition text-center">
-                        Kembali ke Beranda[cite: 13]
+                        Kembali ke Beranda
                     </a>
                 </div>
             </div>

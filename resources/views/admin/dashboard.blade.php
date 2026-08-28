@@ -106,7 +106,7 @@
                     </div>
                 </div>
 
-                <!-- DESKTOP VIEW: Tabel (Hidden di HP, Muncul di Layar md ke atas)[cite: 16] -->
+                <!-- DESKTOP VIEW: Tabel (Hidden di HP, Muncul di Layar md ke atas) -->
                 <div class="hidden md:block overflow-x-auto min-w-0">
                     <table class="w-full text-left text-xs">
                         <thead class="text-slate-400 uppercase font-bold text-[11px] border-b border-slate-100">
@@ -150,7 +150,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-6 text-slate-400">Belum ada tiket masuk.[cite: 16]</td>
+                                    <td colspan="5" class="text-center py-6 text-slate-400">Belum ada tiket masuk.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -194,14 +194,14 @@
                         </div>
                     @empty
                         <div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">
-                            Belum ada tiket masuk.[cite: 16]
+                            Belum ada tiket masuk.
                         </div>
                     @endforelse
                 </div>
 
                 <div class="pt-3 border-t border-slate-100 text-right">
                     <a href="{{ route('admin.tickets.index') }}" class="text-xs font-bold text-teal-800 hover:text-teal-950">
-                        Buka Semua Tiket di Manajemen &rarr;[cite: 16]
+                        Buka Semua Tiket di Manajemen &rarr;
                     </a>
                 </div>
             </div>
@@ -212,7 +212,7 @@
                 <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
                     <div class="min-w-0">
                         <h3 class="font-bold text-sm text-slate-900 truncate">Kesiapan Teknisi IT</h3>
-                        <p class="text-[11px] text-slate-400 truncate">Monitoring beban kerja aktif teknisi[cite: 16]</p>
+                        <p class="text-[11px] text-slate-400 truncate">Monitoring beban kerja aktif teknisi</p>
                     </div>
 
                     <div class="space-y-3 text-xs min-w-0">
