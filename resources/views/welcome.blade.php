@@ -195,16 +195,80 @@
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200/80 py-8 text-center text-slate-500 text-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-0.5 overflow-hidden shadow-xs">
-                    <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain">
+    <!-- Footer Berwarna Hijau Khas RSUD (Modern & Ringkas) -->
+    <footer class="bg-gradient-to-br from-teal-950 via-emerald-950 to-slate-950 text-white border-t border-emerald-800/40 mt-16 overflow-hidden relative">
+        <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-10 pb-8 border-b border-emerald-800/50">
+                
+                <!-- Kolom 1: Profil Helpdesk IT (6 cols) -->
+                <div class="md:col-span-6 space-y-3.5 min-w-0">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-white flex items-center justify-center p-1.5 shadow-md shadow-black/20 shrink-0">
+                            <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain">
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-sm sm:text-base font-black text-white tracking-tight truncate">IT HELPDESK RSUD</h3>
+                            <p class="text-[11px] sm:text-xs text-teal-300 font-bold uppercase tracking-wider truncate">RSUD RAA. SOEWONDO PATI</p>
+                        </div>
+                    </div>
+                    <p class="text-emerald-100/80 text-xs sm:text-sm leading-relaxed max-w-md">
+                        Sistem layanan pengaduan dan penanganan kendala Teknologi Informasi terpadu untuk seluruh instalasi, poli, dan unit ruangan RSUD RAA Soewondo.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs text-emerald-200/90 font-medium">
+                        <svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>Jl. Dr. Susanto No. 114, Pati, Jawa Tengah 59111</span>
+                    </div>
                 </div>
-                <span class="font-bold text-slate-700">Instalasi Teknologi Informasi &amp; Komunikasi RSUD RAA Soewondo Pati</span>
+
+                <!-- Kolom 2: Layanan Utama (3 cols) -->
+                <div class="md:col-span-3 space-y-3 min-w-0">
+                    <h4 class="text-xs font-black uppercase tracking-widest text-teal-300">Layanan Cepat</h4>
+                    <ul class="space-y-2 text-xs font-semibold">
+                        <li>
+                            <a href="{{ route('guest.ticket.create') }}" class="text-emerald-100/90 hover:text-white flex items-center gap-2 transition hover:translate-x-1">
+                                <span class="text-teal-400">➔</span>
+                                <span>Buat Pengaduan Baru</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('guest.ticket.track') }}" class="text-emerald-100/90 hover:text-white flex items-center gap-2 transition hover:translate-x-1">
+                                <span class="text-teal-400">➔</span>
+                                <span>Lacak Status Tiket</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('login') }}" class="text-emerald-100/90 hover:text-white flex items-center gap-2 transition hover:translate-x-1">
+                                <span class="text-teal-400">➔</span>
+                                <span>Portal Login Petugas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 3: Jam Layanan & Dukungan (3 cols) -->
+                <div class="md:col-span-3 space-y-3 min-w-0">
+                    <h4 class="text-xs font-black uppercase tracking-widest text-teal-300">Jam Dukungan IT</h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-2.5">
+                            <span class="block text-white font-bold">Layanan Online 24 Jam</span>
+                            <span class="text-emerald-200/80 text-[11px] mt-0.5 block">Sistem tiket dapat diakses kapan saja oleh unit</span>
+                        </div>
+                        <p class="text-[11px] text-emerald-200/70 leading-relaxed">
+                            Penanganan insiden kritis (SIMRS, Jaringan, IGD/ICU) diprioritaskan sesuai target waktu SLA.
+                        </p>
+                    </div>
+                </div>
+
             </div>
-            <p class="text-slate-400 font-medium">&copy; {{ date('Y') }} RSUD IT Helpdesk System. Layanan Cepat &amp; Terpadu.</p>
+
+            <!-- Bottom Copyright Bar -->
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-emerald-300/70">
+                <p>&copy; {{ date('Y') }} Instalasi TI &amp; Komunikasi RSUD RAA Soewondo Pati. All rights reserved.</p>
+                <p class="text-[11px]">Sistem IT Helpdesk &amp; Ticketing Terpadu</p>
+            </div>
         </div>
     </footer>
 </body>

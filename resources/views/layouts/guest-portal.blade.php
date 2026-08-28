@@ -95,16 +95,28 @@
         {{ $slot }}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200/80 mt-16 py-6 text-center text-slate-500 text-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-            <div class="flex items-center justify-center sm:justify-start gap-2.5">
-                <div class="w-6 h-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-0.5 overflow-hidden shadow-xs shrink-0">
-                    <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain">
+    <!-- Footer Berwarna Hijau Khas RSUD (Modern & Ringkas) -->
+    <footer class="bg-gradient-to-br from-teal-950 via-emerald-950 to-slate-950 text-white border-t border-emerald-800/40 mt-16 overflow-hidden relative">
+        <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 relative z-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center p-1.5 shadow-md shrink-0">
+                        <img src="{{ asset('images/logo-rsud.png') }}" alt="Logo RSUD" class="w-full h-full object-contain">
+                    </div>
+                    <div class="min-w-0 text-left">
+                        <h4 class="text-xs sm:text-sm font-black text-white tracking-tight truncate">IT HELPDESK RSUD RAA. SOEWONDO</h4>
+                        <p class="text-[10px] sm:text-xs text-teal-300 font-semibold truncate">Instalasi Teknologi Informasi &amp; Komunikasi (TIK)</p>
+                    </div>
                 </div>
-                <span class="font-bold text-slate-700 text-[11px] sm:text-xs">Instalasi Teknologi Informasi &amp; Komunikasi RSUD RAA Soewondo Pati</span>
+
+                <div class="text-xs text-emerald-300/80 sm:text-right">
+                    <p class="font-bold text-white">&copy; {{ date('Y') }} RSUD IT Helpdesk System</p>
+                    <p class="text-[11px] text-emerald-300/60 mt-0.5">Jl. Dr. Susanto No. 114, Pati &bull; Layanan Pengaduan 24 Jam</p>
+                </div>
             </div>
-            <p class="text-slate-400 font-medium text-[11px] sm:text-xs">&copy; {{ date('Y') }} RSUD IT Helpdesk System. Layanan Cepat &amp; Terpadu.</p>
         </div>
     </footer>
 </body>
