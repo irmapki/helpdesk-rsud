@@ -10,6 +10,7 @@ use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
@@ -67,7 +68,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Halaman Laporan Tiket Lengkap.
+     * Halaman Laporan Tiket Lengkap (Pencarian Tiket & Pelapor Dipisah).
      */
     public function laporanTiket(Request $request): View
     {
@@ -85,12 +86,23 @@ class DashboardController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('ticket_number', 'like', "%{$search}%")
-                  ->orWhere('title', 'like', "%{$search}%")
-                  ->orWhere('guest_name', 'like', "%{$search}%");
+        // Pencarian khusus Tiket (No Tiket atau Judul Masalah)
+        if ($request->filled('ticket_search')) {
+            $ticketSearch = $request->ticket_search;
+            $query->where(function ($q) use ($ticketSearch) {
+                $q->where('ticket_number', 'like', "%{$ticketSearch}%")
+                  ->orWhere('title', 'like', "%{$ticketSearch}%");
+            });
+        }
+
+        // Pencarian khusus Pelapor (Nama Tamu / Creator)
+        if ($request->filled('pelapor_search')) {
+            $pelaporSearch = $request->pelapor_search;
+            $query->where(function ($q) use ($pelaporSearch) {
+                $q->where('guest_name', 'like', "%{$pelaporSearch}%")
+                  ->orWhereHas('creator', function ($qc) use ($pelaporSearch) {
+                      $qc->where('name', 'like', "%{$pelaporSearch}%");
+                  });
             });
         }
 
@@ -110,6 +122,97 @@ class DashboardController extends Controller
             'totalResolved',
             'totalPending'
         ));
+    }
+
+    /**
+     * Export Laporan Tiket ke Excel (CSV Format).
+     */
+    public function exportExcel(Request $request): StreamedResponse
+    {
+        $query = Ticket::with(['unit', 'category', 'priority', 'technician', 'creator']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('unit_id')) {
+            $query->where('unit_id', $request->unit_id);
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('ticket_search')) {
+            $ticketSearch = $request->ticket_search;
+            $query->where(function ($q) use ($ticketSearch) {
+                $q->where('ticket_number', 'like', "%{$ticketSearch}%")
+                  ->orWhere('title', 'like', "%{$ticketSearch}%");
+            });
+        }
+
+        if ($request->filled('pelapor_search')) {
+            $pelaporSearch = $request->pelapor_search;
+            $query->where(function ($q) use ($pelaporSearch) {
+                $q->where('guest_name', 'like', "%{$pelaporSearch}%")
+                  ->orWhereHas('creator', function ($qc) use ($pelaporSearch) {
+                      $qc->where('name', 'like', "%{$pelaporSearch}%");
+                  });
+            });
+        }
+
+        $tickets = $query->latest()->get();
+
+        $filename = 'Laporan-Tiket-Helpdesk-' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($tickets) {
+            $file = fopen('php://output', 'w');
+            
+            // BOM for Excel UTF-8 compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header Kolom Excel
+            fputcsv($file, [
+                'No Tiket', 
+                'Tanggal', 
+                'Judul Masalah', 
+                'Unit RSUD', 
+                'Kategori', 
+                'Nama Pelapor', 
+                'Kontak Pelapor', 
+                'Teknisi', 
+                'Prioritas', 
+                'Status'
+            ]);
+
+            // Data Baris Tiket
+            foreach ($tickets as $t) {
+                fputcsv($file, [
+                    $t->ticket_number,
+                    $t->created_at->format('Y-m-d H:i'),
+                    $t->title,
+                    $t->unit->name ?? '-',
+                    $t->category->name ?? '-',
+                    $t->reporter_name,
+                    $t->reporter_contact,
+                    $t->technician->name ?? 'Belum Ditugaskan',
+                    $t->priority->name ?? 'Normal',
+                    $t->status_label,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Models\Unit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail; // <-- Tambahan untuk fitur log email
 use Illuminate\View\View;
 use App\Events\TicketCreatedEvent;
 
@@ -101,8 +102,27 @@ class GuestTicketController extends Controller
 
         $ticket = Ticket::create($validated);
         
-        // Broadcast notifikasi tiket baru ke Reverb
+        // Broadcast notifikasi tiket baru ke Reverb (Pop-up Admin)
         event(new TicketCreatedEvent($ticket));
+
+        // Kirim Simulasi Email Masuk (tercatat otomatis ke storage/logs/laravel.log)
+        try {
+            Mail::raw(
+                "Halo Tim Admin & Teknisi,\n\nAda pengaduan/tiket baru masuk dengan detail berikut:\n" .
+                "- No Tiket: {$ticket->ticket_number}\n" .
+                "- Pelapor: {$ticket->guest_name}\n" .
+                "- Unit/Ruangan: " . ($ticket->unit?->name ?? '-') . "\n" .
+                "- Judul Masalah: {$ticket->title}\n" .
+                "- Deskripsi: {$ticket->description}\n\n" .
+                "Silakan buka Dashboard Helpdesk RSUD untuk menindaklanjuti tiket ini.", 
+                function ($message) use ($ticket) {
+                    $message->to('admin.helpdesk@rsud.co.id')
+                            ->subject("Notifikasi Tiket Baru: " . $ticket->ticket_number);
+                }
+            );
+        } catch (\Exception $e) {
+            // Mencegah error email menghentikan proses redirect jika ada kendala log
+        }
 
         // Record initial status log
         TicketStatusLog::create([

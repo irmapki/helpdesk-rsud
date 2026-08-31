@@ -128,6 +128,9 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
     
     // Laporan Tiket
     Route::get('/laporan-tiket', [SupervisorDashboard::class, 'laporanTiket'])->name('laporan-tiket');
+    
+    // Export Laporan Tiket ke Excel
+    Route::get('/laporan-tiket/export', [SupervisorDashboard::class, 'exportExcel'])->name('laporan-tiket.export');
 
     // Statistik Penanganan Tiket
     Route::get('/statistik', [SupervisorDashboard::class, 'statistik'])->name('statistik');
@@ -135,4 +138,5 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
     // Filter Periode
     Route::get('/filter-periode', [SupervisorDashboard::class, 'filterPeriode'])->name('filter-periode');
 });
+
 require __DIR__.'/auth.php';

@@ -9,6 +9,7 @@ use App\Models\TicketStatusLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail; // <-- Tambahan untuk log/simulasi email
 use Illuminate\View\View;
 
 class TeknisiController extends Controller
@@ -101,7 +102,7 @@ class TeknisiController extends Controller
             $updateData['resolved_at'] = now();
         }
 
-        // Jika ada catatan solusi teknis, kita simpan juga ke kolom resolution_notes jika kolomnya ada pada tabel tickets
+        // Jika ada catatan solusi teknis, kita simpan juga ke kolom resolution_notes
         if (!empty($resolutionNote)) {
             $updateData['resolution_notes'] = $resolutionNote;
         }
@@ -121,6 +122,22 @@ class TeknisiController extends Controller
             'changed_by' => Auth::id(),
             'note' => $noteText,
         ]);
+
+        // Kirim Simulasi Email Log saat Status Diperbarui/Resolved oleh Teknisi
+        try {
+            Mail::raw(
+                "Halo Admin & Pelapor,\n\nStatus tiket {$ticket->ticket_number} telah diperbarui oleh Teknisi.\n" .
+                "- Status Terbaru: " . strtoupper($status) . "\n" .
+                "- Catatan/Solusi: " . ($resolutionNote ?? $noteText) . "\n\n" .
+                "Silakan cek sistem Helpdesk RSUD untuk detail lebih lanjut.",
+                function ($message) use ($ticket, $status) {
+                    $message->to('admin.helpdesk@rsud.co.id')
+                            ->subject("Update Status Tiket {$ticket->ticket_number}: " . strtoupper($status));
+                }
+            );
+        } catch (\Exception $e) {
+            // Lewati jika ada kendala log email
+        }
 
         return redirect()->route('teknisi.dashboard', ['ticket_id' => $ticket->id])
             ->with('success', "Status tiket {$ticket->ticket_number} berhasil diperbarui.");
@@ -151,6 +168,21 @@ class TeknisiController extends Controller
             'changed_by' => Auth::id(),
             'note' => 'Catatan Progres Teknisi: ' . $validated['note'],
         ]);
+
+        // Kirim Simulasi Email Log saat Teknisi Menambah Catatan Progres
+        try {
+            Mail::raw(
+                "Halo Admin,\n\nAda catatan progres baru dari teknisi untuk tiket {$ticket->ticket_number}:\n" .
+                "\"{$validated['note']}\"\n\n" .
+                "Silakan cek dashboard untuk memantaunya.",
+                function ($message) use ($ticket) {
+                    $message->to('admin.helpdesk@rsud.co.id')
+                            ->subject("Progres Baru Tiket: " . $ticket->ticket_number);
+                }
+            );
+        } catch (\Exception $e) {
+            // Lewati jika ada kendala log
+        }
 
         return redirect()->route('teknisi.dashboard', ['ticket_id' => $ticket->id])
             ->with('success', 'Catatan penanganan berhasil disimpan.');

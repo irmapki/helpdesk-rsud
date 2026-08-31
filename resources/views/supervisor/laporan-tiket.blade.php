@@ -7,6 +7,15 @@
                 <p class="text-xs text-slate-500 mt-1 break-words">Rekapitulasi dan laporan seluruh riwayat pengaduan tiket di RSUD RAA Soewondo.</p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
+                <!-- Tombol Export Excel -->
+                <a href="{{ route('supervisor.laporan-tiket.export', request()->all()) }}" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2.5 rounded-2xl shadow-xs transition">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Export Excel</span>
+                </a>
+
+                <!-- Tombol Cetak / Print -->
                 <button onclick="window.print()" type="button" class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-2xl border border-slate-200 shadow-xs transition">
                     <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -51,13 +60,23 @@
 
         <!-- Filter Bar -->
         <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs min-w-0">
-            <form method="GET" action="{{ route('supervisor.laporan-tiket') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs min-w-0">
+            <form method="GET" action="{{ route('supervisor.laporan-tiket') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs min-w-0">
+                
+                <!-- Cari Tiket (Nomor / Judul) -->
                 <div class="min-w-0">
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Cari Tiket / Pelapor</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik kata kunci..."
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Cari Tiket</label>
+                    <input type="text" name="ticket_search" value="{{ request('ticket_search') }}" placeholder="No. tiket atau judul..."
                         class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 placeholder-slate-400 font-medium">
                 </div>
 
+                <!-- Cari Pelapor -->
+                <div class="min-w-0">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Cari Pelapor</label>
+                    <input type="text" name="pelapor_search" value="{{ request('pelapor_search') }}" placeholder="Nama atau kontak pelapor..."
+                        class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 placeholder-slate-400 font-medium">
+                </div>
+
+                <!-- Unit RSUD -->
                 <div class="min-w-0">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Unit RSUD</label>
                     <select name="unit_id" class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 font-medium">
@@ -68,6 +87,7 @@
                     </select>
                 </div>
 
+                <!-- Kategori -->
                 <div class="min-w-0">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Kategori</label>
                     <select name="category_id" class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 font-medium">
@@ -78,7 +98,8 @@
                     </select>
                 </div>
 
-                <div class="flex items-end gap-2 min-w-0">
+                <!-- Tombol Aksi Filter -->
+                <div class="flex items-end gap-2 min-w-0 sm:col-span-2 lg:col-span-1">
                     <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-xs text-center truncate">
                         Filter Data
                     </button>
@@ -86,6 +107,7 @@
                         Reset
                     </a>
                 </div>
+
             </form>
         </div>
 
