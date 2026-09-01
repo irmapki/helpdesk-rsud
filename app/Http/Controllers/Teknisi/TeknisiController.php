@@ -99,8 +99,15 @@ class TeknisiController extends Controller
         $updateData = ['status' => $status];
 
         if ($status === 'resolved') {
-            $updateData['resolved_at'] = now();
-        }
+            // Cek apakah tiket ini software/SIMRS yang butuh review
+            if ($ticket->requiresReview()) {
+                $status = 'pending_review';
+                $updateData['status'] = 'pending_review';
+            } else {
+                // Jika hardware / jaringan, langsung dinyatakan selesai
+                $updateData['resolved_at'] = now();
+            }
+}
 
         // Jika ada catatan solusi teknis, kita simpan juga ke kolom resolution_notes
         if (!empty($resolutionNote)) {
@@ -112,6 +119,7 @@ class TeknisiController extends Controller
         // Tentukan teks log status
         $noteText = $resolutionNote ?: match ($status) {
             'in_progress' => 'Teknisi memulai pengerjaan penanganan kendala di lokasi.',
+            'pending_review' => 'Perbaikan software selesai dikerjakan dan diajukan untuk review Supervisor.',
             'resolved' => 'Kendala teknis telah berhasil diselesaikan oleh Teknisi.',
             default => 'Status tiket diperbarui oleh Teknisi.',
         };

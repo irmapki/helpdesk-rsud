@@ -197,7 +197,14 @@ class Ticket extends Model
 
         return 'on_track';
     }
-
+    /**
+     * Mengecek apakah kategori tiket membutuhkan review (Software / SIMRS).
+     */
+    public function requiresReview(): bool
+    {
+        $categoryName = strtolower($this->category?->name ?? '');
+        return str_contains($categoryName, 'software') || str_contains($categoryName, 'simrs') || str_contains($categoryName, 'aplikasi');
+    }
     public function getSlaStatusLabelAttribute(): string
     {
         return match ($this->sla_status) {
@@ -221,6 +228,7 @@ class Ticket extends Model
             'open' => 'Menunggu Validasi',
             'assigned' => 'Sudah Ditugaskan',
             'in_progress' => 'Sedang Dikerjakan',
+            'pending_review' => 'Menunggu Review Supervisor',
             'resolved' => 'Selesai (Menunggu Konfirmasi)',
             'closed' => 'Ditutup',
             default => ucfirst(str_replace('_', ' ', $this->status)),
@@ -237,6 +245,7 @@ class Ticket extends Model
             'open' => 'bg-amber-100 text-amber-800 font-bold',
             'assigned' => 'bg-sky-100 text-sky-700 font-bold',
             'in_progress' => 'bg-indigo-100 text-indigo-700 font-bold',
+            'pending_review' => 'bg-purple-100 text-purple-800 font-bold border border-purple-200',
             'resolved' => 'bg-emerald-100 text-emerald-700 font-bold',
             'closed' => 'bg-slate-100 text-slate-700 font-bold',
             default => 'bg-slate-100 text-slate-700 font-bold',
