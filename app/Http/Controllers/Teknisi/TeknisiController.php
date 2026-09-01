@@ -19,10 +19,9 @@ class TeknisiController extends Controller
      */
     public function index(Request $request): View
     {
-        $technicianId = Auth::id();
-
-        $query = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'creator'])
-            ->where('assigned_to', $technicianId);
+        // Model 2: Menampilkan seluruh tiket yang ditugaskan ke Tim Teknisi IT
+        $query = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'creator', 'technician'])
+            ->whereNotNull('assigned_to');
 
         // Filter tab
         $tab = $request->query('tab', 'all');
@@ -31,7 +30,7 @@ class TeknisiController extends Controller
         } elseif ($tab === 'in_progress') {
             $query->where('status', 'in_progress');
         } elseif ($tab === 'resolved') {
-            $query->whereIn('status', ['resolved', 'closed']);
+            $query->whereIn('status', ['resolved', 'closed', 'pending_review']);
         }
 
         $tickets = $query->latest()->get();
@@ -40,8 +39,8 @@ class TeknisiController extends Controller
         $selectedTicketId = $request->query('ticket_id');
         $selectedTicket = null;
         if ($selectedTicketId) {
-            $selectedTicket = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'notes.user', 'creator'])
-                ->where('assigned_to', $technicianId)
+            $selectedTicket = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'notes.user', 'creator', 'technician'])
+                ->whereNotNull('assigned_to')
                 ->find($selectedTicketId);
         }
 
@@ -50,21 +49,21 @@ class TeknisiController extends Controller
             $selectedTicket->load(['statusLogs.user', 'notes.user']);
         }
 
-        // Summary Counts
-        $assignedCount = Ticket::where('assigned_to', $technicianId)->where('status', 'assigned')->count();
-        $inProgressCount = Ticket::where('assigned_to', $technicianId)->where('status', 'in_progress')->count();
-        $resolvedThisMonth = Ticket::where('assigned_to', $technicianId)
-            ->whereIn('status', ['resolved', 'closed'])
+        // Summary Counts untuk Seluruh Tim Teknisi
+        $assignedCount = Ticket::whereNotNull('assigned_to')->where('status', 'assigned')->count();
+        $inProgressCount = Ticket::whereNotNull('assigned_to')->where('status', 'in_progress')->count();
+        $resolvedThisMonth = Ticket::whereNotNull('assigned_to')
+            ->whereIn('status', ['resolved', 'closed', 'pending_review'])
             ->whereMonth('updated_at', now()->month)
             ->count();
         
-        $approachingSlaCount = Ticket::where('assigned_to', $technicianId)
+        $approachingSlaCount = Ticket::whereNotNull('assigned_to')
             ->whereIn('status', ['assigned', 'in_progress'])
             ->get()
             ->filter(fn($t) => in_array($t->sla_status, ['approaching', 'breached']))
             ->count();
 
-        $totalMyTickets = Ticket::where('assigned_to', $technicianId)->count();
+        $totalMyTickets = Ticket::whereNotNull('assigned_to')->count();
 
         return view('teknisi.dashboard', compact(
             'tickets',
@@ -83,11 +82,6 @@ class TeknisiController extends Controller
      */
     public function updateStatus(Request $request, Ticket $ticket): RedirectResponse
     {
-        // Pastikan tiket ini ditugaskan ke teknisi yang sedang login
-        if ($ticket->assigned_to !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki hak akses untuk tiket ini.');
-        }
-
         $validated = $request->validate([
             'status' => ['required', 'in:assigned,in_progress,resolved'],
             'resolution_notes' => ['nullable', 'string', 'max:1000'],
@@ -107,7 +101,7 @@ class TeknisiController extends Controller
                 // Jika hardware / jaringan, langsung dinyatakan selesai
                 $updateData['resolved_at'] = now();
             }
-}
+        }
 
         // Jika ada catatan solusi teknis, kita simpan juga ke kolom resolution_notes
         if (!empty($resolutionNote)) {
@@ -131,37 +125,33 @@ class TeknisiController extends Controller
             'note' => $noteText,
         ]);
 
-        // Kirim Simulasi Email Log saat Status Diperbarui/Resolved oleh Teknisi
+        // Kirim Simulasi Email Log saat status berubah
         try {
             Mail::raw(
-                "Halo Admin & Pelapor,\n\nStatus tiket {$ticket->ticket_number} telah diperbarui oleh Teknisi.\n" .
-                "- Status Terbaru: " . strtoupper($status) . "\n" .
-                "- Catatan/Solusi: " . ($resolutionNote ?? $noteText) . "\n\n" .
-                "Silakan cek sistem Helpdesk RSUD untuk detail lebih lanjut.",
-                function ($message) use ($ticket, $status) {
+                "Halo Tim Admin & Supervisor,\n\nStatus tiket {$ticket->ticket_number} telah diupdate oleh Teknisi:\n" .
+                "- Status Baru: {$ticket->status_label}\n" .
+                "- Catatan Solusi: " . ($resolutionNote ?? '-') . "\n\n" .
+                "Silakan cek dashboard untuk detailnya.", 
+                function ($message) use ($ticket) {
                     $message->to('admin.helpdesk@rsud.co.id')
-                            ->subject("Update Status Tiket {$ticket->ticket_number}: " . strtoupper($status));
+                            ->subject("Update Status Tiket: " . $ticket->ticket_number);
                 }
             );
         } catch (\Exception $e) {
-            // Lewati jika ada kendala log email
+            // Lewati jika ada kendala log
         }
 
         return redirect()->route('teknisi.dashboard', ['ticket_id' => $ticket->id])
-            ->with('success', "Status tiket {$ticket->ticket_number} berhasil diperbarui.");
+            ->with('success', 'Status penanganan tiket berhasil diperbarui.');
     }
 
     /**
-     * Tambah catatan progres pengerjaan oleh teknisi.
+     * Tambah catatan progres / tindak lanjut oleh teknisi.
      */
     public function addNote(Request $request, Ticket $ticket): RedirectResponse
     {
-        if ($ticket->assigned_to !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki hak akses untuk tiket ini.');
-        }
-
         $validated = $request->validate([
-            'note' => ['required', 'string', 'min:3', 'max:1000'],
+            'note' => ['required', 'string', 'max:1000'],
         ]);
 
         TicketNote::create([
@@ -201,11 +191,9 @@ class TeknisiController extends Controller
      */
     public function riwayat(Request $request): View
     {
-        $technicianId = Auth::id();
-
-        $query = Ticket::with(['unit', 'category', 'priority'])
-            ->where('assigned_to', $technicianId)
-            ->whereIn('status', ['resolved', 'closed']);
+        $query = Ticket::with(['unit', 'category', 'priority', 'technician'])
+            ->whereNotNull('assigned_to')
+            ->whereIn('status', ['resolved', 'closed', 'pending_review']);
 
         if ($request->filled('search')) {
             $search = $request->search;
