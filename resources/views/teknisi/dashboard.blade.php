@@ -213,6 +213,13 @@
                             </div>
                         @endif
 
+                        @if ($selectedTicket->status === 'pending_review')
+                            <div class="p-3.5 bg-purple-50 rounded-xl border border-purple-200 text-xs text-purple-900 font-medium">
+                                <span class="text-[10px] text-purple-800 font-bold uppercase tracking-wider block mb-1">Status: Menunggu Review Supervisor</span>
+                                <p class="text-purple-950 font-semibold">Perbaikan software telah diajukan dan saat ini sedang menunggu review / verifikasi fungsi dari Supervisor IT.</p>
+                            </div>
+                        @endif
+
                         <!-- Form Aksi / Ubah Status & Catatan -->
                         <form action="{{ route('teknisi.status.update', $selectedTicket->id) }}" method="POST" class="space-y-3 pt-2 min-w-0">
                             @csrf
@@ -221,11 +228,15 @@
                                     Update Status Penanganan
                                 </label>
                                 <select name="status" id="status" required class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-bold focus:border-teal-700 focus:ring-teal-700">
-                                    <option value="in_progress" {{ $selectedTicket->status === 'in_progress' ? 'selected' : '' }}>
+                                    <option value="in_progress" {{ in_array($selectedTicket->status, ['assigned', 'in_progress']) ? 'selected' : '' }}>
                                         Sedang Dikerjakan (In Progress)
                                     </option>
-                                    <option value="resolved" {{ $selectedTicket->status === 'resolved' ? 'selected' : '' }}>
-                                        Selesai Ditangani (Resolved)
+                                    <option value="resolved" {{ in_array($selectedTicket->status, ['resolved', 'pending_review']) ? 'selected' : '' }}>
+                                        @if($selectedTicket->requiresReview())
+                                            Selesai Dikerjakan (Ajukan Review ke Supervisor)
+                                        @else
+                                            Selesai Ditangani (Resolved)
+                                        @endif
                                     </option>
                                 </select>
                             </div>
