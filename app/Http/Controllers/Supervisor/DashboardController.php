@@ -160,10 +160,14 @@ class DashboardController extends Controller
                   });
             });
         }
+        // Cek apakah tombol diklik dari halaman SLA atau Tiket
+        if ($request->get('type') === 'sla') {
+            $filename = 'Laporan-Monitoring-SLA-RSUD-' . date('d-m-Y_H-i') . '.csv';
+        } else {
+            $filename = 'Laporan-Rekap-Tiket-RSUD-' . date('d-m-Y_H-i') . '.csv';
+        }
 
         $tickets = $query->latest()->get();
-
-        $filename = 'Laporan-Tiket-Helpdesk-' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             "Content-type"        => "text/csv; charset=UTF-8",
