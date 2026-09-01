@@ -252,7 +252,7 @@
             <!-- Right Action Panel (1 col) -->
             <div class="space-y-6">
                 <!-- 1. VALIDATION ACTION BOX -->
-                @if ($ticket->status === 'open' || $ticket->validation_status === 'pending')
+                @if ($ticket->validation_status === 'pending' && $ticket->status !== 'rejected')
                     <div class="bg-white rounded-2xl border border-amber-200 shadow-xs p-4 sm:p-6 space-y-4 bg-gradient-to-br from-amber-50/40 to-white">
                         <div class="flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
@@ -286,6 +286,14 @@
                                 </button>
                             </form>
                         </div>
+                    </div>
+                @elseif ($ticket->validation_status === 'validated' && !$ticket->assigned_to)
+                    <div class="bg-emerald-50 rounded-2xl border border-emerald-200 shadow-xs p-4 sm:p-5 space-y-1.5">
+                        <div class="flex items-center gap-2 text-emerald-800 font-bold text-xs">
+                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+                            <span>Tiket Telah Divalidasi oleh Admin</span>
+                        </div>
+                        <p class="text-[11px] text-emerald-700 font-medium leading-relaxed">Pengaduan telah dinyatakan sah. Silakan pilih teknisi di bawah untuk menugaskan penanganan.</p>
                     </div>
                 @endif
 

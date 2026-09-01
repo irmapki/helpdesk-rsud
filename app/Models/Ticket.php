@@ -224,8 +224,14 @@ class Ticket extends Model
             return 'Ditolak';
         }
 
+        if ($this->status === 'open') {
+            if ($this->validation_status === 'validated') {
+                return 'Tervalidasi (Menunggu Teknisi)';
+            }
+            return 'Menunggu Validasi';
+        }
+
         return match ($this->status) {
-            'open' => 'Menunggu Validasi',
             'assigned' => 'Sudah Ditugaskan',
             'in_progress' => 'Sedang Dikerjakan',
             'pending_review' => 'Menunggu Review Supervisor',
@@ -241,8 +247,14 @@ class Ticket extends Model
             return 'bg-rose-100 text-rose-700 font-bold';
         }
 
+        if ($this->status === 'open') {
+            if ($this->validation_status === 'validated') {
+                return 'bg-teal-100 text-teal-800 font-bold border border-teal-200';
+            }
+            return 'bg-amber-100 text-amber-800 font-bold';
+        }
+
         return match ($this->status) {
-            'open' => 'bg-amber-100 text-amber-800 font-bold',
             'assigned' => 'bg-sky-100 text-sky-700 font-bold',
             'in_progress' => 'bg-indigo-100 text-indigo-700 font-bold',
             'pending_review' => 'bg-purple-100 text-purple-800 font-bold border border-purple-200',
