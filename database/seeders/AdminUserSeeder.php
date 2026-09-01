@@ -33,12 +33,12 @@ class AdminUserSeeder extends Seeder
             ],
             [
                 'email' => 'teknisi@rsud.test',
-                'name' => 'Rian (Teknisi Jaringan & Hardware)',
+                'name' => 'Teknisi IT RSUD',
                 'phone' => '081234567892',
                 'password' => Hash::make('password'),
                 'role_id' => 3,
                 'unit_id' => null,
-                'specialization' => 'Hardware, Printer & Jaringan LAN',
+                'specialization' => 'Hardware, Jaringan & SIMRS RSUD',
                 'is_active' => true,
             ],
             [
