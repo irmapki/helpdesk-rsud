@@ -198,6 +198,19 @@ class Ticket extends Model
         return 'on_track';
     }
 
+    public function getSlaStatusLabelAttribute(): string
+    {
+        return match ($this->sla_status) {
+            'completed_on_time' => 'Selesai Tepat Waktu',
+            'completed_late'    => 'Selesai Terlambat (Melebihi SLA)',
+            'on_track'          => 'On Track (Dalam Batas SLA)',
+            'approaching'       => 'Mendekati Batas SLA (< 2 Jam)',
+            'breached'          => 'Terlewati (Breached SLA)',
+            'rejected'          => 'Ditolak',
+            default             => 'Normal',
+        };
+    }
+
     public function getStatusLabelAttribute(): string
     {
         if ($this->status === 'rejected' || $this->validation_status === 'rejected') {

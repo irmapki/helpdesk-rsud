@@ -179,33 +179,47 @@ class DashboardController extends Controller
             // BOM for Excel UTF-8 compatibility
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
-            // Header Kolom Excel
+            // Header Kolom Excel Lengkap (Tiket + Evaluasi SLA)
             fputcsv($file, [
                 'No Tiket', 
-                'Tanggal', 
+                'Tanggal Lapor', 
+                'Unit / Ruangan RSUD', 
+                'Kategori Kendala', 
                 'Judul Masalah', 
-                'Unit RSUD', 
-                'Kategori', 
                 'Nama Pelapor', 
                 'Kontak Pelapor', 
-                'Teknisi', 
+                'Teknisi Penanganan', 
                 'Prioritas', 
-                'Status'
+                'Target SLA (Jam)', 
+                'Batas Waktu SLA', 
+                'Waktu Selesai', 
+                'Kepatuhan SLA', 
+                'Status Tiket',
+                'Solusi / Catatan Penanganan'
             ]);
 
-            // Data Baris Tiket
+            // Data Baris Tiket Lengkap
             foreach ($tickets as $t) {
+                $deadlineStr = $t->sla_deadline ? $t->sla_deadline->format('Y-m-d H:i') . ' WIB' : '-';
+                $resolvedAtStr = $t->resolved_at ? $t->resolved_at->format('Y-m-d H:i') . ' WIB' : ($t->closed_at ? $t->closed_at->format('Y-m-d H:i') . ' WIB' : '-');
+                $slaStatusText = $t->sla_status_label;
+
                 fputcsv($file, [
                     $t->ticket_number,
-                    $t->created_at->format('Y-m-d H:i'),
-                    $t->title,
+                    $t->created_at->format('Y-m-d H:i') . ' WIB',
                     $t->unit->name ?? '-',
                     $t->category->name ?? '-',
+                    $t->title,
                     $t->reporter_name,
                     $t->reporter_contact,
                     $t->technician->name ?? 'Belum Ditugaskan',
                     $t->priority->name ?? 'Normal',
+                    ($t->priority->sla_hours ?? 24) . ' Jam',
+                    $deadlineStr,
+                    $resolvedAtStr,
+                    $slaStatusText,
                     $t->status_label,
+                    $t->resolution_notes ?? ($t->description ?? '-')
                 ]);
             }
 
