@@ -213,6 +213,16 @@
                             </div>
                         @endif
 
+                        @php
+                            $latestRevisionLog = $selectedTicket->statusLogs->where('status', 'in_progress')->sortByDesc('created_at')->first();
+                        @endphp
+                        @if($selectedTicket->status === 'in_progress' && $latestRevisionLog && str_contains($latestRevisionLog->note, 'Supervisor meminta perbaikan'))
+                            <div class="p-3.5 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-900 font-medium">
+                                <span class="text-[10px] text-rose-800 font-bold uppercase tracking-wider block mb-1">⚠️ Perlu Revisi / Perbaikan Ulang Software</span>
+                                <p class="text-rose-950 font-bold leading-relaxed">{{ $latestRevisionLog->note }}</p>
+                            </div>
+                        @endif
+
                         @if ($selectedTicket->status === 'pending_review')
                             <div class="p-3.5 bg-purple-50 rounded-xl border border-purple-200 text-xs text-purple-900 font-medium">
                                 <span class="text-[10px] text-purple-800 font-bold uppercase tracking-wider block mb-1">Status: Menunggu Review Supervisor</span>

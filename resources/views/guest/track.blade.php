@@ -102,6 +102,8 @@
                                 $step = 3;
                             } elseif ($currentStatus === 'in_progress') {
                                 $step = 4;
+                            } elseif ($currentStatus === 'pending_review') {
+                                $step = 4;
                             } elseif (in_array($currentStatus, ['resolved', 'closed'])) {
                                 $step = 5;
                             }
@@ -150,9 +152,13 @@
                                     <div class="p-3 rounded-2xl border {{ $step >= 4 ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-slate-50 border-slate-200 text-slate-400' }} min-w-0">
                                         <div class="flex items-center gap-2 mb-0.5 sm:mb-1">
                                             <span class="w-5 h-5 rounded-full {{ $step >= 4 ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-500' }} text-[10px] font-black flex items-center justify-center shrink-0">4</span>
-                                            <span class="text-xs font-extrabold break-words">Pengerjaan</span>
+                                            <span class="text-xs font-extrabold break-words">
+                                                {{ $currentStatus === 'pending_review' ? 'Review UAT' : 'Pengerjaan' }}
+                                            </span>
                                         </div>
-                                        <p class="text-[10px] font-medium {{ $step >= 4 ? 'text-emerald-800' : 'text-slate-400' }} break-words">Teknisi di lokasi</p>
+                                        <p class="text-[10px] font-medium {{ $step >= 4 ? 'text-emerald-800' : 'text-slate-400' }} break-words">
+                                            {{ $currentStatus === 'pending_review' ? 'Uji fungsi Supervisor' : 'Teknisi di lokasi' }}
+                                        </p>
                                     </div>
 
                                     <!-- Step 5 -->

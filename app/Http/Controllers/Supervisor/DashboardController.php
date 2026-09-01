@@ -342,6 +342,8 @@ public function reviewTicket(Request $request, Ticket $ticket): \Illuminate\Http
         return back()->with('success', "Tiket [{$ticket->ticket_number}] berhasil disetujui dan dinyatakan selesai.");
     } else {
         // Jika ada bug / minta revisi: Tiket dikembalikan ke Teknisi (In Progress)
+        $supervisorNote = $validated['supervisor_notes'] ?? 'Masih ditemukan kendala/bug pada modul software.';
+        
         $ticket->update([
             'status' => 'in_progress',
         ]);
@@ -350,8 +352,29 @@ public function reviewTicket(Request $request, Ticket $ticket): \Illuminate\Http
             'ticket_id' => $ticket->id,
             'status' => 'in_progress',
             'changed_by' => \Illuminate\Support\Facades\Auth::id(),
-            'note' => 'Supervisor meminta perbaikan ulang software: ' . ($validated['supervisor_notes'] ?? 'Masih ditemukan kendala/bug.'),
+            'note' => 'Supervisor meminta perbaikan ulang software: ' . $supervisorNote,
         ]);
+
+        \App\Models\TicketNote::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => \Illuminate\Support\Facades\Auth::id(),
+            'note' => '⚠️ [CATATAN REVISI SUPERVISOR]: ' . $supervisorNote,
+        ]);
+
+        // Simulasi Notifikasi Email ke Tim Teknisi terkait Revisi Software
+        try {
+            \Illuminate\Support\Facades\Mail::raw(
+                "Halo Tim Teknisi,\n\nTiket {$ticket->ticket_number} ({$ticket->title}) dikembalikan oleh Supervisor IT untuk perbaikan ulang / revisi software:\n\n" .
+                "Catatan Revisi: {$supervisorNote}\n\n" .
+                "Silakan periksa kembali dan lakukan perbaikan di sistem.",
+                function ($message) use ($ticket) {
+                    $message->to('teknisi@rsud.co.id')
+                            ->subject("⚠️ Revisi Software Diperlukan: " . $ticket->ticket_number);
+                }
+            );
+        } catch (\Exception $e) {
+            // Lewati jika ada kendala log
+        }
 
         return back()->with('success', "Tiket [{$ticket->ticket_number}] dikembalikan ke Teknisi untuk perbaikan ulang.");
     }
