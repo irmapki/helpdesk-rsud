@@ -137,6 +137,8 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
 
     // Filter Periode
     Route::get('/filter-periode', [SupervisorDashboard::class, 'filterPeriode'])->name('filter-periode');
+    // Review & Approval Tiket Software oleh Supervisor
+Route::post('/tickets/{ticket}/review', [SupervisorDashboard::class, 'reviewTicket'])->name('tickets.review');
 });
 
 require __DIR__.'/auth.php';

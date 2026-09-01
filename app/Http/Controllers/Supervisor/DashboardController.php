@@ -28,7 +28,11 @@ class DashboardController extends Controller
         $slaCompliance = $resolvedTickets->count() > 0 
             ? round(($onTimeCount / $resolvedTickets->count()) * 100, 1) 
             : 96.4;
-
+// Ambil tiket software yang sedang menunggu review supervisor
+$reviewTickets = Ticket::with(['unit', 'category', 'priority', 'technician'])
+    ->where('status', 'pending_review')
+    ->latest()
+    ->get();
         // Active Technicians
         $technicians = User::technicians()->active()->with(['assignedTickets' => function ($q) {
             $q->whereIn('status', ['assigned', 'in_progress']);
@@ -51,7 +55,8 @@ class DashboardController extends Controller
             'technicians',
             'activeTechCount',
             'totalTechCount',
-            'criticalTickets'
+            'criticalTickets',
+            'reviewTickets'
         ));
     }
 
@@ -310,5 +315,45 @@ class DashboardController extends Controller
             'endDate',
             'totalFiltered'
         ));
+    }/**
+ * Otorisasi / Review Hasil Perbaikan Software oleh Supervisor IT.
+ */
+public function reviewTicket(Request $request, Ticket $ticket): \Illuminate\Http\RedirectResponse
+{
+    $validated = $request->validate([
+        'action' => ['required', 'in:approve,reject'],
+        'supervisor_notes' => ['nullable', 'string', 'max:1000'],
+    ]);
+
+    if ($validated['action'] === 'approve') {
+        // Jika disetujui: Tiket resmi selesai (Resolved)
+        $ticket->update([
+            'status' => 'resolved',
+            'resolved_at' => now(),
+        ]);
+
+        \App\Models\TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => 'resolved',
+            'changed_by' => \Illuminate\Support\Facades\Auth::id(),
+            'note' => 'Perbaikan software telah diverifikasi dan DISETUJUI oleh Supervisor IT: ' . ($validated['supervisor_notes'] ?? 'Kodingan & fungsi berjalan normal.'),
+        ]);
+
+        return back()->with('success', "Tiket [{$ticket->ticket_number}] berhasil disetujui dan dinyatakan selesai.");
+    } else {
+        // Jika ada bug / minta revisi: Tiket dikembalikan ke Teknisi (In Progress)
+        $ticket->update([
+            'status' => 'in_progress',
+        ]);
+
+        \App\Models\TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => 'in_progress',
+            'changed_by' => \Illuminate\Support\Facades\Auth::id(),
+            'note' => 'Supervisor meminta perbaikan ulang software: ' . ($validated['supervisor_notes'] ?? 'Masih ditemukan kendala/bug.'),
+        ]);
+
+        return back()->with('success', "Tiket [{$ticket->ticket_number}] dikembalikan ke Teknisi untuk perbaikan ulang.");
     }
+}
 }

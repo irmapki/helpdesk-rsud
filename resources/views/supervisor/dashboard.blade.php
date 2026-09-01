@@ -8,6 +8,101 @@
             <p class="text-xs text-slate-500 mt-1 break-words">Monitoring Kinerja &amp; Evaluasi Service Level Agreement (SLA) RSUD RAA Soewondo</p>
         </div>
 
+        @if(session('success'))
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs">
+                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <!-- Section Khusus: Review & Otorisasi Perbaikan Software (UAT) -->
+        @if(isset($reviewTickets) && $reviewTickets->count() > 0)
+            <div class="bg-gradient-to-br from-purple-950 via-indigo-950 to-slate-950 rounded-3xl p-5 sm:p-7 text-white shadow-xl border border-purple-500/40 relative overflow-hidden min-w-0">
+                <div class="pointer-events-none absolute -right-20 -top-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl"></div>
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10 relative z-10 min-w-0">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping shrink-0"></span>
+                            <h2 class="text-base sm:text-lg font-black text-white tracking-tight">Otorisasi &amp; Review Perbaikan Software ({{ $reviewTickets->count() }})</h2>
+                        </div>
+                        <p class="text-xs text-purple-200/80 mt-0.5">Perbaikan software/SIMRS oleh teknisi membutuhkan verifikasi &amp; uji fungsi dari Supervisor IT sebelum dinyatakan selesai.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3.5 mt-4 relative z-10 min-w-0">
+                    @foreach($reviewTickets as $rt)
+                        <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 text-white transition min-w-0" x-data="{ showRejectModal: false }">
+                            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 min-w-0">
+                                <div class="space-y-1.5 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="font-mono text-xs font-bold text-purple-300 bg-purple-950/60 px-2.5 py-0.5 rounded-lg border border-purple-400/30">{{ $rt->ticket_number }}</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/30 text-purple-200 border border-purple-400/20">{{ $rt->category->name ?? 'Software' }}</span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md {{ $rt->priority->badge_class ?? 'bg-slate-100 text-slate-700' }}">{{ $rt->priority->name ?? 'Normal' }}</span>
+                                    </div>
+                                    <h3 class="text-sm sm:text-base font-bold text-white break-words">{{ $rt->title }}</h3>
+                                    <p class="text-xs text-purple-200/90 font-medium">
+                                        Unit: <strong class="text-white">{{ $rt->unit->name ?? '-' }}</strong> &bull; 
+                                        Teknisi: <strong class="text-white">{{ $rt->technician->name ?? 'Belum Ditugaskan' }}</strong>
+                                    </p>
+                                    @if($rt->resolution_notes)
+                                        <div class="bg-black/30 border border-white/10 rounded-xl p-2.5 text-xs text-purple-100 mt-2">
+                                            <span class="font-bold text-purple-300 block mb-0.5">Catatan Solusi dari Teknisi:</span>
+                                            {{ $rt->resolution_notes }}
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex items-center gap-2 shrink-0 pt-2 lg:pt-0">
+                                    <!-- Form Setujui (Approve) -->
+                                    <form method="POST" action="{{ route('supervisor.tickets.review', $rt->id) }}">
+                                        @csrf
+                                        <input type="hidden" name="action" value="approve">
+                                        <button type="submit" onclick="return confirm('Apakah Anda yakin menyetujui perbaikan software ini dan menyatakan tiket selesai?')"
+                                            class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-emerald-900/30 transition hover:scale-[1.02]">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                            <span>Setujui &amp; Selesaikan</span>
+                                        </button>
+                                    </form>
+
+                                    <!-- Tombol Minta Revisi (Tolak) -->
+                                    <button @click="showRejectModal = true" type="button"
+                                        class="inline-flex items-center gap-1.5 bg-rose-600/80 hover:bg-rose-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl border border-rose-400/30 transition hover:scale-[1.02]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        <span>Minta Revisi</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Modal Minta Revisi (Alpine.js) -->
+                            <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                                <div @click.away="showRejectModal = false" class="bg-white rounded-3xl p-6 max-w-md w-full text-slate-900 shadow-2xl space-y-4">
+                                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                        <h4 class="font-black text-sm text-slate-900">Minta Perbaikan Ulang Software</h4>
+                                        <button @click="showRejectModal = false" class="text-slate-400 hover:text-slate-700 font-bold">&times;</button>
+                                    </div>
+                                    <p class="text-xs text-slate-600">Tiket <strong>{{ $rt->ticket_number }}</strong> akan dikembalikan ke status <em>Sedang Dikerjakan</em> oleh Teknisi.</p>
+                                    <form method="POST" action="{{ route('supervisor.tickets.review', $rt->id) }}" class="space-y-3">
+                                        @csrf
+                                        <input type="hidden" name="action" value="reject">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Bug / Alasan Revisi:</label>
+                                            <textarea name="supervisor_notes" required rows="3" placeholder="Contoh: Modul cetak resep masih error saat diuji di poli..." class="w-full text-xs rounded-xl border-slate-200 text-slate-900 focus:ring-rose-500 focus:border-rose-500"></textarea>
+                                        </div>
+                                        <div class="flex justify-end gap-2 pt-2">
+                                            <button @click="showRejectModal = false" type="button" class="text-xs font-bold px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200">Batal</button>
+                                            <button type="submit" class="text-xs font-bold px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-xs">Kembalikan ke Teknisi</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <!-- 4 Statistik Cards Supervisor (Responsive Grid) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 min-w-0">
             <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between min-w-0">
