@@ -76,21 +76,21 @@
                         class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 placeholder-slate-400 font-medium">
                 </div>
 
-                <!-- Unit RSUD -->
+                <!-- Unit RSUD (Searchable Dropdown) -->
                 <div class="min-w-0">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Unit RSUD</label>
-                    <select name="unit_id" class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 font-medium">
-                        <option value="">-- Semua Unit --</option>
+                    <select id="select-unit" name="unit_id" class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 font-medium">
+                        <option value="">-- Semua Unit RSUD --</option>
                         @foreach($units as $u)
                             <option value="{{ $u->id }}" {{ request('unit_id') == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- Kategori -->
+                <!-- Kategori (Searchable Dropdown) -->
                 <div class="min-w-0">
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Kategori</label>
-                    <select name="category_id" class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 font-medium">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 truncate">Kategori Kendala</label>
+                    <select id="select-category" name="category_id" class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-emerald-600 focus:border-emerald-600 font-medium">
                         <option value="">-- Semua Kategori --</option>
                         @foreach($categories as $c)
                             <option value="{{ $c->id }}" {{ request('category_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
@@ -221,4 +221,46 @@
             @endif
         </div>
     </div>
+
+    <!-- TomSelect Library untuk Dropdown Searchable Unit & Kategori -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <style>
+        .ts-control {
+            border-radius: 0.75rem !important;
+            border-color: #e2e8f0 !important;
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+            min-height: 38px !important;
+        }
+        .ts-dropdown {
+            border-radius: 0.75rem !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            font-size: 0.75rem !important;
+        }
+        .ts-dropdown .active {
+            background-color: #ecfdf5 !important;
+            color: #065f46 !important;
+            font-weight: 700 !important;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.TomSelect) {
+                new TomSelect('#select-unit', {
+                    create: false,
+                    maxItems: 1,
+                    allowEmptyOption: true,
+                    placeholder: '-- Semua Unit RSUD --',
+                });
+                new TomSelect('#select-category', {
+                    create: false,
+                    maxItems: 1,
+                    allowEmptyOption: true,
+                    placeholder: '-- Semua Kategori --',
+                });
+            }
+        });
+    </script>
 </x-app-layout>
