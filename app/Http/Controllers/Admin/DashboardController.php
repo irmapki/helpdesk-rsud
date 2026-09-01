@@ -13,11 +13,11 @@ class DashboardController extends Controller
 {
     public function index(): View
     {
-        $pendingValidationCount = Ticket::where('status', 'open')->count();
+        $pendingValidationCount = Ticket::where('validation_status', 'pending')->where('status', '!=', 'rejected')->count();
 
         $assignedCount = Ticket::where('status', 'assigned')->count();
         $inProgressCount = Ticket::where('status', 'in_progress')->count();
-        $resolvedCount = Ticket::where('status', 'resolved')->count();
+        $resolvedCount = Ticket::whereIn('status', ['resolved', 'closed'])->count();
         $totalTicketsCount = Ticket::count();
 
         // Recent incoming tickets needing triage
