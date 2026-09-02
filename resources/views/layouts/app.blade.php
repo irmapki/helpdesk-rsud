@@ -217,6 +217,7 @@
                         </h2>
                     </div>
 
+                    <div class="flex items-center space-x-2 sm:space-x-4 shrink-0 min-w-0">
                         <!-- Tombol Tes & Status Suara Notifikasi -->
                         <button onclick="testNotificationSound()" title="Klik untuk Tes Bunyi Notifikasi Lonceng" 
                             class="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 transition flex items-center gap-1.5 text-xs font-bold shadow-xs shrink-0">
