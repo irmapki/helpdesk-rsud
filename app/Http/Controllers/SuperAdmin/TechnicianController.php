@@ -37,6 +37,32 @@ class TechnicianController extends Controller
         return view('superadmin.technicians.index', compact('technicians'));
     }
 
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:30'],
+            'specialization' => ['required', 'string', 'max:255'],
+        ]);
+
+        // Generate email dummy otomatis di backend agar SuperAdmin tidak perlu input email
+        $slug = \Illuminate\Support\Str::slug($validated['name']);
+        $dummyEmail = $slug . '_' . time() . '@teknisi.rsud.local';
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $dummyEmail,
+            'phone' => $validated['phone'],
+            'specialization' => $validated['specialization'],
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role_id' => 3, // Role Teknisi
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('superadmin.technicians.index')
+            ->with('success', "Teknisi {$validated['name']} berhasil didaftarkan ke sistem.");
+    }
+
     public function edit(User $technician): View
     {
         if (!$technician->hasRole('teknisi')) {
@@ -53,6 +79,7 @@ class TechnicianController extends Controller
         }
 
         $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'specialization' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],
@@ -64,5 +91,30 @@ class TechnicianController extends Controller
 
         return redirect()->route('superadmin.technicians.index')
             ->with('success', "Data teknisi {$technician->name} berhasil diperbarui.");
+    }
+
+    public function destroy(User $technician): RedirectResponse
+    {
+        if (!$technician->hasRole('teknisi')) {
+            abort(404, 'User bukan teknisi.');
+        }
+
+        // Jangan hapus akun master teknisi posko jika itu teknisi@rsud.test
+        if ($technician->email === 'teknisi@rsud.test') {
+            return redirect()->route('superadmin.technicians.index')
+                ->with('error', 'Akun master Teknisi IT RSUD tidak dapat dihapus.');
+        }
+
+        $name = $technician->name;
+        // Pindahkan tiket aktif ke master akun teknisi jika ada
+        $masterTech = User::where('email', 'teknisi@rsud.test')->first();
+        if ($masterTech) {
+            \App\Models\Ticket::where('assigned_to', $technician->id)->update(['assigned_to' => $masterTech->id]);
+        }
+
+        $technician->delete();
+
+        return redirect()->route('superadmin.technicians.index')
+            ->with('success', "Data teknisi {$name} berhasil dihapus.");
     }
 }

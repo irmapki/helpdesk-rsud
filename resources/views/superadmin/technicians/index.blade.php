@@ -1,16 +1,30 @@
 <x-app-layout>
-    <div class="space-y-6 px-3 sm:px-0">
+    <div class="space-y-6 px-3 sm:px-0" x-data="{ showAddModal: false }">
         <!-- Top Title & Action Button -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Data Teknisi IT</h1>
-                <p class="text-xs text-slate-500 font-normal mt-1">Monitoring status penugasan, keahlian, dan beban kerja aktif seluruh teknisi IT RSUD.</p>
+                <p class="text-xs text-slate-500 font-normal mt-1">Monitoring status penugasan, nomor WhatsApp, keahlian, dan beban kerja aktif teknisi RSUD.</p>
             </div>
-            <a href="{{ route('superadmin.users.create') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02] shrink-0">
+            <button @click="showAddModal = true" type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition hover:scale-[1.02] shrink-0">
                 <span class="text-sm font-bold">+</span>
                 <span>Tambah Teknisi Baru</span>
-            </a>
+            </button>
         </div>
+
+        @if(session('success'))
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs">
+                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs">
+                <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
 
         <!-- Search & Workload Overview -->
         <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col gap-4">
@@ -75,12 +89,14 @@
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="py-3.5 px-2">
                                     <div class="flex items-center gap-2.5">
-                                        <div class="w-8 h-8 rounded-full bg-amber-700 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                        <div class="w-8 h-8 rounded-full bg-teal-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
                                             {{ $initials }}
                                         </div>
                                         <div class="min-w-0">
-                                            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[150px] sm:max-w-none">{{ $tech->name }}</div>
-                                            <div class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate max-w-[150px] sm:max-w-none">{{ $tech->email }}</div>
+                                            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[180px] sm:max-w-none">{{ $tech->name }}</div>
+                                            @if ($tech->email === 'teknisi@rsud.test')
+                                                <span class="text-[10px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">Akun Master Posko</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
@@ -91,8 +107,8 @@
                                 </td>
                                 <td class="py-3.5 px-2 whitespace-nowrap">
                                     @if ($tech->phone)
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $tech->phone) }}" target="_blank" class="text-emerald-700 hover:text-emerald-900 font-bold inline-flex items-center gap-1">
-                                            <span>{{ $tech->phone }}</span>
+                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $tech->phone) }}" target="_blank" class="text-emerald-700 hover:text-emerald-900 font-bold inline-flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                                            <span>💬 {{ $tech->phone }}</span>
                                         </a>
                                     @else
                                         <span class="text-slate-400">-</span>
@@ -114,11 +130,24 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-2 text-right whitespace-nowrap">
-                                    <a href="{{ route('superadmin.technicians.edit', $tech) }}" class="p-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-800 transition inline-flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </a>
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <a href="{{ route('superadmin.technicians.edit', $tech) }}" title="Edit Teknisi" class="p-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 transition inline-flex items-center justify-center">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </a>
+                                        @if ($tech->email !== 'teknisi@rsud.test')
+                                            <form action="{{ route('superadmin.technicians.destroy', $tech) }}" method="POST" onsubmit="return confirm('Hapus data teknisi {{ $tech->name }}?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" title="Hapus Teknisi" class="p-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 hover:text-rose-800 transition inline-flex items-center justify-center">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -131,6 +160,52 @@
             </div>
             <div class="text-[10px] text-slate-400 text-center sm:hidden italic pt-3">
                 ← Geser tabel ke samping untuk melihat detail lengkap →
+            </div>
+        </div>
+
+        <!-- Modal Tambah Teknisi Baru (Tanpa Perlu Email) -->
+        <div x-show="showAddModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+            <div @click.away="showAddModal = false" class="bg-white rounded-3xl p-6 max-w-md w-full text-slate-900 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <h3 class="font-black text-sm text-slate-900">Tambah Data Teknisi IT Baru</h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Daftarkan nama &amp; kontak WhatsApp teknisi penanggung jawab.</p>
+                    </div>
+                    <button @click="showAddModal = false" type="button" class="text-slate-400 hover:text-slate-700 font-bold text-lg">&times;</button>
+                </div>
+
+                <form method="POST" action="{{ route('superadmin.technicians.store') }}" class="space-y-3.5">
+                    @csrf
+                    <div>
+                        <label for="new_name" class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Nama Lengkap Teknisi <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="name" id="new_name" required placeholder="Contoh: Rian Prasetya"
+                            class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                    </div>
+
+                    <div>
+                        <label for="new_phone" class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Nomor WhatsApp Teknisi <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="phone" id="new_phone" required placeholder="Contoh: 081234567890"
+                            class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">Nomor ini yang akan dihubungi oleh pelapor/ruangan RSUD via WA.</span>
+                    </div>
+
+                    <div>
+                        <label for="new_specialization" class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Fokus Spesialisasi / Keahlian <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="specialization" id="new_specialization" required placeholder="Contoh: Hardware &amp; Jaringan LAN / SIMRS &amp; Database"
+                            class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                        <button @click="showAddModal = false" type="button" class="text-xs font-bold px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Batal</button>
+                        <button type="submit" class="text-xs font-bold px-5 py-2.5 rounded-xl bg-[#0f333a] hover:bg-[#092227] text-white shadow-xs transition">Simpan Data Teknisi</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

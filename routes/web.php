@@ -80,8 +80,10 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('superadmin')->name('sup
     
     // Technician Data Management
     Route::get('/technicians', [SuperAdminTechnicianController::class, 'index'])->name('technicians.index');
+    Route::post('/technicians', [SuperAdminTechnicianController::class, 'store'])->name('technicians.store');
     Route::get('/technicians/{technician}/edit', [SuperAdminTechnicianController::class, 'edit'])->name('technicians.edit');
     Route::put('/technicians/{technician}', [SuperAdminTechnicianController::class, 'update'])->name('technicians.update');
+    Route::delete('/technicians/{technician}', [SuperAdminTechnicianController::class, 'destroy'])->name('technicians.destroy');
 });
 
 /*

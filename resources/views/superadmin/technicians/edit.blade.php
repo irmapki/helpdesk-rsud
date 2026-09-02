@@ -18,10 +18,9 @@
                 @method('PUT')
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Teknisi</label>
-                    <div class="text-xs font-bold text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 break-all">
-                        {{ $technician->name }} ({{ $technician->email }})
-                    </div>
+                    <label for="name" class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Teknisi <span class="text-rose-500">*</span></label>
+                    <input type="text" name="name" id="name" value="{{ old('name', $technician->name) }}" required
+                        class="w-full text-xs rounded-xl border-slate-200 focus:ring-emerald-600 focus:border-emerald-600 font-medium" placeholder="Nama Lengkap Teknisi">
                 </div>
 
                 <div>
