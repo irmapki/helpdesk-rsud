@@ -42,16 +42,6 @@ class AdminUserSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'email' => 'teknisi2@rsud.test',
-                'name' => 'Bayu (Teknisi SIMRS)',
-                'phone' => '081234567893',
-                'password' => Hash::make('password'),
-                'role_id' => 3,
-                'unit_id' => null,
-                'specialization' => 'SIMRS, Bridging BPJS & Database',
-                'is_active' => true,
-            ],
-            [
                 'email' => 'supervisor@rsud.test',
                 'name' => 'Supervisor IT',
                 'phone' => '081234567894',
