@@ -217,7 +217,13 @@
                         </h2>
                     </div>
 
-                    <div class="flex items-center space-x-2 sm:space-x-4 shrink-0 min-w-0">
+                        <!-- Tombol Tes & Status Suara Notifikasi -->
+                        <button onclick="testNotificationSound()" title="Klik untuk Tes Bunyi Notifikasi Lonceng" 
+                            class="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 transition flex items-center gap-1.5 text-xs font-bold shadow-xs shrink-0">
+                            <span class="text-sm">🔔</span>
+                            <span class="hidden sm:inline">Tes Suara</span>
+                        </button>
+
                         <!-- Status Badge Pill -->
                         <span class="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs shrink-0">
                             <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse shrink-0"></span>
@@ -267,31 +273,51 @@
         <!-- Container Floating Toast Notifikasi Real-Time -->
         <div id="realtimeNotificationContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
-        <!-- Listener WebSocket Reverb untuk Notifikasi Real-Time -->
+        <!-- Audio Notifikasi Lonceng & Live Polling Tiket Baru -->
         <script>
-            // Audio Chime Notifikasi (Web Audio API)
+            // Generator Suara Lonceng Dua Nada (Hospital Chime - Web Audio API)
             function playNotificationSound() {
                 try {
                     const AudioCtx = window.AudioContext || window.webkitAudioContext;
                     if (!AudioCtx) return;
                     const ctx = new AudioCtx();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
                     
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
-                    
-                    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-                    
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.5);
+                    // Nada 1 (Chime D5 - 587.33 Hz)
+                    const osc1 = ctx.createOscillator();
+                    const gain1 = ctx.createGain();
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
+                    gain1.gain.setValueAtTime(0.35, ctx.currentTime);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                    osc1.connect(gain1);
+                    gain1.connect(ctx.destination);
+                    osc1.start(ctx.currentTime);
+                    osc1.stop(ctx.currentTime + 0.6);
+
+                    // Nada 2 (Chime A5 - 880 Hz - 150ms kemudian)
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+                    gain2.gain.setValueAtTime(0.4, ctx.currentTime + 0.15);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.85);
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.start(ctx.currentTime + 0.15);
+                    osc2.stop(ctx.currentTime + 0.85);
                 } catch(e) {
-                    console.log('Audio autoplay prevented:', e);
+                    console.log('Audio error/prevented:', e);
                 }
+            }
+
+            function testNotificationSound() {
+                playNotificationSound();
+                showRealtimeToast({
+                    ticket_number: 'HD-TES-NOTIF',
+                    title: 'Tes Bunyi Notifikasi Helpdesk Berhasil!',
+                    unit: 'Sistem Helpdesk RSUD',
+                    reporter: 'Uji Suara'
+                });
             }
 
             function showRealtimeToast(data) {
@@ -301,7 +327,7 @@
                 if (!container) return;
 
                 const toast = document.createElement('div');
-                toast.className = 'pointer-events-auto bg-white border-2 border-emerald-500 rounded-2xl shadow-2xl p-4 transition-all duration-300 transform translate-y-2 opacity-0 flex flex-col gap-2 min-w-0';
+                toast.className = 'pointer-events-auto bg-white border-2 border-emerald-500 rounded-3xl shadow-2xl p-4 sm:p-5 transition-all duration-300 transform translate-y-2 opacity-0 flex flex-col gap-2.5 min-w-0';
                 
                 toast.innerHTML = `
                     <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
@@ -310,24 +336,24 @@
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                             </span>
-                            <span class="text-[11px] font-black text-emerald-800 uppercase tracking-wider">Tiket Baru Masuk!</span>
+                            <span class="text-[11px] font-black text-emerald-800 uppercase tracking-wider">🔔 Tiket Baru Masuk!</span>
                         </div>
-                        <button onclick="this.closest('div.pointer-events-auto').remove()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <button onclick="this.closest('div.pointer-events-auto').remove()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition font-bold">
+                            &times;
                         </button>
                     </div>
                     <div class="space-y-1 text-xs">
-                        <div class="font-mono font-bold text-teal-800 text-xs">${data.ticket_number || 'HD-NEW'}</div>
-                        <div class="font-black text-slate-900 line-clamp-2 text-xs">${data.title || 'Pengaduan IT Baru'}</div>
+                        <div class="font-mono font-bold text-teal-800 text-xs">${data.ticket_number || data.latest_number || 'HD-BARU'}</div>
+                        <div class="font-black text-slate-900 line-clamp-2 text-xs sm:text-sm">${data.title || data.latest_title || 'Pengaduan IT Baru'}</div>
                         <div class="text-slate-500 text-[11px] flex items-center justify-between pt-1">
-                            <span>📍 ${data.unit || 'Ruangan RSUD'}</span>
-                            <span class="font-semibold text-slate-600">👤 ${data.reporter || 'Pelapor'}</span>
+                            <span>📍 ${data.unit || data.latest_unit || 'Unit RSUD'}</span>
+                            <span class="font-semibold text-slate-600">${data.reporter || data.latest_priority || 'Baru'}</span>
                         </div>
                     </div>
-                    <div class="pt-2 flex gap-2">
-                        <button onclick="window.location.reload()" class="w-full text-center py-2 px-3 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs rounded-xl shadow-xs transition">
-                            Lihat Tiket Baru ➔
-                        </button>
+                    <div class="pt-1.5 flex gap-2">
+                        <a href="${data.url || '{{ route('admin.tickets.index') }}'}" class="w-full text-center py-2 px-3 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs rounded-xl shadow-xs transition">
+                            Lihat Tiket Masuk ➔
+                        </a>
                     </div>
                 `;
 
@@ -339,30 +365,60 @@
                     toast.classList.add('translate-y-0', 'opacity-100');
                 }, 50);
 
-                // Auto Hilang setelah 10 detik
+                // Auto Hilang setelah 12 detik
                 setTimeout(() => {
                     if (toast && toast.parentElement) {
                         toast.classList.add('opacity-0', '-translate-y-2');
                         setTimeout(() => toast.remove(), 300);
                     }
-                }, 10000);
+                }, 12000);
+            }
+
+            // Live Check Polling & Echo Reverb Listener
+            let lastSeenTicketId = null;
+            let isFirstCheck = true;
+
+            function checkIncomingTickets() {
+                fetch('{{ route('tickets.live-check') }}', {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data || !data.latest_id) return;
+
+                    if (isFirstCheck) {
+                        lastSeenTicketId = data.latest_id;
+                        isFirstCheck = false;
+                        return;
+                    }
+
+                    // Jika ada tiket baru dengan ID lebih tinggi dari yang terakhir dilihat
+                    if (data.latest_id > lastSeenTicketId) {
+                        lastSeenTicketId = data.latest_id;
+                        showRealtimeToast(data);
+                    }
+                })
+                .catch(err => {
+                    // Fail silently
+                });
             }
 
             document.addEventListener('DOMContentLoaded', () => {
-                if (window.Echo) {
-                    console.log('✅ Laravel Echo Reverb siap mendengarkan tickets-channel');
+                // Initial check
+                checkIncomingTickets();
 
+                // Poll setiap 7 detik
+                setInterval(checkIncomingTickets, 7000);
+
+                // Listener WebSocket Reverb jika aktif
+                if (window.Echo) {
                     window.Echo.channel('tickets-channel')
                         .listen('.ticket.created', (data) => {
-                            console.log('🔔 Ada Tiket Baru Masuk:', data);
                             showRealtimeToast(data);
                         })
                         .listen('TicketCreatedEvent', (data) => {
-                            console.log('🔔 Ada Tiket Baru Masuk:', data);
                             showRealtimeToast(data);
                         });
-                } else {
-                    console.warn('⚠️ window.Echo belum terdeteksi.');
                 }
             });
         </script>

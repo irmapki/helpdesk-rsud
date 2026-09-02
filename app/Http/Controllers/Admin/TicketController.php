@@ -231,4 +231,27 @@ class TicketController extends Controller
 
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} telah ditutup.");
     }
+
+    /**
+     * API Polling untuk Notifikasi Suara & Real-time Live Check Tiket Baru.
+     */
+    public function checkNewTickets(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $latest = Ticket::with(['unit', 'priority'])->latest()->first();
+        $totalOpen = Ticket::where('status', 'open')->count();
+        $totalAssigned = Ticket::where('status', 'assigned')->count();
+        $totalReview = Ticket::where('status', 'pending_review')->count();
+
+        return response()->json([
+            'latest_id' => $latest?->id,
+            'latest_number' => $latest?->ticket_number,
+            'latest_title' => $latest?->title,
+            'latest_unit' => $latest?->unit?->name,
+            'latest_priority' => $latest?->priority?->name,
+            'total_open' => $totalOpen,
+            'total_assigned' => $totalAssigned,
+            'total_review' => $totalReview,
+            'url' => $latest ? route('admin.tickets.show', $latest->id) : '#',
+        ]);
+    }
 }
