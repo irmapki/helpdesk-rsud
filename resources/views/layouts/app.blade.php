@@ -217,7 +217,7 @@
                         <!-- Tombol Tes & Status Suara Notifikasi -->
                         <button onclick="testNotificationSound()" title="Klik untuk Tes Bunyi Notifikasi Lonceng" 
                             class="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 transition flex items-center gap-1.5 text-xs font-bold shadow-xs shrink-0 cursor-pointer">
-                            <span class="text-sm">🔔</span>
+                            <svg class="w-4 h-4 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                             <span class="hidden sm:inline">Tes Suara</span>
                         </button>
 
@@ -331,7 +331,10 @@
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                             </span>
-                            <span class="text-[11px] font-black text-emerald-800 uppercase tracking-wider">🔔 Tiket Baru Masuk!</span>
+                            <span class="text-[11px] font-black text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <span>Tiket Baru Masuk!</span>
+                            </span>
                         </div>
                         <button onclick="this.closest('div.pointer-events-auto').remove()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition font-bold">
                             &times;
@@ -341,13 +344,14 @@
                         <div class="font-mono font-bold text-teal-800 text-xs">${data.ticket_number || data.latest_number || 'HD-BARU'}</div>
                         <div class="font-black text-slate-900 line-clamp-2 text-xs sm:text-sm">${data.title || data.latest_title || 'Pengaduan IT Baru'}</div>
                         <div class="text-slate-500 text-[11px] flex items-center justify-between pt-1">
-                            <span>📍 ${data.unit || data.latest_unit || 'Unit RSUD'}</span>
+                            <span class="flex items-center gap-1"><svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>${data.unit || data.latest_unit || 'Unit RSUD'}</span>
                             <span class="font-semibold text-slate-600">${data.reporter || data.latest_priority || 'Baru'}</span>
                         </div>
                     </div>
                     <div class="pt-1.5 flex gap-2">
-                        <a href="${data.url || '{{ route('admin.tickets.index') }}'}" class="w-full text-center py-2 px-3 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs rounded-xl shadow-xs transition">
-                            Lihat Tiket Masuk ➔
+                        <a href="${data.url || '{{ route('admin.tickets.index') }}'}" class="w-full text-center py-2 px-3 bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5">
+                            <span>Lihat Tiket Masuk</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     </div>
                 `;

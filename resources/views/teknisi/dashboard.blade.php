@@ -11,8 +11,9 @@
                 </p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xs font-bold px-3 py-1.5 rounded-xl bg-teal-50 text-teal-900 border border-teal-200">
-                    🟢 Status: Siap Bertugas
+                <span class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-teal-50 text-teal-900 border border-teal-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Status: Siap Bertugas</span>
                 </span>
             </div>
         </div>
@@ -84,24 +85,27 @@
                 <!-- Main Scope Switcher (Tiket Saya / Belum Diambil / Tiket Tim) -->
                 <div class="flex flex-wrap items-center gap-2 pb-3 border-b border-slate-100">
                     <a href="{{ route('teknisi.dashboard', ['scope' => 'my']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? 'my') === 'my' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                        <span>📌 Tiket Saya</span>
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? 'my') === 'my' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span>Tiket Saya</span>
                         <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? 'my') === 'my' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
                             {{ $myActiveCount ?? 0 }}
                         </span>
                     </a>
 
                     <a href="{{ route('teknisi.dashboard', ['scope' => 'available']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? '') === 'available' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                        <span>📥 Belum Diambil</span>
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'available' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        <span>Belum Diambil</span>
                         <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? '') === 'available' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900' }}">
                             {{ $availableCount ?? 0 }}
                         </span>
                     </a>
 
                     <a href="{{ route('teknisi.dashboard', ['scope' => 'all']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? '') === 'all' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                        <span>👥 Tiket Tim Lain</span>
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'all' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span>Tiket Tim Lain</span>
                         <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? '') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
                             {{ $teamTicketsCount ?? 0 }}
                         </span>
@@ -153,12 +157,19 @@
                             </div>
                             <h3 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1 break-words">{{ $t->title }}</h3>
                             <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 font-medium gap-1">
-                                <span>📍 {{ $t->unit->name ?? 'Unit Umum' }} &bull; {{ $t->category->name ?? 'Kategori' }}</span>
-                                <span class="text-[11px] text-slate-400">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    {{ $t->unit->name ?? 'Unit Umum' }} &bull; {{ $t->category->name ?? 'Kategori' }}
+                                </span>
+                                <span class="text-[11px] flex items-center gap-1 text-slate-500">
                                     @if($t->technician)
-                                        👤 Teknisi: <strong class="text-slate-700">{{ $t->technician->name }}</strong>
+                                        <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        Teknisi: <strong class="text-slate-700">{{ $t->technician->name }}</strong>
                                     @else
-                                        <span class="text-amber-600 font-bold">⚠️ Belum Ada Teknisi</span>
+                                        <span class="inline-flex items-center gap-1 text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                            <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Belum Ada Teknisi
+                                        </span>
                                     @endif
                                 </span>
                             </div>
@@ -275,14 +286,20 @@
                         @endphp
                         @if($selectedTicket->status === 'in_progress' && $latestRevisionLog && str_contains($latestRevisionLog->note, 'Supervisor meminta perbaikan'))
                             <div class="p-3.5 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-900 font-medium">
-                                <span class="text-[10px] text-rose-800 font-bold uppercase tracking-wider block mb-1">⚠️ Perlu Revisi / Perbaikan Ulang Software</span>
+                                <div class="flex items-center gap-1.5 text-rose-800 font-bold uppercase tracking-wider mb-1">
+                                    <svg class="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    <span class="text-[10px]">Perlu Revisi / Perbaikan Ulang Software</span>
+                                </div>
                                 <p class="text-rose-950 font-bold leading-relaxed">{{ $latestRevisionLog->note }}</p>
                             </div>
                         @endif
 
                         @if ($selectedTicket->status === 'pending_review')
                             <div class="p-3.5 bg-purple-50 rounded-xl border border-purple-200 text-xs text-purple-900 font-medium">
-                                <span class="text-[10px] text-purple-800 font-bold uppercase tracking-wider block mb-1">Status: Menunggu Review Supervisor</span>
+                                <div class="flex items-center gap-1.5 text-purple-800 font-bold uppercase tracking-wider mb-1">
+                                    <svg class="w-4 h-4 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="text-[10px]">Status: Menunggu Review Supervisor</span>
+                                </div>
                                 <p class="text-purple-950 font-semibold">Perbaikan software telah diajukan dan saat ini sedang menunggu review / verifikasi fungsi dari Supervisor IT.</p>
                             </div>
                         @endif
@@ -296,7 +313,7 @@
                                 <form action="{{ route('teknisi.tickets.claim', $selectedTicket->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
-                                        <span>🚀</span>
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                         <span>Ambil &amp; Kerjakan Tiket Ini</span>
                                     </button>
                                 </form>
@@ -332,8 +349,9 @@
                                         class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-medium focus:border-teal-700 focus:ring-teal-700 placeholder-slate-400">{{ old('resolution_notes', $selectedTicket->resolution_notes) }}</textarea>
                                 </div>
 
-                                <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition">
-                                    Simpan Update Tiket
+                                <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>Simpan Update Tiket</span>
                                 </button>
                             </form>
                         @endif
