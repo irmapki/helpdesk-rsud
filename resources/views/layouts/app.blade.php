@@ -14,7 +14,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-[#f8fafc] text-slate-800 h-full overflow-x-hidden">
+    <body class="font-sans antialiased bg-[#f8fafc] text-slate-800 h-full overflow-hidden">
         <!-- Menggunakan Alpine.js dengan state sidebarOpen (true = terbuka secara default) -->
         <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden relative w-full">
 
@@ -30,16 +30,16 @@
                 class="fixed inset-0 bg-slate-900/60 z-40 md:hidden backdrop-blur-xs">
             </div>
 
-            <!-- SIDEBAR UTAMA KIRI (Desain Smooth Slide & Push Content) -->
-            <aside :class="sidebarOpen ? 'translate-x-0 opacity-100' : '-translate-x-full md:-ml-72 opacity-0 md:opacity-100'"
-                class="fixed md:static inset-y-0 left-0 z-50 flex flex-col justify-between flex-shrink-0 w-72 bg-gradient-to-br from-teal-800 via-emerald-800 to-slate-950 text-white shadow-2xl md:shadow-none transition-all duration-300 ease-in-out border-r border-emerald-900/30">
+            <!-- SIDEBAR UTAMA KIRI (Desain Gemini Style: Smooth Slide & Push Content) -->
+            <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:w-0 md:opacity-0 md:overflow-hidden'"
+                class="fixed md:relative inset-y-0 left-0 z-50 flex flex-col justify-between flex-shrink-0 w-72 bg-gradient-to-br from-teal-800 via-emerald-800 to-slate-950 text-white shadow-2xl md:shadow-none transition-all duration-300 ease-in-out border-r border-emerald-900/30">
 
                 {{-- Dekorasi glow samar khas --}}
                 <div class="pointer-events-none absolute -top-16 -right-16 w-64 h-64 bg-teal-400/10 rounded-full blur-2xl"></div>
                 <div class="pointer-events-none absolute -bottom-24 -left-10 w-72 h-72 bg-emerald-400/10 rounded-full blur-2xl"></div>
 
-                <div class="relative z-10 flex-1 overflow-y-auto overflow-x-hidden">
-                    <!-- Logo / Header Sidebar -->
+                <div class="relative z-10 flex-1 overflow-y-auto overflow-x-hidden w-72">
+                    <!-- Logo / Header Sidebar + Tombol Garis 3 di Dalam Sidebar -->
                     <div class="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between">
                         <div class="flex items-center space-x-3 min-w-0">
                             <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white flex items-center justify-center p-1 shadow-md shadow-black/20 overflow-hidden shrink-0">
@@ -50,9 +50,9 @@
                                 <p class="text-[10px] text-teal-300 font-bold uppercase tracking-wider mt-0.5 truncate">IT HELPDESK &amp; TICKETING</p>
                             </div>
                         </div>
-                        <!-- Tombol Close Sidebar Khusus Mobile/Tablet -->
-                        <button @click="sidebarOpen = false" class="text-emerald-200 hover:text-white p-2 rounded-xl bg-white/10 shrink-0 md:hidden">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <!-- Tombol Garis 3 di Dalam Sidebar (Untuk Menutup Sidebar) -->
+                        <button @click="sidebarOpen = !sidebarOpen" class="text-emerald-100 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition shrink-0 cursor-pointer border border-white/15 shadow-xs" title="Tutup Sidebar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                     </div>
 
@@ -176,10 +176,10 @@
                 </div>
 
                 <!-- Tombol Keluar di Bawah -->
-                <div class="relative z-10 p-4 border-t border-white/10">
+                <div class="relative z-10 p-4 border-t border-white/10 w-72">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full py-2.5 px-4 text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/15 rounded-2xl transition flex items-center justify-center space-x-2 shadow-xs">
+                        <button type="submit" class="w-full py-2.5 px-4 text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/15 rounded-2xl transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                             <span class="truncate">Keluar Sistem</span>
                         </button>
@@ -193,13 +193,10 @@
                 <!-- TOP HEADER -->
                 <header class="bg-white shadow-xs z-20 flex items-center justify-between h-16 sm:h-20 px-4 sm:px-8 border-b border-slate-200/80 flex-shrink-0 gap-2">
                     <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <!-- Tombol Hamburger Buka-Tutup Sidebar (Smooth Toggle PC & Mobile) -->
-                        <button @click="sidebarOpen = !sidebarOpen" class="p-2.5 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 hover:text-emerald-800 transition shrink-0 cursor-pointer shadow-xs active:scale-95">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
+                        <!-- Tombol Garis 3 Melayang (Muncul di Kiri Atas Navbar ketika Sidebar Ditutup - Style Gemini) -->
+                        <button x-show="!sidebarOpen" @click="sidebarOpen = !sidebarOpen" class="text-slate-700 hover:text-emerald-800 p-2 rounded-xl bg-slate-100 hover:bg-emerald-50 transition shrink-0 cursor-pointer border border-slate-200 shadow-xs" title="Buka Sidebar" x-cloak>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
-
                         <h2 class="text-xs sm:text-base font-black text-slate-900 truncate">
                             @if(request()->routeIs('admin.*'))
                                 Dashboard Admin RSUD (Triage &amp; Dispatch)
