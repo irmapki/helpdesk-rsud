@@ -114,6 +114,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')->group(function () {
     Route::get('/dashboard', [TeknisiController::class, 'index'])->name('dashboard');
     Route::post('/tickets/{ticket}/status', [TeknisiController::class, 'updateStatus'])->name('status.update');
+    Route::post('/tickets/{ticket}/claim', [TeknisiController::class, 'claimTicket'])->name('tickets.claim');
     Route::post('/tickets/{ticket}/notes', [TeknisiController::class, 'addNote'])->name('notes.store');
     Route::get('/riwayat', [TeknisiController::class, 'riwayat'])->name('riwayat');
 });

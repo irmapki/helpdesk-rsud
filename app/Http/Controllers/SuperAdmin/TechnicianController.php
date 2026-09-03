@@ -41,26 +41,24 @@ class TechnicianController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['nullable', 'string', 'min:6'],
             'phone' => ['required', 'string', 'max:30'],
             'specialization' => ['required', 'string', 'max:255'],
         ]);
 
-        // Generate email dummy otomatis di backend agar SuperAdmin tidak perlu input email
-        $slug = \Illuminate\Support\Str::slug($validated['name']);
-        $dummyEmail = $slug . '_' . time() . '@teknisi.rsud.local';
-
         User::create([
             'name' => $validated['name'],
-            'email' => $dummyEmail,
+            'email' => $validated['email'],
             'phone' => $validated['phone'],
             'specialization' => $validated['specialization'],
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password'] ?: 'password'),
             'role_id' => 3, // Role Teknisi
             'is_active' => true,
         ]);
 
         return redirect()->route('superadmin.technicians.index')
-            ->with('success', "Teknisi {$validated['name']} berhasil didaftarkan ke sistem.");
+            ->with('success', "Akun teknisi {$validated['name']} ({$validated['email']}) berhasil didaftarkan.");
     }
 
     public function edit(User $technician): View
@@ -80,17 +78,29 @@ class TechnicianController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $technician->id],
+            'password' => ['nullable', 'string', 'min:6'],
             'phone' => ['nullable', 'string', 'max:30'],
             'specialization' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'specialization' => $validated['specialization'],
+            'is_active' => $request->has('is_active'),
+        ];
 
-        $technician->update($validated);
+        if (!empty($validated['password'])) {
+            $updateData['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        }
+
+        $technician->update($updateData);
 
         return redirect()->route('superadmin.technicians.index')
-            ->with('success', "Data teknisi {$technician->name} berhasil diperbarui.");
+            ->with('success', "Data akun teknisi {$technician->name} berhasil diperbarui.");
     }
 
     public function destroy(User $technician): RedirectResponse
@@ -99,18 +109,9 @@ class TechnicianController extends Controller
             abort(404, 'User bukan teknisi.');
         }
 
-        // Jangan hapus akun master teknisi posko jika itu teknisi@rsud.test
-        if ($technician->email === 'teknisi@rsud.test') {
-            return redirect()->route('superadmin.technicians.index')
-                ->with('error', 'Akun master Teknisi IT RSUD tidak dapat dihapus.');
-        }
-
         $name = $technician->name;
-        // Pindahkan tiket aktif ke master akun teknisi jika ada
-        $masterTech = User::where('email', 'teknisi@rsud.test')->first();
-        if ($masterTech) {
-            \App\Models\Ticket::where('assigned_to', $technician->id)->update(['assigned_to' => $masterTech->id]);
-        }
+        // Hapus penugasan tiket atau lepas penugasan
+        \App\Models\Ticket::where('assigned_to', $technician->id)->update(['assigned_to' => null, 'status' => 'open']);
 
         $technician->delete();
 

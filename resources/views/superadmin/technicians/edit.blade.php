@@ -23,6 +23,20 @@
                         class="w-full text-xs rounded-xl border-slate-200 focus:ring-emerald-600 focus:border-emerald-600 font-medium" placeholder="Nama Lengkap Teknisi">
                 </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="email" class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Login <span class="text-rose-500">*</span></label>
+                        <input type="email" name="email" id="email" value="{{ old('email', $technician->email) }}" required
+                            class="w-full text-xs rounded-xl border-slate-200 focus:ring-emerald-600 focus:border-emerald-600 font-medium" placeholder="teknisi@rsud.test">
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-xs font-bold text-slate-700 uppercase mb-1">Ganti Password (Opsional)</label>
+                        <input type="password" name="password" id="password"
+                            class="w-full text-xs rounded-xl border-slate-200 focus:ring-emerald-600 focus:border-emerald-600 font-medium" placeholder="Kosongkan jika tidak diubah">
+                    </div>
+                </div>
+
                 <div>
                     <label for="phone" class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor WhatsApp Teknisi</label>
                     <input type="text" name="phone" id="phone" value="{{ old('phone', $technician->phone) }}"

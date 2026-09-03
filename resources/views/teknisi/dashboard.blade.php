@@ -1,26 +1,35 @@
 <x-app-layout>
     <div class="space-y-6 max-w-full overflow-x-hidden pb-10">
-        <!-- Top Title -->
-        <div class="min-w-0">
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight break-words">
-                Tiket Penanganan Kendala (Teknisi IT)
-            </h1>
-            <p class="text-xs text-slate-500 font-normal mt-1 break-words">Daftar tiket pengaduan aktif yang ditugaskan kepada Anda oleh Tim Dispatch Helpdesk</p>
+        <!-- Top Title & Identitas Teknisi -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+            <div class="min-w-0">
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight break-words">
+                    Dashboard Penanganan Kendala IT
+                </h1>
+                <p class="text-xs text-slate-500 font-normal mt-1 break-words">
+                    Selamat bertugas, <strong class="text-slate-800">{{ Auth::user()->name }}</strong> &bull; Spesialisasi: <span class="text-teal-700 font-bold">{{ Auth::user()->specialization ?: 'Hardware & Jaringan' }}</span>
+                </p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xs font-bold px-3 py-1.5 rounded-xl bg-teal-50 text-teal-900 border border-teal-200">
+                    🟢 Status: Siap Bertugas
+                </span>
+            </div>
         </div>
 
-        <!-- 4 Statistik Cards Teknisi -->
+        <!-- 4 Statistik Cards Teknisi Model 1 -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <!-- Card 1: Baru Ditugaskan -->
+            <!-- Card 1: Tiket Aktif Saya -->
             <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between min-w-0">
-                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center shrink-0">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                 </div>
                 <div class="mt-3 min-w-0">
-                    <span class="text-[11px] sm:text-xs font-semibold text-slate-600 block truncate">Baru Ditugaskan</span>
-                    <div class="text-xl sm:text-3xl font-black text-slate-900 mt-0.5 sm:mt-1">{{ $assignedCount ?? 0 }}</div>
-                    <span class="text-[10px] sm:text-xs font-bold text-rose-500 mt-1 sm:mt-2 inline-block">Belum dikerjakan</span>
+                    <span class="text-[11px] sm:text-xs font-semibold text-slate-600 block truncate">Tiket Aktif Saya</span>
+                    <div class="text-xl sm:text-3xl font-black text-teal-900 mt-0.5 sm:mt-1">{{ $myActiveCount ?? 0 }}</div>
+                    <span class="text-[10px] sm:text-xs font-bold text-teal-700 mt-1 sm:mt-2 inline-block">Tanggung jawab saya</span>
                 </div>
             </div>
 
@@ -33,12 +42,26 @@
                 </div>
                 <div class="mt-3 min-w-0">
                     <span class="text-[11px] sm:text-xs font-semibold text-slate-600 block truncate">Sedang Dikerjakan</span>
-                    <div class="text-xl sm:text-3xl font-black text-sky-700 mt-0.5 sm:mt-1">{{ $inProgressCount ?? 0 }}</div>
-                    <span class="text-[10px] sm:text-xs font-bold text-sky-600 mt-1 sm:mt-2 inline-block">In progress</span>
+                    <div class="text-xl sm:text-3xl font-black text-sky-700 mt-0.5 sm:mt-1">{{ $myInProgressCount ?? 0 }}</div>
+                    <span class="text-[10px] sm:text-xs font-bold text-sky-600 mt-1 sm:mt-2 inline-block">Dalam proses</span>
                 </div>
             </div>
 
-            <!-- Card 3: Selesai Bulan Ini -->
+            <!-- Card 3: Belum Diambil Siapa Pun -->
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between min-w-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="mt-3 min-w-0">
+                    <span class="text-[11px] sm:text-xs font-semibold text-slate-600 block truncate">Tiket Belum Diambil</span>
+                    <div class="text-xl sm:text-3xl font-black text-amber-600 mt-0.5 sm:mt-1">{{ $availableCount ?? 0 }}</div>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-600 mt-1 sm:mt-2 inline-block">Siap Anda ambil</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Selesai Bulan Ini -->
             <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between min-w-0">
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,21 +71,7 @@
                 <div class="mt-3 min-w-0">
                     <span class="text-[11px] sm:text-xs font-semibold text-slate-600 block truncate">Selesai Bulan Ini</span>
                     <div class="text-xl sm:text-3xl font-black text-emerald-600 mt-0.5 sm:mt-1">{{ $resolvedThisMonth ?? 0 }}</div>
-                    <span class="text-[10px] sm:text-xs font-bold text-emerald-600 mt-1 sm:mt-2 inline-block">Tiket tuntas</span>
-                </div>
-            </div>
-
-            <!-- Card 4: Mendekati SLA -->
-            <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between min-w-0">
-                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div class="mt-3 min-w-0">
-                    <span class="text-[11px] sm:text-xs font-semibold text-slate-600 block truncate">Mendekati SLA</span>
-                    <div class="text-xl sm:text-3xl font-black text-amber-500 mt-0.5 sm:mt-1">{{ $approachingSlaCount ?? 0 }}</div>
-                    <span class="text-[10px] sm:text-xs font-bold text-amber-600 mt-1 sm:mt-2 inline-block">Prioritas</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-emerald-600 mt-1 sm:mt-2 inline-block">Kinerja pribadi</span>
                 </div>
             </div>
         </div>
@@ -71,28 +80,54 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start min-w-0">
             <!-- Kolom Kiri: Daftar Tiket (7 cols) -->
             <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 min-w-0">
-                    <div class="min-w-0">
-                        <h2 class="text-base font-bold text-slate-900 break-words">Daftar Tiket Ditugaskan</h2>
-                        <p class="text-xs text-slate-400 mt-0.5 break-words">Tiket kendala yang dialokasikan Admin kepada Anda</p>
-                    </div>
+                
+                <!-- Main Scope Switcher (Tiket Saya / Belum Diambil / Tiket Tim) -->
+                <div class="flex flex-wrap items-center gap-2 pb-3 border-b border-slate-100">
+                    <a href="{{ route('teknisi.dashboard', ['scope' => 'my']) }}"
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? 'my') === 'my' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        <span>📌 Tiket Saya</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? 'my') === 'my' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
+                            {{ $myActiveCount ?? 0 }}
+                        </span>
+                    </a>
 
-                    <!-- Filter Tab -->
-                    <div class="grid grid-cols-3 sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
-                        <a href="{{ route('teknisi.dashboard', ['tab' => 'all']) }}"
-                            class="text-center px-2 py-1.5 sm:py-1 text-[10px] sm:text-xs font-bold rounded-lg transition {{ ($tab ?? 'all') === 'all' ? 'bg-[#0f333a] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
-                            Semua ({{ $totalMyTickets ?? 0 }})
-                        </a>
-                        <a href="{{ route('teknisi.dashboard', ['tab' => 'assigned']) }}"
-                            class="text-center px-2 py-1.5 sm:py-1 text-[10px] sm:text-xs font-bold rounded-lg transition {{ ($tab ?? '') === 'assigned' ? 'bg-[#0f333a] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
-                            Assigned ({{ $assignedCount ?? 0 }})
-                        </a>
-                        <a href="{{ route('teknisi.dashboard', ['tab' => 'in_progress']) }}"
-                            class="text-center px-2 py-1.5 sm:py-1 text-[10px] sm:text-xs font-bold rounded-lg transition {{ ($tab ?? '') === 'in_progress' ? 'bg-[#0f333a] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
-                            In Progress ({{ $inProgressCount ?? 0 }})
-                        </a>
-                    </div>
+                    <a href="{{ route('teknisi.dashboard', ['scope' => 'available']) }}"
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? '') === 'available' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        <span>📥 Belum Diambil</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? '') === 'available' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900' }}">
+                            {{ $availableCount ?? 0 }}
+                        </span>
+                    </a>
+
+                    <a href="{{ route('teknisi.dashboard', ['scope' => 'all']) }}"
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? '') === 'all' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        <span>👥 Tiket Tim Lain</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? '') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
+                            {{ $teamTicketsCount ?? 0 }}
+                        </span>
+                    </a>
                 </div>
+
+                @if(($scope ?? 'my') === 'my')
+                    <!-- Sub-Filter Khusus Tiket Saya -->
+                    <div class="flex items-center justify-between gap-2 pt-1 pb-2">
+                        <span class="text-xs font-bold text-slate-700">Filter Status:</span>
+                        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                            <a href="{{ route('teknisi.dashboard', ['scope' => 'my', 'tab' => 'all']) }}"
+                                class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition {{ ($tab ?? 'all') === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
+                                Semua ({{ $totalMyTickets ?? 0 }})
+                            </a>
+                            <a href="{{ route('teknisi.dashboard', ['scope' => 'my', 'tab' => 'assigned']) }}"
+                                class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition {{ ($tab ?? '') === 'assigned' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
+                                Assigned ({{ $myAssignedCount ?? 0 }})
+                            </a>
+                            <a href="{{ route('teknisi.dashboard', ['scope' => 'my', 'tab' => 'in_progress']) }}"
+                                class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition {{ ($tab ?? '') === 'in_progress' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
+                                In Progress ({{ $myInProgressCount ?? 0 }})
+                            </a>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- List Tiket Dinamis -->
                 <div class="space-y-3 min-w-0">
@@ -100,7 +135,7 @@
                         @php
                             $isSelected = isset($selectedTicket) && $selectedTicket->id === $t->id;
                         @endphp
-                        <a href="{{ route('teknisi.dashboard', ['ticket_id' => $t->id, 'tab' => $tab ?? 'all']) }}"
+                        <a href="{{ route('teknisi.dashboard', ['ticket_id' => $t->id, 'scope' => $scope ?? 'my', 'tab' => $tab ?? 'all']) }}"
                             class="block border-2 rounded-2xl p-4 transition shadow-xs min-w-0 {{ $isSelected ? 'border-teal-700 bg-teal-50/30' : 'border-slate-200 bg-white hover:border-slate-300' }}">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-1.5 min-w-0">
                                 <div class="flex items-center gap-2 min-w-0">
@@ -117,19 +152,40 @@
                                 </div>
                             </div>
                             <h3 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1 break-words">{{ $t->title }}</h3>
-                            <p class="text-xs text-slate-500 font-medium break-words">
-                                {{ $t->unit->name ?? 'Unit Umum' }} &bull; {{ $t->category->name ?? 'Kategori' }} &bull; {{ $t->created_at->diffForHumans() }}
-                            </p>
+                            <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 font-medium gap-1">
+                                <span>📍 {{ $t->unit->name ?? 'Unit Umum' }} &bull; {{ $t->category->name ?? 'Kategori' }}</span>
+                                <span class="text-[11px] text-slate-400">
+                                    @if($t->technician)
+                                        👤 Teknisi: <strong class="text-slate-700">{{ $t->technician->name }}</strong>
+                                    @else
+                                        <span class="text-amber-600 font-bold">⚠️ Belum Ada Teknisi</span>
+                                    @endif
+                                </span>
+                            </div>
                         </a>
                     @empty
                         <div class="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-3 shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mx-auto mb-3 shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
-                            <p class="text-xs font-bold text-slate-700 px-4">Tidak ada tiket penanganan pada tab ini.</p>
-                            <p class="text-[11px] text-slate-400 mt-0.5 px-4">Tiket yang ditugaskan oleh Admin akan muncul di sini secara otomatis.</p>
+                            <p class="text-xs font-bold text-slate-700 px-4">
+                                @if(($scope ?? 'my') === 'available')
+                                    Tidak ada tiket yang menunggu penanganan saat ini.
+                                @elseif(($scope ?? 'my') === 'all')
+                                    Tidak ada tiket tim lainnya yang sedang aktif.
+                                @else
+                                    Tidak ada tiket penanganan pada tab ini.
+                                @endif
+                            </p>
+                            <p class="text-[11px] text-slate-400 mt-0.5 px-4">
+                                @if(($scope ?? 'my') === 'available')
+                                    Semua tiket baru sudah dialokasikan ke teknisi.
+                                @else
+                                    Tiket yang ditugaskan kepada Anda akan muncul di sini.
+                                @endif
+                            </p>
                         </div>
                     @endforelse
                 </div>
@@ -195,9 +251,10 @@
                         <div class="space-y-2 text-xs bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Pelapor:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->reporter_name }}</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Kontak HP/WA:</span> <span class="font-bold text-emerald-700 text-right truncate">{{ $selectedTicket->reporter_contact }}</span></div>
-                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Unit:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->unit->name ?? '-' }}</span></div>
+                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Unit RSUD:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->unit->name ?? '-' }}</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Kategori:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->category->name ?? '-' }}</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Prioritas:</span> <span class="font-bold text-rose-600 text-right">{{ $selectedTicket->priority->name ?? 'Normal' }} (SLA: {{ $selectedTicket->priority->sla_hours ?? '-' }} jam)</span></div>
+                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Teknisi Bertugas:</span> <span class="font-bold text-teal-800 text-right">{{ $selectedTicket->technician->name ?? 'Belum Ditugaskan' }}</span></div>
                         </div>
 
                         @if ($selectedTicket->rating)
@@ -230,76 +287,94 @@
                             </div>
                         @endif
 
-                        <!-- Form Aksi / Ubah Status & Catatan -->
-                        <form action="{{ route('teknisi.status.update', $selectedTicket->id) }}" method="POST" class="space-y-3 pt-2 min-w-0">
-                            @csrf
-                            <div class="min-w-0">
-                                <label for="status" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                    Update Status Penanganan
-                                </label>
-                                <select name="status" id="status" required class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-bold focus:border-teal-700 focus:ring-teal-700">
-                                    <option value="in_progress" {{ in_array($selectedTicket->status, ['assigned', 'in_progress']) ? 'selected' : '' }}>
-                                        Sedang Dikerjakan (In Progress)
-                                    </option>
-                                    <option value="resolved" {{ in_array($selectedTicket->status, ['resolved', 'pending_review']) ? 'selected' : '' }}>
-                                        @if($selectedTicket->requiresReview())
-                                            Selesai Dikerjakan (Ajukan Review ke Supervisor)
-                                        @else
-                                            Selesai Ditangani (Resolved)
-                                        @endif
-                                    </option>
-                                </select>
+                        <!-- Aksi Teknisi: Ambil Tiket ATAU Update Status -->
+                        @if ($selectedTicket->assigned_to !== Auth::id())
+                            <!-- Jika tiket belum di-assign atau milik orang lain dan ingin diambil -->
+                            <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2.5">
+                                <span class="text-xs font-black text-emerald-900 block">Tiket ini belum berada di bawah tanggung jawab Anda.</span>
+                                <p class="text-[11px] text-emerald-700">Anda dapat mengambil tiket ini untuk mulai mengerjakannya dan memasukkannya ke daftar Tiket Saya.</p>
+                                <form action="{{ route('teknisi.tickets.claim', $selectedTicket->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+                                        <span>🚀</span>
+                                        <span>Ambil &amp; Kerjakan Tiket Ini</span>
+                                    </button>
+                                </form>
                             </div>
-
-                            <div class="min-w-0">
-                                <label for="resolution_notes" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                    Catatan / Solusi Teknis Perbaikan
-                                </label>
-                                <textarea name="resolution_notes" id="resolution_notes" rows="3" required
-                                    placeholder="Jelaskan tindakan yang dilakukan (misal: penggantian kabel LAN, konfigurasi IP, perbaikan printer)..."
-                                    class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-medium focus:border-teal-700 focus:ring-teal-700 placeholder-slate-400">{{ old('resolution_notes', $selectedTicket->resolution_notes) }}</textarea>
-                            </div>
-
-                            <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition">
-                                Simpan Update Tiket
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Log Aktivitas & Catatan Tambahan -->
-                    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
-                        <h3 class="font-bold text-sm text-slate-900 break-words">Catatan Tambahan Teknisi</h3>
-
-                        <form action="{{ route('teknisi.notes.store', $selectedTicket->id) }}" method="POST" class="space-y-2 min-w-0">
-                            @csrf
-                            <textarea name="note" rows="2" required placeholder="Tulis progres atau kendala teknis tambahan..."
-                                class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-medium focus:border-teal-700 focus:ring-teal-700 placeholder-slate-400"></textarea>
-                            <button type="submit" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs py-2 rounded-xl transition">
-                                Tambah Catatan
-                            </button>
-                        </form>
-
-                        <div class="space-y-2 pt-2 border-t border-slate-100 min-w-0">
-                            @forelse ($selectedTicket->notes as $note)
-                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs min-w-0">
-                                    <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1 gap-2 min-w-0">
-                                        <span class="font-bold text-slate-800 truncate">{{ $note->user->name ?? 'Teknisi' }}</span>
-                                        <span class="shrink-0">{{ $note->created_at->format('d/m/Y H:i') }}</span>
-                                    </div>
-                                    <p class="text-slate-700 break-words">{{ $note->note }}</p>
+                        @else
+                            <!-- Jika tiket ditugaskan ke saya: Form Ubah Status -->
+                            <form action="{{ route('teknisi.status.update', $selectedTicket->id) }}" method="POST" class="space-y-3 pt-2 min-w-0">
+                                @csrf
+                                <div class="min-w-0">
+                                    <label for="status" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                        Update Status Penanganan
+                                    </label>
+                                    <select name="status" id="status" required class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-bold focus:border-teal-700 focus:ring-teal-700">
+                                        <option value="in_progress" {{ in_array($selectedTicket->status, ['assigned', 'in_progress']) ? 'selected' : '' }}>
+                                            Sedang Dikerjakan (In Progress)
+                                        </option>
+                                        <option value="resolved" {{ in_array($selectedTicket->status, ['resolved', 'pending_review']) ? 'selected' : '' }}>
+                                            @if($selectedTicket->requiresReview())
+                                                Selesai Dikerjakan (Ajukan Review ke Supervisor)
+                                            @else
+                                                Selesai Ditangani (Resolved)
+                                            @endif
+                                        </option>
+                                    </select>
                                 </div>
-                            @empty
-                                <p class="text-xs text-slate-400 text-center py-2">Belum ada catatan aktivitas.</p>
-                            @endforelse
-                        </div>
+
+                                <div class="min-w-0">
+                                    <label for="resolution_notes" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                        Catatan / Solusi Teknis Perbaikan
+                                    </label>
+                                    <textarea name="resolution_notes" id="resolution_notes" rows="3" required
+                                        placeholder="Jelaskan tindakan yang dilakukan (misal: penggantian kabel LAN, konfigurasi IP, perbaikan printer)..."
+                                        class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-medium focus:border-teal-700 focus:ring-teal-700 placeholder-slate-400">{{ old('resolution_notes', $selectedTicket->resolution_notes) }}</textarea>
+                                </div>
+
+                                <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition">
+                                    Simpan Update Tiket
+                                </button>
+                            </form>
+                        @endif
                     </div>
+
+                    @if ($selectedTicket->assigned_to === Auth::id())
+                        <!-- Log Aktivitas & Catatan Tambahan -->
+                        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
+                            <h3 class="font-bold text-sm text-slate-900 break-words">Catatan Tambahan Teknisi</h3>
+
+                            <form action="{{ route('teknisi.notes.store', $selectedTicket->id) }}" method="POST" class="space-y-2 min-w-0">
+                                @csrf
+                                <textarea name="note" rows="2" required placeholder="Tulis progres atau kendala teknis tambahan..."
+                                    class="w-full rounded-xl border-slate-200 bg-white text-slate-800 text-xs font-medium focus:border-teal-700 focus:ring-teal-700 placeholder-slate-400"></textarea>
+                                <button type="submit" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs py-2 rounded-xl transition">
+                                    Tambah Catatan
+                                </button>
+                            </form>
+
+                            <div class="space-y-2 pt-2 border-t border-slate-100 min-w-0">
+                                @forelse ($selectedTicket->notes as $note)
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs min-w-0">
+                                        <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1 gap-2 min-w-0">
+                                            <span class="font-bold text-slate-800 truncate">{{ $note->user->name ?? 'Teknisi' }}</span>
+                                            <span class="shrink-0">{{ $note->created_at->format('d/m/Y H:i') }}</span>
+                                        </div>
+                                        <p class="text-slate-700 break-words">{{ $note->note }}</p>
+                                    </div>
+                                @empty
+                                    <p class="text-xs text-slate-400 text-center py-2">Belum ada catatan aktivitas.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <div class="bg-white rounded-2xl border border-dashed border-slate-200 p-8 sm:p-12 text-center text-slate-400">
                         <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
                         </svg>
                         <p class="text-xs font-bold text-slate-700 px-2">Pilih salah satu tiket di sebelah kiri</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5 px-2">Untuk melihat detail lengkap dan mengubah status penanganan.</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5 px-2">Untuk melihat detail lengkap dan mengambil / memperbarui status tiket.</p>
                     </div>
                 @endif
             </div>

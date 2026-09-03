@@ -94,9 +94,7 @@
                                         </div>
                                         <div class="min-w-0">
                                             <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[180px] sm:max-w-none">{{ $tech->name }}</div>
-                                            @if ($tech->email === 'teknisi@rsud.test')
-                                                <span class="text-[10px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">Akun Master Posko</span>
-                                            @endif
+                                            <div class="text-[11px] text-slate-400 font-mono truncate">{{ $tech->email }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -136,17 +134,15 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        @if ($tech->email !== 'teknisi@rsud.test')
-                                            <form action="{{ route('superadmin.technicians.destroy', $tech) }}" method="POST" onsubmit="return confirm('Hapus data teknisi {{ $tech->name }}?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" title="Hapus Teknisi" class="p-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 hover:text-rose-800 transition inline-flex items-center justify-center">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        @endif
+                                        <form action="{{ route('superadmin.technicians.destroy', $tech) }}" method="POST" onsubmit="return confirm('Hapus data akun teknisi {{ $tech->name }}?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" title="Hapus Teknisi" class="p-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 hover:text-rose-800 transition inline-flex items-center justify-center">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -163,13 +159,13 @@
             </div>
         </div>
 
-        <!-- Modal Tambah Teknisi Baru (Tanpa Perlu Email) -->
+        <!-- Modal Tambah Akun Teknisi Baru (Model 1) -->
         <div x-show="showAddModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <div @click.away="showAddModal = false" class="bg-white rounded-3xl p-6 max-w-md w-full text-slate-900 shadow-2xl space-y-4">
+            <div @click.away="showAddModal = false" class="bg-white rounded-3xl p-6 max-w-lg w-full text-slate-900 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
-                        <h3 class="font-black text-sm text-slate-900">Tambah Data Teknisi IT Baru</h3>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Daftarkan nama &amp; kontak WhatsApp teknisi penanggung jawab.</p>
+                        <h3 class="font-black text-sm text-slate-900">Tambah Akun Teknisi IT Baru</h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Daftarkan akun login dan nomor WhatsApp personil teknisi IT RSUD.</p>
                     </div>
                     <button @click="showAddModal = false" type="button" class="text-slate-400 hover:text-slate-700 font-bold text-lg">&times;</button>
                 </div>
@@ -180,8 +176,26 @@
                         <label for="new_name" class="block text-xs font-bold text-slate-700 uppercase mb-1">
                             Nama Lengkap Teknisi <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" name="name" id="new_name" required placeholder="Contoh: Rian Prasetya"
+                        <input type="text" name="name" id="new_name" required placeholder="Contoh: Budi Santoso"
                             class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="new_email" class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                                Email Login <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="email" name="email" id="new_email" required placeholder="budi@rsud.test"
+                                class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                        </div>
+
+                        <div>
+                            <label for="new_password" class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                                Password Awal
+                            </label>
+                            <input type="password" name="password" id="new_password" placeholder="Default: password"
+                                class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                        </div>
                     </div>
 
                     <div>
@@ -190,20 +204,20 @@
                         </label>
                         <input type="text" name="phone" id="new_phone" required placeholder="Contoh: 081234567890"
                             class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
-                        <span class="text-[10px] text-slate-400 mt-0.5 block">Nomor ini yang akan dihubungi oleh pelapor/ruangan RSUD via WA.</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">Nomor ini yang akan dihubungi oleh pelapor/ruangan RSUD via WhatsApp.</span>
                     </div>
 
                     <div>
                         <label for="new_specialization" class="block text-xs font-bold text-slate-700 uppercase mb-1">
                             Fokus Spesialisasi / Keahlian <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" name="specialization" id="new_specialization" required placeholder="Contoh: Hardware &amp; Jaringan LAN / SIMRS &amp; Database"
+                        <input type="text" name="specialization" id="new_specialization" required placeholder="Contoh: Hardware, Printer &amp; Jaringan LAN"
                             class="w-full text-xs rounded-xl border-slate-200 focus:ring-teal-700 focus:border-teal-700 font-medium">
                     </div>
 
                     <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
                         <button @click="showAddModal = false" type="button" class="text-xs font-bold px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Batal</button>
-                        <button type="submit" class="text-xs font-bold px-5 py-2.5 rounded-xl bg-[#0f333a] hover:bg-[#092227] text-white shadow-xs transition">Simpan Data Teknisi</button>
+                        <button type="submit" class="text-xs font-bold px-5 py-2.5 rounded-xl bg-[#0f333a] hover:bg-[#092227] text-white shadow-xs transition">Simpan &amp; Buat Akun Teknisi</button>
                     </div>
                 </form>
             </div>

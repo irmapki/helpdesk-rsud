@@ -15,22 +15,33 @@ use Illuminate\View\View;
 class TeknisiController extends Controller
 {
     /**
-     * Menampilkan halaman utama dashboard teknisi (Tiket Saya).
+     * Menampilkan halaman utama dashboard teknisi (Model 1: 1 Orang 1 Akun).
      */
     public function index(Request $request): View
     {
-        // Model 2: Menampilkan seluruh tiket yang ditugaskan ke Tim Teknisi IT
-        $query = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'creator', 'technician'])
-            ->whereNotNull('assigned_to');
-
-        // Filter tab
+        $myId = Auth::id();
+        $scope = $request->query('scope', 'my'); // 'my' (Tiket Saya), 'available' (Tiket Belum Diambil), 'all' (Semua Tiket Tim)
         $tab = $request->query('tab', 'all');
-        if ($tab === 'assigned') {
-            $query->where('status', 'assigned');
-        } elseif ($tab === 'in_progress') {
-            $query->where('status', 'in_progress');
-        } elseif ($tab === 'resolved') {
-            $query->whereIn('status', ['resolved', 'closed', 'pending_review']);
+
+        $query = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'creator', 'technician']);
+
+        if ($scope === 'available') {
+            // Tiket yang belum diambil / belum ditugaskan ke siapa pun
+            $query->whereNull('assigned_to')->whereIn('status', ['open', 'assigned']);
+        } elseif ($scope === 'all') {
+            // Tiket tim teknisi lain
+            $query->whereNotNull('assigned_to')->where('assigned_to', '!=', $myId);
+        } else {
+            // Default: Tiket yang ditugaskan / diambil oleh teknisi yang sedang login
+            $query->where('assigned_to', $myId);
+
+            if ($tab === 'assigned') {
+                $query->where('status', 'assigned');
+            } elseif ($tab === 'in_progress') {
+                $query->where('status', 'in_progress');
+            } elseif ($tab === 'resolved') {
+                $query->whereIn('status', ['resolved', 'closed', 'pending_review']);
+            }
         }
 
         $tickets = $query->latest()->get();
@@ -40,7 +51,6 @@ class TeknisiController extends Controller
         $selectedTicket = null;
         if ($selectedTicketId) {
             $selectedTicket = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'notes.user', 'creator', 'technician'])
-                ->whereNotNull('assigned_to')
                 ->find($selectedTicketId);
         }
 
@@ -49,32 +59,62 @@ class TeknisiController extends Controller
             $selectedTicket->load(['statusLogs.user', 'notes.user']);
         }
 
-        // Summary Counts untuk Seluruh Tim Teknisi
-        $assignedCount = Ticket::whereNotNull('assigned_to')->where('status', 'assigned')->count();
-        $inProgressCount = Ticket::whereNotNull('assigned_to')->where('status', 'in_progress')->count();
-        $resolvedThisMonth = Ticket::whereNotNull('assigned_to')
+        // Summary Counts Khusus Teknisi Login
+        $myActiveCount = Ticket::where('assigned_to', $myId)->whereIn('status', ['assigned', 'in_progress'])->count();
+        $myAssignedCount = Ticket::where('assigned_to', $myId)->where('status', 'assigned')->count();
+        $myInProgressCount = Ticket::where('assigned_to', $myId)->where('status', 'in_progress')->count();
+        $availableCount = Ticket::whereNull('assigned_to')->whereIn('status', ['open', 'assigned'])->count();
+        $teamTicketsCount = Ticket::whereNotNull('assigned_to')->where('assigned_to', '!=', $myId)->whereIn('status', ['assigned', 'in_progress'])->count();
+        
+        $resolvedThisMonth = Ticket::where('assigned_to', $myId)
             ->whereIn('status', ['resolved', 'closed', 'pending_review'])
             ->whereMonth('updated_at', now()->month)
             ->count();
         
-        $approachingSlaCount = Ticket::whereNotNull('assigned_to')
+        $approachingSlaCount = Ticket::where('assigned_to', $myId)
             ->whereIn('status', ['assigned', 'in_progress'])
             ->get()
             ->filter(fn($t) => in_array($t->sla_status, ['approaching', 'breached']))
             ->count();
 
-        $totalMyTickets = Ticket::whereNotNull('assigned_to')->count();
+        $totalMyTickets = Ticket::where('assigned_to', $myId)->count();
 
         return view('teknisi.dashboard', compact(
             'tickets',
             'selectedTicket',
+            'scope',
             'tab',
-            'assignedCount',
-            'inProgressCount',
+            'myActiveCount',
+            'myAssignedCount',
+            'myInProgressCount',
+            'availableCount',
+            'teamTicketsCount',
             'resolvedThisMonth',
             'approachingSlaCount',
             'totalMyTickets'
         ));
+    }
+
+    /**
+     * Fitur Ambil Tiket Secara Mandiri (Self-Claim Ticket).
+     */
+    public function claimTicket(Request $request, Ticket $ticket): RedirectResponse
+    {
+        $ticket->update([
+            'assigned_to' => Auth::id(),
+            'status' => 'assigned',
+            'validation_status' => 'validated',
+        ]);
+
+        TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => 'assigned',
+            'changed_by' => Auth::id(),
+            'note' => 'Tiket diambil secara mandiri oleh Teknisi ' . Auth::user()->name,
+        ]);
+
+        return redirect()->route('teknisi.dashboard', ['scope' => 'my', 'ticket_id' => $ticket->id])
+            ->with('success', "Tiket {$ticket->ticket_number} berhasil Anda ambil dan masuk ke daftar Tiket Saya.");
     }
 
     /**
@@ -187,12 +227,12 @@ class TeknisiController extends Controller
     }
 
     /**
-     * Halaman Riwayat Penanganan Selesai.
+     * Halaman Riwayat Penanganan Selesai Pribadi Teknisi.
      */
     public function riwayat(Request $request): View
     {
         $query = Ticket::with(['unit', 'category', 'priority', 'technician'])
-            ->whereNotNull('assigned_to')
+            ->where('assigned_to', Auth::id())
             ->whereIn('status', ['resolved', 'closed', 'pending_review']);
 
         if ($request->filled('search')) {
