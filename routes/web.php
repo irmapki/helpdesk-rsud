@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [GuestTicketController::class, 'landing'])->name('guest.landing');
-Route::get('/welcome', fn() => redirect()->route('guest.landing'))->name('welcome'); // Menambahkan rute 'welcome' agar tombol kembali berfungsi
+Route::get('/welcome', fn() => redirect()->route('guest.landing'))->name('welcome');
 Route::get('/guest/ticket/create', [GuestTicketController::class, 'create'])->name('guest.ticket.create');
 Route::post('/guest/ticket', [GuestTicketController::class, 'store'])->name('guest.ticket.store');
 Route::get('/guest/ticket/success/{ticket_number}', [GuestTicketController::class, 'success'])->name('guest.ticket.success');
@@ -108,7 +108,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 /*
 |--------------------------------------------------------------------------
-| C. Teknisi Routes
+| C. Teknisi Routes (Self-Assign & Task Management)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')->group(function () {
@@ -141,8 +141,9 @@ Route::middleware(['auth', 'role:supervisor'])->prefix('supervisor')->name('supe
 
     // Filter Periode
     Route::get('/filter-periode', [SupervisorDashboard::class, 'filterPeriode'])->name('filter-periode');
+    
     // Review & Approval Tiket Software oleh Supervisor
-Route::post('/tickets/{ticket}/review', [SupervisorDashboard::class, 'reviewTicket'])->name('tickets.review');
+    Route::post('/tickets/{ticket}/review', [SupervisorDashboard::class, 'reviewTicket'])->name('tickets.review');
 });
 
 require __DIR__.'/auth.php';

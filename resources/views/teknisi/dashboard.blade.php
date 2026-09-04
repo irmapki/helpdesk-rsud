@@ -88,7 +88,7 @@
                         class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? 'my') === 'my' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         <span>Tiket Saya</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? 'my') === 'my' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($scope ?? 'my') === 'my' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
                             {{ $myActiveCount ?? 0 }}
                         </span>
                     </a>
@@ -97,16 +97,16 @@
                         class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'available' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                         <span>Belum Diambil</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? '') === 'available' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900' }}">
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($scope ?? '') === 'available' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900' }}">
                             {{ $availableCount ?? 0 }}
                         </span>
                     </a>
 
-                    <a href="{{ route('teknisi.dashboard', ['scope' => 'all']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'all' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                    <a href="{{ route('teknisi.dashboard', ['scope' => 'team']) }}"
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'team' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        <span>Tiket Tim Lain</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ ($scope ?? '') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
+                        <span>Tiket Tim</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($scope ?? '') === 'team' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
                             {{ $teamTicketsCount ?? 0 }}
                         </span>
                     </a>
@@ -184,7 +184,7 @@
                             <p class="text-xs font-bold text-slate-700 px-4">
                                 @if(($scope ?? 'my') === 'available')
                                     Tidak ada tiket yang menunggu penanganan saat ini.
-                                @elseif(($scope ?? 'my') === 'all')
+                                @elseif(($scope ?? 'my') === 'team')
                                     Tidak ada tiket tim lainnya yang sedang aktif.
                                 @else
                                     Tidak ada tiket penanganan pada tab ini.
@@ -212,7 +212,7 @@
                                 <h3 class="font-bold text-slate-900 text-sm break-words">Detail Tiket Terpilih</h3>
                                 <span class="text-[11px] font-mono text-teal-800 font-bold block truncate">{{ $selectedTicket->ticket_number }}</span>
                             </div>
-                            <span class="px-3 py-1 rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto {{ $selectedTicket->status_badge_class }}">
+                            <span class="px-3 py-1 rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto {{ $selectedTicket->status_badge_class ?? 'bg-slate-100 text-slate-700' }}">
                                 {{ $selectedTicket->status_label }}
                             </span>
                         </div>
@@ -224,7 +224,7 @@
                             </p>
 
                             @php
-                                $selectedAttachments = $selectedTicket->attachments_list;
+                                $selectedAttachments = $selectedTicket->attachments_list ?? [];
                             @endphp
                             @if (!empty($selectedAttachments))
                                 <div class="mt-3 min-w-0">
@@ -260,15 +260,15 @@
                         </div>
 
                         <div class="space-y-2 text-xs bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
-                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Pelapor:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->reporter_name }}</span></div>
-                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Kontak HP/WA:</span> <span class="font-bold text-emerald-700 text-right truncate">{{ $selectedTicket->reporter_contact }}</span></div>
+                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Pelapor:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->reporter_name ?? ($selectedTicket->creator->name ?? '-') }}</span></div>
+                            <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Kontak HP/WA:</span> <span class="font-bold text-emerald-700 text-right truncate">{{ $selectedTicket->reporter_contact ?? '-' }}</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Unit RSUD:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->unit->name ?? '-' }}</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Kategori:</span> <span class="font-bold text-slate-900 text-right truncate">{{ $selectedTicket->category->name ?? '-' }}</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Prioritas:</span> <span class="font-bold text-rose-600 text-right">{{ $selectedTicket->priority->name ?? 'Normal' }} (SLA: {{ $selectedTicket->priority->sla_hours ?? '-' }} jam)</span></div>
                             <div class="flex justify-between gap-2"><span class="text-slate-500 font-medium shrink-0">Teknisi Bertugas:</span> <span class="font-bold text-teal-800 text-right">{{ $selectedTicket->technician->name ?? 'Belum Ditugaskan' }}</span></div>
                         </div>
 
-                        @if ($selectedTicket->rating)
+                        @if (isset($selectedTicket->rating) && $selectedTicket->rating)
                             <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs min-w-0">
                                 <span class="text-[10px] text-amber-800 font-bold uppercase tracking-wider block mb-1">Penilaian dari Pelapor / Ruangan</span>
                                 <div class="flex items-center gap-1 text-amber-600 font-bold text-sm">
@@ -305,13 +305,26 @@
                         @endif
 
                         <!-- Aksi Teknisi: Ambil Tiket ATAU Update Status -->
-                        @if ($selectedTicket->assigned_to !== Auth::id())
-                            <!-- Jika tiket belum di-assign atau milik orang lain dan ingin diambil -->
-                            <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2.5">
+                        @php
+                            $isAssignedToMe = $selectedTicket->assigned_to === Auth::id();
+                            $isTeamMember = method_exists($selectedTicket, 'technicians') && $selectedTicket->technicians->contains(Auth::id());
+                        @endphp
+
+                        @if (!$isAssignedToMe && !$isTeamMember)
+                            <!-- Jika tiket belum di-assign atau milik orang lain, berikan opsi klaim Mandiri / Tim -->
+                            <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-3">
                                 <span class="text-xs font-black text-emerald-900 block">Tiket ini belum berada di bawah tanggung jawab Anda.</span>
-                                <p class="text-[11px] text-emerald-700">Anda dapat mengambil tiket ini untuk mulai mengerjakannya dan memasukkannya ke daftar Tiket Saya.</p>
-                                <form action="{{ route('teknisi.tickets.claim', $selectedTicket->id) }}" method="POST">
+                                <p class="text-[11px] text-emerald-700">Pilih metode pengambilan tugas di bawah ini untuk mulai mengerjakannya:</p>
+                                
+                                <form action="{{ route('teknisi.tickets.claim', $selectedTicket->id) }}" method="POST" class="space-y-2">
                                     @csrf
+                                    <div>
+                                        <label for="claim_type" class="block text-[11px] font-bold text-emerald-900 uppercase tracking-wider mb-1">Metode Pengambilan</label>
+                                        <select name="claim_type" id="claim_type" class="w-full rounded-xl border-emerald-300 bg-white text-slate-800 text-xs font-bold focus:border-emerald-700 focus:ring-emerald-700">
+                                            <option value="individual">Ambil Sendiri (Individu Utama)</option>
+                                            <option value="team">Gabung Tim Penanganan (Kolaborasi)</option>
+                                        </select>
+                                    </div>
                                     <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
                                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                         <span>Ambil &amp; Kerjakan Tiket Ini</span>
@@ -319,7 +332,7 @@
                                 </form>
                             </div>
                         @else
-                            <!-- Jika tiket ditugaskan ke saya: Form Ubah Status -->
+                            <!-- Jika sudah di-assign atau tergabung dalam tim: Form Ubah Status -->
                             <form action="{{ route('teknisi.status.update', $selectedTicket->id) }}" method="POST" class="space-y-3 pt-2 min-w-0">
                                 @csrf
                                 <div class="min-w-0">
@@ -331,7 +344,7 @@
                                             Sedang Dikerjakan (In Progress)
                                         </option>
                                         <option value="resolved" {{ in_array($selectedTicket->status, ['resolved', 'pending_review']) ? 'selected' : '' }}>
-                                            @if($selectedTicket->requiresReview())
+                                            @if(method_exists($selectedTicket, 'requiresReview') && $selectedTicket->requiresReview())
                                                 Selesai Dikerjakan (Ajukan Review ke Supervisor)
                                             @else
                                                 Selesai Ditangani (Resolved)
@@ -357,7 +370,7 @@
                         @endif
                     </div>
 
-                    @if ($selectedTicket->assigned_to === Auth::id())
+                    @if ($isAssignedToMe || $isTeamMember)
                         <!-- Log Aktivitas & Catatan Tambahan -->
                         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
                             <h3 class="font-bold text-sm text-slate-900 break-words">Catatan Tambahan Teknisi</h3>

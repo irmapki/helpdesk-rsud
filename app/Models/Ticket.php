@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ticket extends Model
@@ -71,6 +72,16 @@ class Ticket extends Model
     public function technician(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Relasi many-to-many untuk teknisi tim kolaborasi.
+     * Menggunakan tabel pivot 'ticket_technician' dengan foreign key yang sesuai.
+     */
+    public function technicians(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'ticket_technician', 'ticket_id', 'user_id')
+                    ->withTimestamps();
     }
 
     public function statusLogs(): HasMany
@@ -197,6 +208,7 @@ class Ticket extends Model
 
         return 'on_track';
     }
+
     /**
      * Mengecek apakah kategori tiket membutuhkan review (Software / SIMRS).
      */
@@ -205,6 +217,7 @@ class Ticket extends Model
         $categoryName = strtolower($this->category?->name ?? '');
         return str_contains($categoryName, 'software') || str_contains($categoryName, 'simrs') || str_contains($categoryName, 'aplikasi');
     }
+
     public function getSlaStatusLabelAttribute(): string
     {
         return match ($this->sla_status) {
