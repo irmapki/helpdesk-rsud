@@ -42,8 +42,10 @@
                                     No. WhatsApp / HP Aktif <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text" name="guest_phone" id="guest_phone" value="{{ old('guest_phone') }}" required
+                                    inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                     placeholder="Contoh: 081234567890"
                                     class="w-full rounded-xl border-slate-200 bg-slate-50/60 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 focus:bg-white transition @error('guest_phone') border-rose-500 @enderror">
+                                <p class="text-[10px] text-slate-400 mt-1 font-medium">*Hanya boleh diisi angka (tanpa spasi, plus, atau simbol).</p>
                                 @error('guest_phone')
                                     <p class="text-[11px] text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
