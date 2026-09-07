@@ -181,29 +181,42 @@
                                     Unggah Bukti Kendala (Foto &amp; Video)
                                 </label>
 
-                                <!-- Kotak interaktif berbasis contenteditable dengan kursor rapi di sebelah kiri tombol -->
+                                <!-- Kotak interaktif upload file, foto kamera, dan paste clipboard -->
                                 <div id="drop-zone" contenteditable="true" onpaste="handlePaste(event)"
-                                    class="w-full border border-slate-200 bg-slate-50/60 rounded-xl p-3 sm:p-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none transition group cursor-text relative">
+                                    class="w-full border border-slate-200 bg-slate-50/60 rounded-2xl p-3 sm:p-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none transition group cursor-text relative">
                                     
-                                    <div class="flex items-center gap-3 w-full sm:w-auto min-w-0 pointer-events-none order-1">
-                                        <!-- Tombol Pilih File diberi pointer-events-auto agar tetap bisa diklik secara mandiri -->
-                                        <button type="button" onclick="event.stopPropagation(); document.getElementById('attachments').click();" class="pointer-events-auto inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-emerald-800 text-white text-xs font-bold hover:bg-emerald-900 transition shrink-0 shadow-sm active:scale-95">
-                                            Pilih File
+                                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5 w-full sm:w-auto min-w-0 pointer-events-none order-1">
+                                        <!-- Tombol 1: Pilih File dari Galeri / Folder -->
+                                        <button type="button" onclick="event.stopPropagation(); document.getElementById('attachments').click();" 
+                                            class="pointer-events-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-800 text-white text-xs font-bold hover:bg-emerald-900 transition shrink-0 shadow-sm active:scale-95 cursor-pointer">
+                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                            <span>Pilih File</span>
                                         </button>
-                                        <span id="file-chosen-text" class="text-xs text-slate-500 font-medium truncate">
+
+                                        <!-- Tombol 2: Ambil Foto Kamera Langsung (HP / Webcam Laptop) -->
+                                        <button type="button" onclick="event.stopPropagation(); triggerCamera();" 
+                                            class="pointer-events-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-700 text-white text-xs font-bold hover:bg-teal-800 transition shrink-0 shadow-sm active:scale-95 cursor-pointer">
+                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            <span>Buka Kamera</span>
+                                        </button>
+
+                                        <span id="file-chosen-text" class="text-xs text-slate-500 font-medium truncate py-1">
                                             Tidak ada file yang dipilih
                                         </span>
                                     </div>
 
-                                    <!-- Span tersembunyi/dummy di awal baris agar kursor mutlak selalu berfokus di sisi kiri sebelah tombol -->
+                                    <!-- Span tersembunyi di awal baris agar kursor fokus di sisi kiri -->
                                     <span id="cursor-anchor" class="inline-block w-0 h-0 overflow-hidden select-none outline-none focus:outline-none order-0 shrink-0"></span>
 
-                                    <div class="text-[11px] text-slate-400 font-medium text-center sm:text-right shrink-0 pointer-events-none select-none order-2 sm:order-2 ml-auto">
-                                        Klik area ini &amp; tekan <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-slate-700 bg-white border border-slate-200 rounded shadow-2xs">Ctrl+V</kbd> untuk paste gambar
+                                    <div class="text-[11px] text-slate-400 font-medium text-left sm:text-right shrink-0 pointer-events-none select-none order-2 sm:order-2 ml-auto">
+                                        Klik &amp; tekan <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-slate-700 bg-white border border-slate-200 rounded shadow-2xs">Ctrl+V</kbd> untuk paste gambar
                                     </div>
 
+                                    <!-- Input file galeri tersembunyi -->
                                     <div class="hidden">
                                         <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*,.heic,.heif" onchange="handleFileSelect(event)">
+                                        <!-- Input kamera native mobile -->
+                                        <input type="file" id="camera-native-input" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
                                     </div>
                                 </div>
                                 
@@ -211,7 +224,7 @@
                                     <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>Mendukung upload <strong>Foto (JPG, PNG)</strong>, <strong>Video (MP4, MKV)</strong>, atau langsung <strong>Paste (Ctrl+V)</strong> gambar ke dalam kotak.</span>
+                                    <span>Bisa <strong>Pilih File</strong>, <strong>Buka Kamera (HP/Laptop)</strong>, atau langsung <strong>Paste (Ctrl+V)</strong> screenshot ke dalam kotak.</span>
                                 </p>
 
                                 <div id="preview-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-3 hidden min-w-0"></div>
@@ -244,8 +257,43 @@
         </div>
     </div>
 
+    <!-- Modal Live Webcam Laptop / Komputer -->
+    <div id="webcam-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 text-slate-900">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Kamera Webcam Langsung</h3>
+                        <p class="text-[11px] text-slate-500">Arahkan kamera ke perangkat kendala lalu jepret foto</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeWebcamModal()" class="text-slate-400 hover:text-slate-700 font-bold text-lg p-1">&times;</button>
+            </div>
+
+            <!-- Area Video Live Preview -->
+            <div class="relative bg-black rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
+                <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                <canvas id="webcam-canvas" class="hidden"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-2">
+                <button type="button" onclick="closeWebcamModal()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                    Batal
+                </button>
+                <button type="button" onclick="snapWebcamPhoto()" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-md transition flex items-center gap-2 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                    <span>Jepret Foto</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let selectedFiles = [];
+        let webcamStream = null;
 
         function toggleCustomUnitInput(value) {
             const wrapper = document.getElementById('custom_unit_wrapper');
@@ -258,6 +306,79 @@
                 wrapper.classList.add('hidden');
                 customInput.removeAttribute('required');
             }
+        }
+
+        // Pemicu Kamera: Jika mobile langsung buka kamera HP, jika laptop/desktop buka modal Webcam
+        function triggerCamera() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Di HP: picu kamera bawaan HP secara instan
+                document.getElementById('camera-native-input').click();
+            } else {
+                // Di Laptop: buka live webcam modal jika didukung browser
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    openWebcamModal();
+                } else {
+                    document.getElementById('camera-native-input').click();
+                }
+            }
+        }
+
+        async function openWebcamModal() {
+            const modal = document.getElementById('webcam-modal');
+            const video = document.getElementById('webcam-video');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'environment' },
+                    audio: false
+                });
+                video.srcObject = webcamStream;
+            } catch (err) {
+                console.error("Gagal membuka webcam:", err);
+                closeWebcamModal();
+                // Fallback ke input kamera biasa
+                document.getElementById('camera-native-input').click();
+            }
+        }
+
+        function closeWebcamModal() {
+            const modal = document.getElementById('webcam-modal');
+            const video = document.getElementById('webcam-video');
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+            if (video) {
+                video.srcObject = null;
+            }
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function snapWebcamPhoto() {
+            const video = document.getElementById('webcam-video');
+            const canvas = document.getElementById('webcam-canvas');
+            if (!video || !canvas) return;
+
+            canvas.width = video.videoWidth || 1280;
+            canvas.height = video.videoHeight || 720;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {
+                if (blob) {
+                    const now = new Date();
+                    const timestamp = now.toISOString().slice(0,10).replace(/-/g,"") + '_' + now.toTimeString().slice(0,8).replace(/:/g,"");
+                    const file = new File([blob], `foto_kamera_${timestamp}.jpg`, { type: 'image/jpeg' });
+                    selectedFiles.push(file);
+                    updateFileInputAndPreview();
+                }
+                closeWebcamModal();
+            }, 'image/jpeg', 0.88);
         }
 
         // Paksa kursor selalu fokus di awal (sebelah kiri tombol) saat area diklik di luar tombol
@@ -277,10 +398,11 @@
             const input = event.target;
             const files = Array.from(input.files);
             files.forEach(file => selectedFiles.push(file));
+            input.value = ''; // Reset input agar file sama bisa dipilih ulang jika dihapus
             updateFileInputAndPreview();
         }
 
-        // Fungsi khusus untuk menangkap Paste (Ctrl+V) gambar dari clipboard pada elemen contenteditable
+        // Tangkap Paste (Ctrl+V) gambar dari clipboard
         function handlePaste(event) {
             const items = (event.clipboardData || event.originalEvent.clipboardData).items;
             let added = false;

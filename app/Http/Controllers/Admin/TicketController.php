@@ -109,19 +109,69 @@ class TicketController extends Controller
 
     public function validateTicket(Request $request, Ticket $ticket): RedirectResponse
     {
+        $mode = $request->input('assign_mode', 'open_pool'); // 'open_pool' atau 'direct_assign'
+        $assignedTo = $request->input('assigned_to');
+
+        if ($mode === 'direct_assign' && $assignedTo) {
+            $technician = User::findOrFail($assignedTo);
+            $ticket->update([
+                'validation_status' => 'validated',
+                'assigned_to' => $technician->id,
+                'assigned_at' => now(),
+                'status' => 'assigned',
+                'admin_notes' => $request->admin_notes,
+            ]);
+
+            TicketStatusLog::create([
+                'ticket_id' => $ticket->id,
+                'status' => 'assigned',
+                'changed_by' => Auth::id(),
+                'note' => "Tiket divalidasi dan langsung ditugaskan oleh Admin kepada Teknisi {$technician->name}." . ($request->admin_notes ? " (Catatan: {$request->admin_notes})" : ""),
+            ]);
+
+            return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} divalidasi dan ditugaskan ke {$technician->name}.");
+        }
+
+        // Default: Masukkan ke Antrean Terbuka (Open Pool untuk diambil mandiri oleh teknisi)
         $ticket->update([
             'validation_status' => 'validated',
+            'assigned_to' => null,
+            'status' => 'open',
             'admin_notes' => $request->admin_notes,
         ]);
+
+        $groupLabel = $ticket->category ? (strtoupper($ticket->category->group_type) . ' - ' . $ticket->category->name) : 'Tim IT';
 
         TicketStatusLog::create([
             'ticket_id' => $ticket->id,
             'status' => 'validated',
             'changed_by' => Auth::id(),
-            'note' => $request->admin_notes ?: 'Tiket telah divalidasi oleh Admin dan siap diproses.',
+            'note' => "Tiket divalidasi oleh Admin dan dimasukkan ke Antrean Terbuka ({$groupLabel}) untuk diambil oleh Teknisi.",
         ]);
 
-        return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil divalidasi.");
+        return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil divalidasi dan dibuka ke Antrean Terbuka Tim.");
+    }
+
+    /**
+     * Lepas penugasan dan kembalikan tiket ke antrean terbuka tim teknisi.
+     */
+    public function releaseToPool(Ticket $ticket): RedirectResponse
+    {
+        $oldTechName = $ticket->technician->name ?? 'Teknisi';
+        $ticket->update([
+            'assigned_to' => null,
+            'assigned_at' => null,
+            'status' => 'open',
+        ]);
+
+        TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => 'open',
+            'changed_by' => Auth::id(),
+            'note' => "Penugasan dari {$oldTechName} telah dilepas oleh Admin dan dikembalikan ke Antrean Terbuka Tim.",
+        ]);
+
+        return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil dikembalikan ke Antrean Terbuka.");
     }
 
     public function rejectTicket(Request $request, Ticket $ticket): RedirectResponse

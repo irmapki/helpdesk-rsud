@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketNote;
 use App\Models\TicketStatusLog;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,29 +16,49 @@ use Illuminate\View\View;
 class TeknisiController extends Controller
 {
     /**
-     * Menampilkan halaman utama dashboard teknisi (Mendukung Self-Assign & Tim).
+     * Menampilkan halaman utama dashboard teknisi (Mendukung Self-Assign, Klasifikasi Software/Hardware, & Tim).
      */
     public function index(Request $request): View
     {
         $myId = Auth::id();
-        $scope = $request->query('scope', 'my'); // 'my' (Tiket Saya), 'available' (Tersedia / Belum Diambil), 'team' (Tiket Tim)
+        $scope = $request->query('scope', 'my'); // 'my' (Tiket Saya), 'available' (Tersedia / Belum Diambil), 'team' (Tiket Tim Kolaborasi)
         $tab = $request->query('tab', 'all');
+        $categoryType = $request->query('category_type', 'all'); // 'all', 'software', 'hardware'
 
-        // Pastikan relasi technicians (pivot tim) dan technician (individu) dimuat agar fleksibel[cite: 6]
-        $query = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'creator', 'technician', 'technicians']);
+        $query = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'creator', 'technician', 'collaborators']);
 
         if ($scope === 'available') {
-            // Tiket yang belum diambil sama sekali (baik individu maupun tim)[cite: 6]
+            // Tiket yang belum diambil sama sekali di antrean terbuka
             $query->whereNull('assigned_to')
-                  ->doesntHave('technicians')
                   ->whereIn('status', ['open', 'assigned']);
+
+            if ($categoryType === 'software') {
+                $query->whereHas('category', function ($q) {
+                    $q->where('name', 'like', '%simrs%')
+                      ->orWhere('name', 'like', '%software%')
+                      ->orWhere('name', 'like', '%bpjs%')
+                      ->orWhere('name', 'like', '%vclaim%')
+                      ->orWhere('name', 'like', '%aplikasi%')
+                      ->orWhere('name', 'like', '%sistem%');
+                });
+            } elseif ($categoryType === 'hardware') {
+                $query->whereHas('category', function ($q) {
+                    $q->where('name', 'not like', '%simrs%')
+                      ->where('name', 'not like', '%software%')
+                      ->where('name', 'not like', '%bpjs%')
+                      ->where('name', 'not like', '%vclaim%')
+                      ->where('name', 'not like', '%aplikasi%')
+                      ->where('name', 'not like', '%sistem%');
+                });
+            }
         } elseif ($scope === 'team') {
-            // Tiket yang dikerjakan bersama sebagai tim (teknisi yang sedang login ikut terdaftar di relasi pivot technicians)[cite: 6]
-            $query->whereHas('technicians', function ($q) use ($myId) {
-                $q->where('user_id', $myId);
-            });
+            // Tiket di mana teknisi login terdaftar sebagai rekan tim (collaborator) ATAU tiket rekan tim yang aktif
+            $query->where(function ($q) use ($myId) {
+                $q->whereHas('collaborators', fn($qc) => $qc->where('user_id', $myId))
+                  ->orWhere(fn($qo) => $qo->whereNotNull('assigned_to')->where('assigned_to', '!=', $myId));
+            })->whereIn('status', ['assigned', 'in_progress']);
         } else {
-            // Default: Tiket Saya (Individu yang di-assign langsung)[cite: 6]
+            // Default: Tiket Saya (Individu yang di-assign langsung)
             $query->where('assigned_to', $myId);
 
             if ($tab === 'assigned') {
@@ -51,32 +72,56 @@ class TeknisiController extends Controller
 
         $tickets = $query->latest()->get();
 
-        // Selected ticket for right detail panel[cite: 6]
+        // Selected ticket for right detail panel
         $selectedTicketId = $request->query('ticket_id');
         $selectedTicket = null;
         if ($selectedTicketId) {
-            $selectedTicket = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'notes.user', 'creator', 'technician', 'technicians'])
+            $selectedTicket = Ticket::with(['unit', 'category', 'priority', 'statusLogs.user', 'notes.user', 'creator', 'technician', 'collaborators'])
                 ->find($selectedTicketId);
         }
 
         if (!$selectedTicket && $tickets->isNotEmpty()) {
             $selectedTicket = $tickets->first();
-            $selectedTicket->load(['statusLogs.user', 'notes.user', 'technicians']);
+            $selectedTicket->load(['statusLogs.user', 'notes.user', 'collaborators']);
         }
 
-        // Summary Counts Khusus Teknisi Login[cite: 6]
+        // Summary Counts Khusus Teknisi Login
         $myActiveCount = Ticket::where('assigned_to', $myId)->whereIn('status', ['assigned', 'in_progress'])->count();
         $myAssignedCount = Ticket::where('assigned_to', $myId)->where('status', 'assigned')->count();
         $myInProgressCount = Ticket::where('assigned_to', $myId)->where('status', 'in_progress')->count();
         
-        // Hitung tiket yang benar-benar tersedia bebas untuk diambil[cite: 6]
+        // Hitung tiket yang tersedia bebas untuk diambil
         $availableCount = Ticket::whereNull('assigned_to')
-            ->doesntHave('technicians')
             ->whereIn('status', ['open', 'assigned'])
             ->count();
 
-        $teamTicketsCount = Ticket::whereHas('technicians', function ($q) use ($myId) {
-            $q->where('user_id', $myId);
+        $availableSoftwareCount = Ticket::whereNull('assigned_to')
+            ->whereIn('status', ['open', 'assigned'])
+            ->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%simrs%')
+                  ->orWhere('name', 'like', '%software%')
+                  ->orWhere('name', 'like', '%bpjs%')
+                  ->orWhere('name', 'like', '%vclaim%')
+                  ->orWhere('name', 'like', '%aplikasi%')
+                  ->orWhere('name', 'like', '%sistem%');
+            })
+            ->count();
+
+        $availableHardwareCount = Ticket::whereNull('assigned_to')
+            ->whereIn('status', ['open', 'assigned'])
+            ->whereHas('category', function ($q) {
+                $q->where('name', 'not like', '%simrs%')
+                  ->where('name', 'not like', '%software%')
+                  ->where('name', 'not like', '%bpjs%')
+                  ->where('name', 'not like', '%vclaim%')
+                  ->where('name', 'not like', '%aplikasi%')
+                  ->where('name', 'not like', '%sistem%');
+            })
+            ->count();
+
+        $teamTicketsCount = Ticket::where(function ($q) use ($myId) {
+            $q->whereHas('collaborators', fn($qc) => $qc->where('user_id', $myId))
+              ->orWhere(fn($qo) => $qo->whereNotNull('assigned_to')->where('assigned_to', '!=', $myId));
         })->whereIn('status', ['assigned', 'in_progress'])->count();
         
         $resolvedThisMonth = Ticket::where('assigned_to', $myId)
@@ -91,74 +136,96 @@ class TeknisiController extends Controller
             ->count();
 
         $totalMyTickets = Ticket::where('assigned_to', $myId)->count();
+        $allTechnicians = User::technicians()->active()->where('id', '!=', $myId)->get();
 
         return view('teknisi.dashboard', compact(
             'tickets',
             'selectedTicket',
             'scope',
             'tab',
+            'categoryType',
             'myActiveCount',
             'myAssignedCount',
             'myInProgressCount',
             'availableCount',
+            'availableSoftwareCount',
+            'availableHardwareCount',
             'teamTicketsCount',
             'resolvedThisMonth',
             'approachingSlaCount',
-            'totalMyTickets'
+            'totalMyTickets',
+            'allTechnicians'
         ));
     }
 
     /**
-     * Fitur Ambil Tiket Secara Mandiri (Self-Claim / Individual & Team Support).
+     * Fitur Ambil Tiket Secara Mandiri (Self-Claim).
      */
     public function claimTicket(Request $request, Ticket $ticket): RedirectResponse
     {
         $myId = Auth::id();
         $userName = Auth::user()->name;
-        $claimType = $request->input('claim_type', 'individual'); // Pilihan: 'individual' atau 'team'[cite: 6]
 
-        if ($claimType === 'team') {
-            // Mode Tim: Jika tiket belum punya leader utama (assigned_to), set teknisi ini sebagai leader, lalu daftarkan ke pivot[cite: 6]
-            if (!$ticket->assigned_to) {
-                $ticket->update([
-                    'assigned_to' => $myId,
-                    'status' => 'assigned',
-                    'validation_status' => 'validated',
-                ]);
-            }
-
-            // Sinkronisasi tabel relasi tim (pivot technicians) agar tidak duplikat[cite: 6]
-            if (method_exists($ticket, 'technicians')) {
-                $ticket->technicians()->syncWithoutDetaching([$myId]);
-            }
-
-            $logNote = "Teknisi {$userName} bergabung ke dalam tim penanganan tiket secara mandiri.";
-        } else {
-            // Mode Individu: Diambil sendiri secara penuh[cite: 6]
-            $ticket->update([
-                'assigned_to' => $myId,
-                'status' => 'assigned',
-                'validation_status' => 'validated',
-            ]);
-
-            if (method_exists($ticket, 'technicians')) {
-                $ticket->technicians()->sync([$myId]);
-            }
-
-            $logNote = "Tiket diambil secara mandiri oleh Teknisi {$userName} (Individu).";
-        }
+        $ticket->update([
+            'assigned_to' => $myId,
+            'assigned_at' => now(),
+            'status' => 'assigned',
+            'validation_status' => 'validated',
+        ]);
 
         TicketStatusLog::create([
             'ticket_id' => $ticket->id,
             'status' => 'assigned',
             'changed_by' => $myId,
-            'note' => $logNote,
+            'note' => "Tiket diambil secara mandiri oleh Teknisi {$userName}.",
         ]);
 
-        $targetScope = ($claimType === 'team') ? 'team' : 'my';
+        return redirect()->route('teknisi.dashboard', ['scope' => 'my', 'ticket_id' => $ticket->id])
+            ->with('success', "Tiket {$ticket->ticket_number} berhasil Anda ambil.");
+    }
 
-        return redirect()->route('teknisi.dashboard', ['scope' => $targetScope, 'ticket_id' => $ticket->id])
-            ->with('success', "Tiket {$ticket->ticket_number} berhasil Anda ambil ({$claimType}).");
+    /**
+     * Ajak rekan teknisi lain untuk berkolaborasi dalam tim.
+     */
+    public function inviteCollaborator(Request $request, Ticket $ticket): RedirectResponse
+    {
+        $validated = $request->validate([
+            'collaborator_id' => ['required', 'exists:users,id'],
+        ]);
+
+        $collaborator = User::findOrFail($validated['collaborator_id']);
+        
+        if ($collaborator->id === Auth::id() || $collaborator->id === $ticket->assigned_to) {
+            return redirect()->back()->with('error', 'Teknisi ini sudah menjadi penanggung jawab tiket.');
+        }
+
+        $ticket->collaborators()->syncWithoutDetaching([$collaborator->id => ['role_in_team' => 'member']]);
+
+        TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => $ticket->status,
+            'changed_by' => Auth::id(),
+            'note' => "Teknisi " . Auth::user()->name . " mengajak {$collaborator->name} ({$collaborator->specialization}) ke dalam tim penanganan tiket.",
+        ]);
+
+        return redirect()->back()->with('success', "{$collaborator->name} berhasil ditambahkan ke tim pengerjaan tiket.");
+    }
+
+    /**
+     * Lepas rekan teknisi dari tim kolaborasi.
+     */
+    public function removeCollaborator(Request $request, Ticket $ticket, User $user): RedirectResponse
+    {
+        $ticket->collaborators()->detach($user->id);
+
+        TicketStatusLog::create([
+            'ticket_id' => $ticket->id,
+            'status' => $ticket->status,
+            'changed_by' => Auth::id(),
+            'note' => "{$user->name} telah dilepas dari tim pengerjaan tiket oleh " . Auth::user()->name . ".",
+        ]);
+
+        return redirect()->back()->with('success', "{$user->name} telah dikeluarkan dari tim pengerjaan tiket.");
     }
 
     /**

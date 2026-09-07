@@ -75,12 +75,12 @@ class Ticket extends Model
     }
 
     /**
-     * Relasi many-to-many untuk teknisi tim kolaborasi.
-     * Menggunakan tabel pivot 'ticket_technician' dengan foreign key yang sesuai.
+     * Rekan teknisi pendamping yang berkolaborasi dalam pengerjaan tiket ini.
      */
-    public function technicians(): BelongsToMany
+    public function collaborators(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'ticket_technician', 'ticket_id', 'user_id')
+        return $this->belongsToMany(User::class, 'ticket_collaborators', 'ticket_id', 'user_id')
+                    ->withPivot('role_in_team')
                     ->withTimestamps();
     }
 

@@ -114,7 +114,7 @@
 
                 @if(($scope ?? 'my') === 'my')
                     <!-- Sub-Filter Khusus Tiket Saya -->
-                    <div class="flex items-center justify-between gap-2 pt-1 pb-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1 pb-2">
                         <span class="text-xs font-bold text-slate-700">Filter Status:</span>
                         <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
                             <a href="{{ route('teknisi.dashboard', ['scope' => 'my', 'tab' => 'all']) }}"
@@ -131,6 +131,25 @@
                             </a>
                         </div>
                     </div>
+                @elseif(($scope ?? '') === 'available')
+                    <!-- Sub-Filter Khusus Tiket Belum Diambil: Klasifikasi Software vs Hardware -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1 pb-2">
+                        <span class="text-xs font-bold text-slate-700">Kategori Antrean:</span>
+                        <div class="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                            <a href="{{ route('teknisi.dashboard', ['scope' => 'available', 'category_type' => 'all']) }}"
+                                class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition {{ ($categoryType ?? 'all') === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900' }}">
+                                Semua ({{ $availableCount ?? 0 }})
+                            </a>
+                            <a href="{{ route('teknisi.dashboard', ['scope' => 'available', 'category_type' => 'software']) }}"
+                                class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition {{ ($categoryType ?? '') === 'software' ? 'bg-purple-700 text-white shadow-xs' : 'text-purple-700 hover:bg-purple-100' }}">
+                                💻 Software ({{ $availableSoftwareCount ?? 0 }})
+                            </a>
+                            <a href="{{ route('teknisi.dashboard', ['scope' => 'available', 'category_type' => 'hardware']) }}"
+                                class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition {{ ($categoryType ?? '') === 'hardware' ? 'bg-teal-800 text-white shadow-xs' : 'text-teal-800 hover:bg-teal-100' }}">
+                                🔌 Hardware ({{ $availableHardwareCount ?? 0 }})
+                            </a>
+                        </div>
+                    </div>
                 @endif
 
                 <!-- List Tiket Dinamis -->
@@ -138,13 +157,26 @@
                     @forelse ($tickets as $t)
                         @php
                             $isSelected = isset($selectedTicket) && $selectedTicket->id === $t->id;
+                            $isSoftware = $t->category && $t->category->group_type === 'software';
                         @endphp
-                        <a href="{{ route('teknisi.dashboard', ['ticket_id' => $t->id, 'scope' => $scope ?? 'my', 'tab' => $tab ?? 'all']) }}"
+                        <a href="{{ route('teknisi.dashboard', ['ticket_id' => $t->id, 'scope' => $scope ?? 'my', 'tab' => $tab ?? 'all', 'category_type' => $categoryType ?? 'all']) }}"
                             class="block border-2 rounded-2xl p-4 transition shadow-xs min-w-0 {{ $isSelected ? 'border-teal-700 bg-teal-50/30' : 'border-slate-200 bg-white hover:border-slate-300' }}">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-1.5 min-w-0">
-                                <div class="flex items-center gap-2 min-w-0">
+                                <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-wrap">
                                     <span class="text-xs font-mono font-bold text-teal-800 shrink-0">{{ $t->ticket_number }}</span>
-                                    <span class="px-2.5 py-0.5 text-[10px] rounded-lg font-bold shrink-0 {{ $t->priority->badge_class ?? 'bg-slate-100 text-slate-700' }}">
+                                    
+                                    <!-- Badge Kategori Software vs Hardware -->
+                                    @if ($isSoftware)
+                                        <span class="px-2 py-0.5 text-[10px] rounded-md font-extrabold shrink-0 bg-purple-100 text-purple-800 border border-purple-200">
+                                            SOFTWARE
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 text-[10px] rounded-md font-extrabold shrink-0 bg-teal-100 text-teal-800 border border-teal-200">
+                                            HARDWARE
+                                        </span>
+                                    @endif
+
+                                    <span class="px-2 py-0.5 text-[10px] rounded-md font-bold shrink-0 {{ $t->priority->badge_class ?? 'bg-slate-100 text-slate-700' }}">
                                         {{ $t->priority->name ?? 'Normal' }}
                                     </span>
                                 </div>
@@ -168,7 +200,7 @@
                                     @else
                                         <span class="inline-flex items-center gap-1 text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                                             <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            Belum Ada Teknisi
+                                            Siap Diklaim
                                         </span>
                                     @endif
                                 </span>
@@ -307,32 +339,24 @@
                         <!-- Aksi Teknisi: Ambil Tiket ATAU Update Status -->
                         @php
                             $isAssignedToMe = $selectedTicket->assigned_to === Auth::id();
-                            $isTeamMember = method_exists($selectedTicket, 'technicians') && $selectedTicket->technicians->contains(Auth::id());
                         @endphp
 
-                        @if (!$isAssignedToMe && !$isTeamMember)
-                            <!-- Jika tiket belum di-assign atau milik orang lain, berikan opsi klaim Mandiri / Tim -->
-                            <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-3">
-                                <span class="text-xs font-black text-emerald-900 block">Tiket ini belum berada di bawah tanggung jawab Anda.</span>
-                                <p class="text-[11px] text-emerald-700">Pilih metode pengambilan tugas di bawah ini untuk mulai mengerjakannya:</p>
+                        @if (!$isAssignedToMe)
+                            <!-- Jika tiket belum di-assign kepada teknisi login: tombol klaim mandiri -->
+                            <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2.5">
+                                <span class="text-xs font-black text-emerald-900 block">Tiket ini belum berada di bawah penanganan Anda.</span>
+                                <p class="text-[11px] text-emerald-700">Klik tombol di bawah ini untuk mengambil tanggung jawab pengerjaan tiket:</p>
                                 
-                                <form action="{{ route('teknisi.tickets.claim', $selectedTicket->id) }}" method="POST" class="space-y-2">
+                                <form action="{{ route('teknisi.tickets.claim', $selectedTicket->id) }}" method="POST">
                                     @csrf
-                                    <div>
-                                        <label for="claim_type" class="block text-[11px] font-bold text-emerald-900 uppercase tracking-wider mb-1">Metode Pengambilan</label>
-                                        <select name="claim_type" id="claim_type" class="w-full rounded-xl border-emerald-300 bg-white text-slate-800 text-xs font-bold focus:border-emerald-700 focus:ring-emerald-700">
-                                            <option value="individual">Ambil Sendiri (Individu Utama)</option>
-                                            <option value="team">Gabung Tim Penanganan (Kolaborasi)</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+                                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
                                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                         <span>Ambil &amp; Kerjakan Tiket Ini</span>
                                     </button>
                                 </form>
                             </div>
                         @else
-                            <!-- Jika sudah di-assign atau tergabung dalam tim: Form Ubah Status -->
+                            <!-- Jika sudah di-assign kepada teknisi login: Form Ubah Status -->
                             <form action="{{ route('teknisi.status.update', $selectedTicket->id) }}" method="POST" class="space-y-3 pt-2 min-w-0">
                                 @csrf
                                 <div class="min-w-0">
@@ -370,7 +394,101 @@
                         @endif
                     </div>
 
-                    @if ($isAssignedToMe || $isTeamMember)
+                    @php
+                        $isCollaborator = $selectedTicket->collaborators->contains(Auth::id());
+                    @endphp
+
+                    @if ($isAssignedToMe || $isCollaborator)
+                        <!-- Tim Kolaborasi & Rekan Kerja -->
+                        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                <div>
+                                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-teal-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                        <span>Tim Pengerjaan &amp; Kolaborasi</span>
+                                    </h3>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Teknisi utama (PIC) &amp; rekan yang ikut mengerjakan tiket ini</p>
+                                </div>
+                            </div>
+
+                            <!-- Daftar Anggota Tim -->
+                            <div class="space-y-2">
+                                <!-- PIC Utama -->
+                                @if ($selectedTicket->technician)
+                                    <div class="p-3 bg-teal-50/60 rounded-xl border border-teal-200 flex items-center justify-between gap-2 text-xs">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <div class="w-7 h-7 rounded-lg bg-teal-800 text-white font-bold flex items-center justify-center text-xs shrink-0">
+                                                {{ strtoupper(substr($selectedTicket->technician->name, 0, 1)) }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="font-extrabold text-slate-900 block truncate">{{ $selectedTicket->technician->name }}</span>
+                                                <span class="text-[10px] text-teal-800 font-medium block">{{ $selectedTicket->technician->specialization ?: 'Umum' }}</span>
+                                            </div>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded-md bg-teal-800 text-white text-[10px] font-extrabold shrink-0">
+                                            PIC UTAMA
+                                        </span>
+                                    </div>
+                                @endif
+
+                                <!-- Rekan Kolaborator -->
+                                @forelse ($selectedTicket->collaborators as $collab)
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-2 text-xs">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <div class="w-7 h-7 rounded-lg bg-indigo-700 text-white font-bold flex items-center justify-center text-xs shrink-0">
+                                                {{ strtoupper(substr($collab->name, 0, 1)) }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="font-bold text-slate-900 block truncate">{{ $collab->name }}</span>
+                                                <span class="text-[10px] text-slate-500 block">{{ $collab->specialization ?: 'Pendamping' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2 shrink-0">
+                                            <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[10px] font-bold border border-indigo-200">
+                                                REKAN TIM
+                                            </span>
+                                            @if ($isAssignedToMe)
+                                                <form action="{{ route('teknisi.collaborators.remove', ['ticket' => $selectedTicket->id, 'user' => $collab->id]) }}" method="POST" onsubmit="return confirm('Lepas {{ $collab->name }} dari tim pengerjaan?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-rose-500 hover:text-rose-700 p-1 font-bold text-xs cursor-pointer" title="Lepas dari tim">&times;</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    @if (!$selectedTicket->technician)
+                                        <p class="text-xs text-slate-400 text-center py-2">Belum ada teknisi yang ditugaskan.</p>
+                                    @endif
+                                @endforelse
+                            </div>
+
+                            <!-- Form Ajak Rekan Kerja (Hanya untuk Teknisi Utama) -->
+                            @if ($isAssignedToMe && $selectedTicket->status !== 'closed' && $selectedTicket->status !== 'rejected')
+                                <div class="pt-3 border-t border-slate-100">
+                                    <form action="{{ route('teknisi.collaborators.invite', $selectedTicket->id) }}" method="POST" class="space-y-2">
+                                        @csrf
+                                        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                                            Ajak Rekan Teknisi Lain (Kolaborasi):
+                                        </label>
+                                        <div class="flex items-center gap-2">
+                                            <select name="collaborator_id" required class="flex-1 text-xs rounded-xl border-slate-200 bg-white text-slate-800 font-medium focus:border-teal-700 focus:ring-teal-700 truncate">
+                                                <option value="">-- Pilih Rekan Teknisi --</option>
+                                                @foreach ($allTechnicians as $tech)
+                                                    @if(!$selectedTicket->collaborators->contains($tech->id))
+                                                        <option value="{{ $tech->id }}">{{ $tech->name }} ({{ $tech->specialization ?: 'Umum' }})</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            <button type="submit" class="px-3.5 py-2 rounded-xl bg-teal-800 text-white text-xs font-bold hover:bg-teal-900 transition shrink-0 shadow-xs cursor-pointer">
+                                                + Ajak ke Tim
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
+
                         <!-- Log Aktivitas & Catatan Tambahan -->
                         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
                             <h3 class="font-bold text-sm text-slate-900 break-words">Catatan Tambahan Teknisi</h3>

@@ -55,6 +55,13 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'assigned_to');
     }
 
+    public function collaboratedTickets(): BelongsToMany
+    {
+        return $this->belongsToMany(Ticket::class, 'ticket_collaborators', 'user_id', 'ticket_id')
+                    ->withPivot('role_in_team')
+                    ->withTimestamps();
+    }
+
     public function createdTickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'created_by');

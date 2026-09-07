@@ -102,6 +102,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/tickets/{ticket}/reject', [AdminTicketController::class, 'rejectTicket'])->name('tickets.reject');
     Route::post('/tickets/{ticket}/triage', [AdminTicketController::class, 'updateTriage'])->name('tickets.triage');
     Route::post('/tickets/{ticket}/assign', [AdminTicketController::class, 'assignTechnician'])->name('tickets.assign');
+    Route::post('/tickets/{ticket}/release', [AdminTicketController::class, 'releaseToPool'])->name('tickets.release');
     Route::post('/tickets/{ticket}/notes', [AdminTicketController::class, 'addNote'])->name('tickets.notes');
     Route::post('/tickets/{ticket}/close', [AdminTicketController::class, 'closeTicket'])->name('tickets.close');
 });
@@ -115,6 +116,8 @@ Route::middleware(['auth', 'role:teknisi'])->prefix('teknisi')->name('teknisi.')
     Route::get('/dashboard', [TeknisiController::class, 'index'])->name('dashboard');
     Route::post('/tickets/{ticket}/status', [TeknisiController::class, 'updateStatus'])->name('status.update');
     Route::post('/tickets/{ticket}/claim', [TeknisiController::class, 'claimTicket'])->name('tickets.claim');
+    Route::post('/tickets/{ticket}/collaborators', [TeknisiController::class, 'inviteCollaborator'])->name('collaborators.invite');
+    Route::delete('/tickets/{ticket}/collaborators/{user}', [TeknisiController::class, 'removeCollaborator'])->name('collaborators.remove');
     Route::post('/tickets/{ticket}/notes', [TeknisiController::class, 'addNote'])->name('notes.store');
     Route::get('/riwayat', [TeknisiController::class, 'riwayat'])->name('riwayat');
 });

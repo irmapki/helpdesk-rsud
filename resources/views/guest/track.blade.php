@@ -205,6 +205,29 @@
                                     </a>
                                 @endif
                             </div>
+
+                            @if ($ticket->collaborators && $ticket->collaborators->isNotEmpty())
+                                <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-slate-600">
+                                    <svg class="w-3.5 h-3.5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span><strong>Tim Pendamping:</strong> {{ $ticket->collaborators->pluck('name')->join(', ') }}</span>
+                                </div>
+                            @endif
+                        @elseif ($ticket->validation_status === 'validated' && !$ticket->technician && $ticket->status !== 'rejected')
+                            <div class="mt-4 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 font-bold flex items-center justify-center shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="text-[10px] text-amber-800 uppercase font-bold tracking-wider block">Status Penanganan</span>
+                                        <h4 class="text-xs sm:text-sm font-extrabold text-slate-900">Menunggu Diambil oleh Tim Teknisi</h4>
+                                        <p class="text-[11px] text-slate-600 font-medium">Pengaduan telah disetujui Admin dan siap dikerjakan oleh Tim Teknisi IT.</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-xl bg-amber-100 text-amber-800 text-[11px] font-bold shrink-0 self-start sm:self-auto border border-amber-300">
+                                    Antrean Terbuka
+                                </span>
+                            </div>
                         @endif
 
                         <!-- Description & Attachments -->

@@ -253,21 +253,71 @@
             <div class="space-y-6">
                 <!-- 1. VALIDATION ACTION BOX -->
                 @if ($ticket->validation_status === 'pending' && $ticket->status !== 'rejected')
-                    <div class="bg-white rounded-2xl border border-amber-200 shadow-xs p-4 sm:p-6 space-y-4 bg-gradient-to-br from-amber-50/40 to-white">
+                    <div class="bg-white rounded-2xl border border-amber-200 shadow-xs p-4 sm:p-6 space-y-4 bg-gradient-to-br from-amber-50/40 to-white" x-data="{ assignMode: 'open_pool' }">
                         <div class="flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
-                            <h3 class="font-bold text-sm text-slate-900">Validasi Pengaduan</h3>
+                            <h3 class="font-bold text-sm text-slate-900">Validasi &amp; Penugasan Tiket</h3>
                         </div>
-                        <p class="text-xs text-slate-500">Periksa kebenaran tiket sebelum menugaskan ke teknisi.</p>
+                        <p class="text-xs text-slate-500">Periksa keabsahan pengaduan dan tentukan jalur penanganan teknisi.</p>
 
-                        <!-- Form Approve Validation -->
-                        <form action="{{ route('admin.tickets.validate', $ticket) }}" method="POST">
+                        <!-- Form Validasi dengan Opsi Pool Terbuka vs Direct Assign -->
+                        <form action="{{ route('admin.tickets.validate', $ticket) }}" method="POST" class="space-y-3.5">
                             @csrf
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                    Metode Penugasan:
+                                </label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <label class="p-3 rounded-xl border cursor-pointer transition flex flex-col justify-between text-xs"
+                                        :class="assignMode === 'open_pool' ? 'border-teal-700 bg-teal-50/60 font-bold text-teal-900 shadow-xs' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <input type="radio" name="assign_mode" value="open_pool" x-model="assignMode" class="text-teal-700 focus:ring-teal-700">
+                                            <span>Antrean Terbuka (Pool)</span>
+                                        </div>
+                                        <span class="text-[10px] font-normal text-slate-500">Teknisi mengambil tugas secara mandiri</span>
+                                    </label>
+
+                                    <label class="p-3 rounded-xl border cursor-pointer transition flex flex-col justify-between text-xs"
+                                        :class="assignMode === 'direct_assign' ? 'border-teal-700 bg-teal-50/60 font-bold text-teal-900 shadow-xs' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <input type="radio" name="assign_mode" value="direct_assign" x-model="assignMode" class="text-teal-700 focus:ring-teal-700">
+                                            <span>Tunjuk Personil Langsung</span>
+                                        </div>
+                                        <span class="text-[10px] font-normal text-slate-500">Admin memilih teknisi tertentu</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Pilihan Teknisi jika memilih Direct Assign -->
+                            <div x-show="assignMode === 'direct_assign'" x-transition class="space-y-2 pt-1">
+                                <label for="assigned_to_val" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                                    Pilih Teknisi Penanggung Jawab <span class="text-rose-500">*</span>
+                                </label>
+                                <select name="assigned_to" id="assigned_to_val"
+                                    class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                                    <option value="">-- Pilih Teknisi IT --</option>
+                                    @foreach ($technicians as $tech)
+                                        @php $load = $tech->assignedTickets->count(); @endphp
+                                        <option value="{{ $tech->id }}">
+                                            {{ $tech->name }} (Beban: {{ $load }} Tiket) - {{ $tech->specialization ?: 'Umum' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="admin_notes" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                    Catatan Validasi Admin (Opsional)
+                                </label>
+                                <input type="text" name="admin_notes" id="admin_notes" placeholder="Contoh: Terverifikasi, kendala SIMRS ruang IGD..."
+                                    class="w-full text-xs rounded-xl border-slate-200 bg-white text-slate-800 focus:ring-teal-700 focus:border-teal-700 font-medium">
+                            </div>
+
                             <button type="submit" class="w-full bg-[#0f333a] hover:bg-[#092227] text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
                                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Validasi &amp; Setujui Tiket</span>
+                                <span>Validasi &amp; Simpan Tiket</span>
                             </button>
                         </form>
 
@@ -288,30 +338,44 @@
                         </div>
                     </div>
                 @elseif ($ticket->validation_status === 'validated' && !$ticket->assigned_to)
-                    <div class="bg-emerald-50 rounded-2xl border border-emerald-200 shadow-xs p-4 sm:p-5 space-y-1.5">
-                        <div class="flex items-center gap-2 text-emerald-800 font-bold text-xs">
-                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                            <span>Tiket Telah Divalidasi oleh Admin</span>
+                    <div class="bg-amber-50 rounded-2xl border border-amber-200 shadow-xs p-4 sm:p-5 space-y-2">
+                        <div class="flex items-center gap-2 text-amber-900 font-bold text-xs">
+                            <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>Tiket Berada di Antrean Terbuka (Pool)</span>
                         </div>
-                        <p class="text-[11px] text-emerald-700 font-medium leading-relaxed">Pengaduan telah dinyatakan sah. Silakan pilih teknisi di bawah untuk menugaskan penanganan.</p>
+                        <p class="text-[11px] text-amber-800 font-medium leading-relaxed">
+                            Tiket siap diambil mandiri oleh teknisi. Anda juga dapat langsung menugaskan teknisi spesifik melalui formulir di bawah.
+                        </p>
                     </div>
                 @endif
 
                 <!-- 2. ASSIGN TECHNICIAN BOX -->
                 @if ($ticket->status !== 'rejected' && $ticket->status !== 'closed')
                     <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
-                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
-                            <svg class="w-4 h-4 text-teal-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <span>{{ $ticket->technician ? 'Ubah Penugasan Teknisi' : 'Tugaskan ke Teknisi' }}</span>
-                        </h3>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-teal-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <span>{{ $ticket->technician ? 'Ubah Penugasan Teknisi' : 'Tugaskan ke Teknisi' }}</span>
+                            </h3>
+
+                            @if ($ticket->technician)
+                                <form action="{{ route('admin.tickets.release', $ticket) }}" method="POST" onsubmit="return confirm('Lepas penugasan dan kembalikan ke Antrean Terbuka?')">
+                                    @csrf
+                                    <button type="submit" class="text-[10px] font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-lg border border-rose-200 transition">
+                                        Lepas ke Pool &rarr;
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
 
                         @if ($ticket->technician)
                             <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs">
                                 <span class="text-[10px] text-emerald-800 font-bold uppercase block">Teknisi Saat Ini:</span>
                                 <span class="font-bold text-slate-900 block text-sm mt-0.5 break-all">{{ $ticket->technician->name }}</span>
-                                <span class="text-slate-400 text-[11px] mt-0.5 block">Ditugaskan: {{ $ticket->assigned_at?->format('d/m/Y H:i') ?: '-' }}</span>
+                                <span class="text-slate-500 text-[11px] mt-0.5 block">Spesialisasi: {{ $ticket->technician->specialization ?: 'Umum' }}</span>
+                                <span class="text-slate-400 text-[10px] mt-0.5 block">Ditugaskan: {{ $ticket->assigned_at?->format('d/m/Y H:i') ?: '-' }}</span>
                             </div>
                         @endif
 
