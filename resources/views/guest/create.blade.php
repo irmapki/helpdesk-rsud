@@ -257,7 +257,7 @@
         </div>
     </div>
 
-    <!-- Modal Live Webcam Laptop / Komputer -->
+    <!-- Modal Live Webcam Laptop / Komputer dengan Tombol Switch Mirror -->
     <div id="webcam-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 text-slate-900">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -275,8 +275,14 @@
 
             <!-- Area Video Live Preview -->
             <div class="relative bg-black rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
-                <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover transition-transform duration-200"></video>
                 <canvas id="webcam-canvas" class="hidden"></canvas>
+                
+                <!-- Tombol Switch Mirror di atas Frame Video -->
+                <button type="button" id="mirror-toggle-btn" onclick="toggleMirrorMode()" class="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg backdrop-blur-md transition flex items-center gap-1.5 shadow-md">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    <span id="mirror-status-text">Mirror: OFF</span>
+                </button>
             </div>
 
             <div class="flex items-center justify-between gap-3 pt-2">
@@ -294,6 +300,7 @@
     <script>
         let selectedFiles = [];
         let webcamStream = null;
+        let isMirrorEnabled = false; // Status awal Mirror (OFF)
 
         function toggleCustomUnitInput(value) {
             const wrapper = document.getElementById('custom_unit_wrapper');
@@ -305,6 +312,21 @@
             } else {
                 wrapper.classList.add('hidden');
                 customInput.removeAttribute('required');
+            }
+        }
+
+        // Fungsi untuk mengaktifkan/menonaktifkan mode mirror secara live
+        function toggleMirrorMode() {
+            isMirrorEnabled = !isMirrorEnabled;
+            const video = document.getElementById('webcam-video');
+            const statusText = document.getElementById('mirror-status-text');
+
+            if (isMirrorEnabled) {
+                video.style.transform = 'scaleX(-1)';
+                statusText.textContent = 'Mirror: ON';
+            } else {
+                video.style.transform = 'scaleX(1)';
+                statusText.textContent = 'Mirror: OFF';
             }
         }
 
@@ -328,6 +350,12 @@
         async function openWebcamModal() {
             const modal = document.getElementById('webcam-modal');
             const video = document.getElementById('webcam-video');
+            
+            // Set default mirror ke OFF saat pertama kali buka modal
+            isMirrorEnabled = false;
+            video.style.transform = 'scaleX(1)';
+            document.getElementById('mirror-status-text').textContent = 'Mirror: OFF';
+
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
@@ -340,7 +368,6 @@
             } catch (err) {
                 console.error("Gagal membuka webcam:", err);
                 closeWebcamModal();
-                // Fallback ke input kamera biasa
                 document.getElementById('camera-native-input').click();
             }
         }
@@ -367,7 +394,16 @@
             canvas.width = video.videoWidth || 1280;
             canvas.height = video.videoHeight || 720;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            // Jika mode mirror aktif saat menjepret, balikkan hasil render canvas agar sesuai dengan preview
+            if (isMirrorEnabled) {
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+            } else {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            }
+            ctx.restore();
 
             canvas.toBlob(blob => {
                 if (blob) {
@@ -398,7 +434,7 @@
             const input = event.target;
             const files = Array.from(input.files);
             files.forEach(file => selectedFiles.push(file));
-            input.value = ''; // Reset input agar file sama bisa dipilih ulang jika dihapus
+            input.value = ''; 
             updateFileInputAndPreview();
         }
 
