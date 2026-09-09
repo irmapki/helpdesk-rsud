@@ -38,14 +38,23 @@ Route::post('/guest/ticket/{ticket_number}/feedback', [GuestTicketController::cl
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', function () {
-    $role = auth()->user()?->role?->name;
-    return match ($role) {
-        'super_admin' => redirect()->route('superadmin.dashboard'),
-        'admin' => redirect()->route('admin.dashboard'),
-        'teknisi' => redirect()->route('teknisi.dashboard'),
-        'supervisor' => redirect()->route('supervisor.dashboard'),
-        default => view('dashboard'),
-    };
+    $user = auth()->user();
+    if (!$user) return redirect()->route('login');
+
+    if ($user->hasRole('super_admin') || $user->role?->name === 'super_admin') {
+        return redirect()->route('superadmin.dashboard');
+    }
+    if ($user->hasRole('supervisor') || $user->role?->name === 'supervisor') {
+        return redirect()->route('supervisor.dashboard');
+    }
+    if ($user->hasRole('admin') || $user->role?->name === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+    if ($user->hasRole('teknisi') || $user->role?->name === 'teknisi') {
+        return redirect()->route('teknisi.dashboard');
+    }
+
+    return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

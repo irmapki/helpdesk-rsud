@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         'name',
@@ -38,6 +40,15 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (User $user) {
+            if ($user->role_id && $user->role) {
+                $user->syncRoles([$user->role->name]);
+            }
+        });
     }
 
     public function role(): BelongsTo
@@ -79,19 +90,18 @@ class User extends Authenticatable
 
     public function scopeTechnicians(Builder $query): Builder
     {
-        return $query->whereHas('role', function ($q) {
-            $q->where('name', 'teknisi');
+        return $query->where(function ($q) {
+            $q->whereHas('roles', function ($sub) {
+                $sub->where('name', 'teknisi');
+            })->orWhereHas('role', function ($sub) {
+                $sub->where('name', 'teknisi');
+            });
         });
     }
 
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
-    }
-
-    public function hasRole(string ...$roles): bool
-    {
-        return $this->role && in_array($this->role->name, $roles);
     }
 
     public function getActiveTicketsCountAttribute(): int

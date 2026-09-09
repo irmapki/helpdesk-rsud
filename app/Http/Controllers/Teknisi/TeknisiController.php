@@ -336,8 +336,12 @@ class TeknisiController extends Controller
      */
     public function riwayat(Request $request): View
     {
-        $query = Ticket::with(['unit', 'category', 'priority', 'technician'])
-            ->where('assigned_to', Auth::id())
+        $myId = Auth::id();
+        $query = Ticket::with(['unit', 'category', 'priority', 'technician', 'collaborators'])
+            ->where(function ($q) use ($myId) {
+                $q->where('assigned_to', $myId)
+                  ->orWhereHas('collaborators', fn($qc) => $qc->where('user_id', $myId));
+            })
             ->whereIn('status', ['resolved', 'closed', 'pending_review']);
 
         if ($request->filled('search')) {

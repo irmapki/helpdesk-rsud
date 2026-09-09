@@ -27,15 +27,22 @@ class AuthenticatedSessionController extends Controller
     $request->authenticate();
     $request->session()->regenerate();
 
-    $role = $request->user()->role->name;
+        $user = $request->user();
 
-    return redirect()->intended(match ($role) {
-        'super_admin' => route('superadmin.dashboard'),
-        'admin' => route('admin.dashboard'),
-        'teknisi' => route('teknisi.dashboard'),
-        'supervisor' => route('supervisor.dashboard'),
-        default => route('dashboard'),
-    });
+        if ($user->hasRole('super_admin') || $user->role?->name === 'super_admin') {
+            return redirect()->intended(route('superadmin.dashboard'));
+        }
+        if ($user->hasRole('supervisor') || $user->role?->name === 'supervisor') {
+            return redirect()->intended(route('supervisor.dashboard'));
+        }
+        if ($user->hasRole('admin') || $user->role?->name === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+        if ($user->hasRole('teknisi') || $user->role?->name === 'teknisi') {
+            return redirect()->intended(route('teknisi.dashboard'));
+        }
+
+        return redirect()->intended(route('dashboard'));
 }
 
     /**

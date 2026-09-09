@@ -105,9 +105,28 @@
                                     </div>
                                 </td>
                                 <td class="py-3.5 px-2 whitespace-nowrap">
-                                    <span class="inline-block px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-bold {{ $roleBadgeClass }}">
-                                        {{ $roleLabel }}
-                                    </span>
+                                    @if($user->roles->count() > 0)
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($user->roles as $r)
+                                                @php
+                                                    $rBadge = match ($r->name) {
+                                                        'super_admin' => 'bg-purple-100 text-purple-800',
+                                                        'admin' => 'bg-blue-100 text-blue-800',
+                                                        'teknisi' => 'bg-emerald-100 text-emerald-800',
+                                                        'supervisor' => 'bg-amber-100 text-amber-800',
+                                                        default => 'bg-slate-100 text-slate-800',
+                                                    };
+                                                @endphp
+                                                <span class="inline-block px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-bold {{ $rBadge }}">
+                                                    {{ $r->label ?? $r->name }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="inline-block px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-bold {{ $roleBadgeClass }}">
+                                            {{ $roleLabel }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="py-3.5 px-2 text-slate-700 font-medium text-xs whitespace-nowrap">
                                     {{ $user->unit->name ?? 'Semua Unit (Pusat)' }}

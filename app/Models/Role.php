@@ -3,18 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as SpatieRole;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Role extends Model
+class Role extends SpatieRole
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
+        'guard_name',
     ];
 
-    public function users(): HasMany
+    public function legacyUsers(): HasMany
     {
         return $this->hasMany(User::class);
     }

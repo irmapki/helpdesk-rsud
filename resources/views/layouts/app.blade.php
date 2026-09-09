@@ -143,7 +143,7 @@
                     <div class="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-5 custom-scrollbar">
 
                         {{-- ==================== MENU SUPERADMIN ==================== --}}
-                        @if(request()->routeIs('superadmin.*') || (auth()->check() && auth()->user()->hasRole('super_admin')))
+                        @if(auth()->check() && (auth()->user()->hasRole('super_admin') || auth()->user()->role?->name === 'super_admin'))
                             <div>
                                 <div x-show="desktopExpanded || !isDesktop" class="px-3 mb-2">
                                     <p class="text-[10px] font-black text-teal-300/80 uppercase tracking-widest truncate">MENU SUPER ADMIN</p>
@@ -280,9 +280,10 @@
                                     </a>
                                 </nav>
                             </div>
+                        @endif
 
                         {{-- ==================== MENU ADMIN (Triage & Dispatch) ==================== --}}
-                        @elseif(request()->routeIs('admin.*') || (auth()->check() && auth()->user()->hasRole('admin')))
+                        @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->role?->name === 'admin'))
                             <div>
                                 <div x-show="desktopExpanded || !isDesktop" class="px-3 mb-2">
                                     <p class="text-[10px] font-black text-teal-300/80 uppercase tracking-widest truncate">MENU UTAMA ADMIN</p>
@@ -327,9 +328,10 @@
                                     </a>
                                 </nav>
                             </div>
+                        @endif
 
                         {{-- ==================== MENU TEKNISI ==================== --}}
-                        @elseif(request()->routeIs('teknisi.*') || (auth()->check() && auth()->user()->hasRole('teknisi')))
+                        @if(auth()->check() && (auth()->user()->hasRole('teknisi') || auth()->user()->role?->name === 'teknisi'))
                             <div>
                                 <div x-show="desktopExpanded || !isDesktop" class="px-3 mb-2">
                                     <p class="text-[10px] font-black text-teal-300/80 uppercase tracking-widest truncate">MENU UTAMA TEKNISI</p>
@@ -374,9 +376,10 @@
                                     </a>
                                 </nav>
                             </div>
+                        @endif
 
                         {{-- ==================== MENU SUPERVISOR ==================== --}}
-                        @elseif(request()->routeIs('supervisor.*') || (auth()->check() && auth()->user()->hasRole('supervisor')))
+                        @if(auth()->check() && (auth()->user()->hasRole('supervisor') || auth()->user()->role?->name === 'supervisor'))
                             <div>
                                 <div x-show="desktopExpanded || !isDesktop" class="px-3 mb-2">
                                     <p class="text-[10px] font-black text-teal-300/80 uppercase tracking-widest truncate">MENU UTAMA SUPERVISOR</p>
@@ -565,7 +568,14 @@
                             <div class="text-left hidden md:block min-w-0">
                                 <span class="block text-xs font-extrabold text-slate-900 leading-tight truncate max-w-[120px]">{{ Auth::user()->name ?? 'User' }}</span>
                                 <span class="block text-[10px] text-slate-500 font-semibold leading-tight mt-0.5 truncate">
-                                    {{ Auth::user()->role->label ?? Auth::user()->role->name ?? 'Petugas' }}
+                                    @php
+                                        $userRoles = Auth::user()->roles->pluck('label')->filter();
+                                        if ($userRoles->isEmpty()) {
+                                            $userRoles = Auth::user()->roles->pluck('name');
+                                        }
+                                        $roleText = $userRoles->isNotEmpty() ? $userRoles->join(', ') : (Auth::user()->role->label ?? Auth::user()->role->name ?? 'Petugas');
+                                    @endphp
+                                    {{ $roleText }}
                                 </span>
                             </div>
                         </a>

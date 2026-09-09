@@ -21,21 +21,17 @@ class UserController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = User::with(['role', 'unit']);
+        $query = User::with(['roles', 'role', 'unit']);
 
         // Tab filter (Semua, Admin, Teknisi, Supervisor)
         $tab = $request->query('tab', 'semua');
         if ($tab !== 'semua') {
-            $query->whereHas('role', function ($q) use ($tab) {
-                if ($tab === 'admin') {
-                    $q->where('name', 'admin');
-                } elseif ($tab === 'teknisi') {
-                    $q->where('name', 'teknisi');
-                } elseif ($tab === 'supervisor') {
-                    $q->where('name', 'supervisor');
-                } elseif ($tab === 'super_admin') {
-                    $q->where('name', 'super_admin');
-                }
+            $query->where(function ($sub) use ($tab) {
+                $sub->whereHas('roles', function ($q) use ($tab) {
+                    $q->where('name', $tab);
+                })->orWhereHas('role', function ($q) use ($tab) {
+                    $q->where('name', $tab);
+                });
             });
         }
 
@@ -105,25 +101,41 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:30'],
             'password' => ['required', Password::defaults()],
-            'role_id' => ['required', 'exists:roles,id'],
+            'roles' => ['nullable', 'array', 'min:1'],
+            'roles.*' => ['string', 'exists:roles,name'],
+            'role_id' => ['nullable', 'exists:roles,id'],
             'unit_id' => ['nullable', 'exists:units,id'],
             'specialization' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],
         ]);
 
+        $roleNames = $request->input('roles', []);
+        if (empty($roleNames) && $request->filled('role_id')) {
+            $roleObj = Role::find($request->role_id);
+            if ($roleObj) $roleNames = [$roleObj->name];
+        }
+        if (empty($roleNames)) {
+            return back()->withErrors(['roles' => 'Minimal pilih satu role / hak akses akun.'])->withInput();
+        }
+
+        $primaryRole = Role::where('name', $roleNames[0])->first();
+        $validated['role_id'] = $primaryRole ? $primaryRole->id : null;
         $validated['password'] = Hash::make($validated['password']);
         $validated['is_active'] = $request->has('is_active');
+        unset($validated['roles']);
 
-        User::create($validated);
+        $user = User::create($validated);
+        $user->syncRoles($roleNames);
 
         return redirect()->route('superadmin.users.index')
-            ->with('success', 'User berhasil ditambahkan.');
+            ->with('success', 'User dan hak akses multi-role berhasil ditambahkan.');
     }
 
     public function edit(User $user): View
     {
         $roles = Role::all();
         $units = Unit::all();
+        $user->load('roles');
 
         return view('superadmin.users.edit', compact('user', 'roles', 'units'));
     }
@@ -135,11 +147,25 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'max:30'],
             'password' => ['nullable', Password::defaults()],
-            'role_id' => ['required', 'exists:roles,id'],
+            'roles' => ['nullable', 'array', 'min:1'],
+            'roles.*' => ['string', 'exists:roles,name'],
+            'role_id' => ['nullable', 'exists:roles,id'],
             'unit_id' => ['nullable', 'exists:units,id'],
             'specialization' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],
         ]);
+
+        $roleNames = $request->input('roles', []);
+        if (empty($roleNames) && $request->filled('role_id')) {
+            $roleObj = Role::find($request->role_id);
+            if ($roleObj) $roleNames = [$roleObj->name];
+        }
+        if (empty($roleNames)) {
+            return back()->withErrors(['roles' => 'Minimal pilih satu role / hak akses akun.'])->withInput();
+        }
+
+        $primaryRole = Role::where('name', $roleNames[0])->first();
+        $validated['role_id'] = $primaryRole ? $primaryRole->id : $user->role_id;
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
@@ -148,11 +174,13 @@ class UserController extends Controller
         }
 
         $validated['is_active'] = $request->has('is_active');
+        unset($validated['roles']);
 
         $user->update($validated);
+        $user->syncRoles($roleNames);
 
         return redirect()->route('superadmin.users.index')
-            ->with('success', 'Data user berhasil diperbarui.');
+            ->with('success', 'Data user dan hak akses multi-role berhasil diperbarui.');
     }
 
     public function destroy(User $user): RedirectResponse
