@@ -13,6 +13,9 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TechnicianAssignedMail;
+use App\Mail\TicketResolvedMail;
 use Illuminate\View\View;
 
 class TicketController extends Controller
@@ -129,6 +132,15 @@ class TicketController extends Controller
                 'note' => "Tiket divalidasi dan langsung ditugaskan oleh Admin kepada Teknisi {$technician->name}." . ($request->admin_notes ? " (Catatan: {$request->admin_notes})" : ""),
             ]);
 
+            // Kirim email ke teknisi saat divalidasi & langsung ditugaskan
+            if (!empty($technician->email)) {
+                try {
+                    Mail::to($technician->email)->send(new TechnicianAssignedMail($ticket));
+                } catch (\Exception $e) {
+                    // Abaikan jika koneksi mail offline
+                }
+            }
+
             return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} divalidasi dan ditugaskan ke {$technician->name}.");
         }
 
@@ -152,9 +164,6 @@ class TicketController extends Controller
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil divalidasi dan dibuka ke Antrean Terbuka Tim.");
     }
 
-    /**
-     * Lepas penugasan dan kembalikan tiket ke antrean terbuka tim teknisi.
-     */
     public function releaseToPool(Ticket $ticket): RedirectResponse
     {
         $oldTechName = $ticket->technician->name ?? 'Teknisi';
@@ -247,6 +256,15 @@ class TicketController extends Controller
             'note' => $note,
         ]);
 
+        // Kirim email ke teknisi saat ditugaskan melalui aksi assign
+        if (!empty($technician->email)) {
+            try {
+                Mail::to($technician->email)->send(new TechnicianAssignedMail($ticket));
+            } catch (\Exception $e) {
+                // Abaikan jika koneksi mail offline
+            }
+        }
+
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil ditugaskan ke {$technician->name}.");
     }
 
@@ -279,12 +297,20 @@ class TicketController extends Controller
             'note' => 'Tiket resmi ditutup oleh Admin Helpdesk.',
         ]);
 
+        // Mengambil email guest/pelapor secara aman berdasarkan struktur tabel tiket umum (guest_email / email / relasi creator)
+        $guestEmail = $ticket->guest_email ?? $ticket->email ?? $ticket->creator?->email;
+        
+        if (!empty($guestEmail)) {
+            try {
+                Mail::to($guestEmail)->send(new TicketResolvedMail($ticket));
+            } catch (\Exception $e) {
+                // Abaikan jika koneksi mail offline
+            }
+        }
+
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} telah ditutup.");
     }
 
-    /**
-     * API Polling untuk Notifikasi Suara & Real-time Live Check Tiket Baru.
-     */
     public function checkNewTickets(Request $request): \Illuminate\Http\JsonResponse
     {
         $latest = Ticket::with(['unit', 'priority'])->latest()->first();
