@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TechnicianAssignedMail;
 use App\Mail\TicketResolvedMail;
+use App\Mail\TicketAvailableMail;
 use Illuminate\View\View;
+
 
 class TicketController extends Controller
 {
@@ -103,9 +105,20 @@ class TicketController extends Controller
         $ticket->load(['category', 'priority', 'unit', 'technician', 'creator', 'statusLogs.user', 'notes.user']);
         $categories = Category::all();
         $priorities = Priority::all();
+
+        // Ambil semua teknisi aktif, lalu urutkan supaya yang spesialisasinya
+        // cocok dengan group_type kategori tiket muncul lebih dulu di dropdown assign
+        $groupType = $ticket->category->group_type ?? null;
+
         $technicians = User::technicians()->active()->with(['assignedTickets' => function ($q) {
             $q->whereIn('status', ['assigned', 'in_progress']);
         }])->get();
+
+        if ($groupType) {
+            $technicians = $technicians->sortByDesc(function ($tech) use ($groupType) {
+                return $tech->specialization_group === $groupType;
+            })->values();
+        }
 
         return view('admin.tickets.show', compact('ticket', 'categories', 'priorities', 'technicians'));
     }
@@ -137,7 +150,7 @@ class TicketController extends Controller
                 try {
                     Mail::to($technician->email)->send(new TechnicianAssignedMail($ticket));
                 } catch (\Exception $e) {
-                    // Abaikan jika koneksi mail offline
+                    \Log::error('MAIL GAGAL: ' . $e->getMessage());
                 }
             }
 
@@ -152,6 +165,7 @@ class TicketController extends Controller
             'admin_notes' => $request->admin_notes,
         ]);
 
+        $groupType = $ticket->category->group_type ?? null;
         $groupLabel = $ticket->category ? (strtoupper($ticket->category->group_type) . ' - ' . $ticket->category->name) : 'Tim IT';
 
         TicketStatusLog::create([
@@ -161,7 +175,38 @@ class TicketController extends Controller
             'note' => "Tiket divalidasi oleh Admin dan dimasukkan ke Antrean Terbuka ({$groupLabel}) untuk diambil oleh Teknisi.",
         ]);
 
+        // Notifikasi ke teknisi yang spesialisasinya cocok dengan group_type kategori tiket
+        $this->notifyMatchingTechnicians($ticket, $groupType);
+
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil divalidasi dan dibuka ke Antrean Terbuka Tim.");
+    }
+
+    /**
+     * Kirim email ke semua teknisi aktif yang specialization_group-nya
+     * sama dengan group_type kategori tiket. Dipanggil saat tiket masuk
+     * ke Antrean Terbuka supaya hanya teknisi yang relevan yang diberi tahu.
+     */
+    protected function notifyMatchingTechnicians(Ticket $ticket, ?string $groupType): void
+    {
+        if (!$groupType) {
+            return;
+        }
+
+        $matchingTechnicians = User::technicians()->active()
+            ->where('specialization_group', $groupType)
+            ->get();
+
+        foreach ($matchingTechnicians as $tech) {
+            if (empty($tech->email)) {
+                continue;
+            }
+
+            try {
+                Mail::to($tech->email)->send(new TicketAvailableMail($ticket));
+            } catch (\Exception $e) {
+                \Log::error('MAIL GAGAL (pool): ' . $e->getMessage());
+            }
+        }
     }
 
     public function releaseToPool(Ticket $ticket): RedirectResponse
@@ -179,6 +224,10 @@ class TicketController extends Controller
             'changed_by' => Auth::id(),
             'note' => "Penugasan dari {$oldTechName} telah dilepas oleh Admin dan dikembalikan ke Antrean Terbuka Tim.",
         ]);
+
+        // Beri tahu ulang teknisi yang cocok spesialisasinya, karena tiket kembali ke pool
+        $groupType = $ticket->category->group_type ?? null;
+        $this->notifyMatchingTechnicians($ticket, $groupType);
 
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} berhasil dikembalikan ke Antrean Terbuka.");
     }
@@ -261,7 +310,7 @@ class TicketController extends Controller
             try {
                 Mail::to($technician->email)->send(new TechnicianAssignedMail($ticket));
             } catch (\Exception $e) {
-                // Abaikan jika koneksi mail offline
+                \Log::error('MAIL GAGAL: ' . $e->getMessage());
             }
         }
 
@@ -299,12 +348,12 @@ class TicketController extends Controller
 
         // Mengambil email guest/pelapor secara aman berdasarkan struktur tabel tiket umum (guest_email / email / relasi creator)
         $guestEmail = $ticket->guest_email ?? $ticket->email ?? $ticket->creator?->email;
-        
+
         if (!empty($guestEmail)) {
             try {
                 Mail::to($guestEmail)->send(new TicketResolvedMail($ticket));
             } catch (\Exception $e) {
-                // Abaikan jika koneksi mail offline
+                \Log::error('MAIL GAGAL: ' . $e->getMessage());
             }
         }
 

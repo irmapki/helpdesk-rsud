@@ -83,6 +83,7 @@ class TechnicianController extends Controller
             'phone' => ['nullable', 'string', 'max:30'],
             'specialization' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],
+            'specialization_group' => ['required', 'in:hardware,software'],
         ]);
 
         $updateData = [

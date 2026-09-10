@@ -62,5 +62,10 @@
                 </div>
             </form>
         </div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">Kelompok Keahlian (untuk sistem)</label>
+<select name="specialization_group" class="w-full border-slate-300 rounded-xl text-sm">
+    <option value="hardware" @selected(old('specialization_group', $technician->specialization_group) === 'hardware')>Hardware</option>
+    <option value="software" @selected(old('specialization_group', $technician->specialization_group) === 'software')>Software</option>
+</select>
     </div>
 </x-app-layout>
