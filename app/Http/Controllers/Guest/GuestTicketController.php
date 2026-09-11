@@ -8,10 +8,12 @@ use App\Models\Priority;
 use App\Models\Ticket;
 use App\Models\TicketStatusLog;
 use App\Models\Unit;
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Mail; // <-- Tambahan untuk fitur log email
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use App\Events\TicketCreatedEvent;
 
@@ -48,11 +50,10 @@ class GuestTicketController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:10'],
             'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,heic,heif,mp4,mov,avi,mkv,webm,3gp', 'max:51200'], // max 50MB per file
+            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,webp,heic,heif,mp4,mov,avi,mkv,webm,3gp', 'max:51200'],
             'attachment' => ['nullable'],
         ]);
 
-        // Handle custom unit if chosen or typed
         if ($request->unit_id === 'other' || !empty($request->custom_unit_name)) {
             $customName = trim((string) $request->custom_unit_name);
             if (empty($customName)) {
@@ -71,13 +72,11 @@ class GuestTicketController extends Controller
 
         unset($validated['custom_unit_name']);
 
-        // Default priority to Medium if not specified
         if (empty($validated['priority_id'])) {
             $defaultPriority = Priority::where('name', 'Medium')->first() ?? Priority::first();
             $validated['priority_id'] = $defaultPriority?->id;
         }
 
-        // Handle multiple attachments (images & videos)
         $storedPaths = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
@@ -97,15 +96,24 @@ class GuestTicketController extends Controller
 
         $ticketNumber = Ticket::generateTicketNumber();
         $validated['ticket_number'] = $ticketNumber;
+        
+        // Diselaraskan dengan pengecekan lonceng admin (status open dan validation_status pending)
         $validated['status'] = 'open';
         $validated['validation_status'] = 'pending';
 
         $ticket = Ticket::create($validated);
         
-        // Broadcast notifikasi tiket baru ke Reverb (Pop-up Admin)
         event(new TicketCreatedEvent($ticket));
 
-        // Kirim Simulasi Email Masuk (tercatat otomatis ke storage/logs/laravel.log)
+        // Mengirimkan database notification ke Admin dan Super Admin
+        $admins = User::whereHas('role', function($query) {
+            $query->whereIn('name', ['admin', 'super_admin']);
+        })->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketNotification($ticket));
+        }
+
         try {
             Mail::raw(
                 "Halo Tim Admin & Teknisi,\n\nAda pengaduan/tiket baru masuk dengan detail berikut:\n" .
@@ -121,15 +129,14 @@ class GuestTicketController extends Controller
                 }
             );
         } catch (\Exception $e) {
-            // Mencegah error email menghentikan proses redirect jika ada kendala log
+            // Mencegah error email menghentikan proses redirect
         }
 
-        // Record initial status log
         TicketStatusLog::create([
             'ticket_id' => $ticket->id,
             'status' => 'open',
             'changed_by' => null,
-            'note' => "Pengaduan baru diajukan oleh {$ticket->guest_name} ({$ticket->unit->name}) melalui Portal Helpdesk RSUD.",
+            'note' => "Pengaduan baru diajukan oleh {$ticket->guest_name} (" . ($ticket->unit?->name ?? '-') . ") melalui Portal Helpdesk RSUD.",
         ]);
 
         return redirect()->route('guest.ticket.success', ['ticket_number' => $ticketNumber])

@@ -61,7 +61,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Endpoint live-check disesuaikan agar cocok dengan pemanggilan route('tickets.live-check') di layout
     Route::get('/tickets/live-check', [AdminTicketController::class, 'checkNewTickets'])->name('tickets.live-check');
+
+    // Route untuk Pengelolaan Notifikasi Lonceng (Umum/Auth)
+    Route::post('/notifications/{id}/read', function ($id) {
+        $notification = auth()->user()->notifications()->find($id);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['success' => true]);
+    })->name('notifications.read');
+
+    Route::delete('/notifications/{id}', function ($id) {
+        $notification = auth()->user()->notifications()->find($id);
+        if ($notification) {
+            $notification->delete();
+        }
+        return back()->with('success', 'Notifikasi berhasil dihapus.');
+    })->name('notifications.destroy');
 });
 
 /*
@@ -77,7 +96,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('superadmin')->name('sup
     Route::patch('/users/{user}/toggle-status', [SuperAdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
     
     // Role Management
-    Route::get('/roles', [SuperAdminRoleController::class, 'index'])->name('roles.index');
+    Route::resource('roles', SuperAdminRoleController::class);
     
     // Ticket Categories Management
     Route::resource('categories', SuperAdminCategoryController::class)->except(['create', 'show', 'edit']);

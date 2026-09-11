@@ -19,7 +19,6 @@ use App\Mail\TicketResolvedMail;
 use App\Mail\TicketAvailableMail;
 use Illuminate\View\View;
 
-
 class TicketController extends Controller
 {
     public function index(Request $request): View
@@ -360,23 +359,35 @@ class TicketController extends Controller
         return redirect()->back()->with('success', "Tiket {$ticket->ticket_number} telah ditutup.");
     }
 
+    /**
+     * Endpoint live-check untuk lonceng notifikasi admin (mengembalikan list tiket pending/menunggu validasi)
+     */
     public function checkNewTickets(Request $request): \Illuminate\Http\JsonResponse
     {
-        $latest = Ticket::with(['unit', 'priority'])->latest()->first();
-        $totalOpen = Ticket::where('status', 'open')->count();
-        $totalAssigned = Ticket::where('status', 'assigned')->count();
-        $totalReview = Ticket::where('status', 'pending_review')->count();
+        // Mengambil tiket yang memerlukan validasi admin (pending / open / menunggu validasi)
+        $tickets = Ticket::with(['unit', 'priority'])
+            ->where(function($query) {
+                $query->where('validation_status', 'pending')
+                      ->orWhere('status', 'open')
+                      ->orWhere('status', 'Menunggu Validasi');
+            })
+            ->latest()
+            ->take(10)
+            ->get();
 
         return response()->json([
-            'latest_id' => $latest?->id,
-            'latest_number' => $latest?->ticket_number,
-            'latest_title' => $latest?->title,
-            'latest_unit' => $latest?->unit?->name,
-            'latest_priority' => $latest?->priority?->name,
-            'total_open' => $totalOpen,
-            'total_assigned' => $totalAssigned,
-            'total_review' => $totalReview,
-            'url' => $latest ? route('admin.tickets.show', $latest->id) : '#',
+            'unread_count' => $tickets->count(),
+            'latest_id' => optional($tickets->first())->id ?? 0,
+            'notifications' => $tickets->map(function($ticket) {
+                return [
+                    'id' => $ticket->id,
+                    'no_tiket' => $ticket->ticket_number ?? '-',
+                    'judul' => $ticket->title ?? $ticket->subject ?? 'Pengaduan Baru',
+                    'unit' => $ticket->unit->name ?? 'Umum',
+                    'time' => $ticket->created_at ? $ticket->created_at->diffForHumans() : '',
+                    'url' => route('admin.tickets.show', $ticket->id)
+                ];
+            })
         ]);
     }
 }
