@@ -360,34 +360,77 @@ class TicketController extends Controller
     }
 
     /**
-     * Endpoint live-check untuk lonceng notifikasi admin (mengembalikan list tiket pending/menunggu validasi)
+     * Endpoint live-check untuk lonceng notifikasi & pop-up toast real-time
      */
     public function checkNewTickets(Request $request): \Illuminate\Http\JsonResponse
     {
-        // Mengambil tiket yang memerlukan validasi admin (pending / open / menunggu validasi)
-        $tickets = Ticket::with(['unit', 'priority'])
-            ->where(function($query) {
-                $query->where('validation_status', 'pending')
-                      ->orWhere('status', 'open')
-                      ->orWhere('status', 'Menunggu Validasi');
-            })
-            ->latest()
-            ->take(10)
-            ->get();
+        $user = $request->user();
+
+        // Jika teknisi: tampilkan tiket yang baru di-assign ke dirinya yang statusnya 'assigned'
+        if ($user && ($user->hasRole('teknisi') && !$user->hasRole('admin') && !$user->hasRole('super_admin'))) {
+            $tickets = Ticket::with(['unit', 'category', 'priority'])
+                ->where('assigned_to', $user->id)
+                ->where('status', 'assigned')
+                ->latest('assigned_at')
+                ->take(10)
+                ->get();
+
+            $type = 'assigned_task';
+        } else {
+            // Default: Admin / Super Admin (Tiket baru masuk yang pending / open / perlu validasi)
+            $tickets = Ticket::with(['unit', 'category', 'priority'])
+                ->where(function($query) {
+                    $query->where('validation_status', 'pending')
+                          ->orWhere('status', 'open')
+                          ->orWhere('status', 'Menunggu Validasi');
+                })
+                ->latest('created_at')
+                ->take(10)
+                ->get();
+
+            $type = 'new_ticket';
+        }
+
+        $notifications = $tickets->map(function($ticket) use ($user) {
+            $url = ($user && $user->hasRole('teknisi') && !$user->hasRole('admin'))
+                ? route('teknisi.dashboard', ['ticket_id' => $ticket->id])
+                : route('admin.tickets.show', $ticket->id);
+
+            return [
+                'id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number ?? ('HD-' . str_pad($ticket->id, 4, '0', STR_PAD_LEFT)),
+                'title' => $ticket->title ?? $ticket->subject ?? 'Pengaduan Layanan IT',
+                'unit' => optional($ticket->unit)->name ?? 'Unit RSUD',
+                'category' => optional($ticket->category)->name ?? 'Umum',
+                'priority' => optional($ticket->priority)->name ?? 'Normal',
+                'status' => $ticket->status,
+                'time' => $ticket->created_at ? $ticket->created_at->diffForHumans() : 'Baru saja',
+                'url' => $url,
+            ];
+        });
+
+        $latest = $notifications->first();
+
+        // Hitung total tiket yang berstatus 'pending' / butuh validasi admin secara real-time
+        $pendingCount = Ticket::where(function($query) {
+            $query->where('validation_status', 'pending')
+                  ->orWhere('status', 'open')
+                  ->orWhere('status', 'Menunggu Validasi');
+        })->count();
+
+        // Hitung total tiket aktif milik teknisi yang sedang login
+        $myActiveCount = ($user && method_exists($user, 'hasRole') && $user->hasRole('teknisi'))
+            ? Ticket::where('assigned_to', $user->id)->whereIn('status', ['assigned', 'in_progress'])->count()
+            : 0;
 
         return response()->json([
-            'unread_count' => $tickets->count(),
-            'latest_id' => optional($tickets->first())->id ?? 0,
-            'notifications' => $tickets->map(function($ticket) {
-                return [
-                    'id' => $ticket->id,
-                    'no_tiket' => $ticket->ticket_number ?? '-',
-                    'judul' => $ticket->title ?? $ticket->subject ?? 'Pengaduan Baru',
-                    'unit' => $ticket->unit->name ?? 'Umum',
-                    'time' => $ticket->created_at ? $ticket->created_at->diffForHumans() : '',
-                    'url' => route('admin.tickets.show', $ticket->id)
-                ];
-            })
+            'type' => $type,
+            'pending_count' => $pendingCount,
+            'my_active_count' => $myActiveCount,
+            'unread_count' => $notifications->count(),
+            'latest_id' => $latest ? $latest['id'] : 0,
+            'latest_ticket' => $latest,
+            'notifications' => $notifications,
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teknisi;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TicketResolvedMail;
 use App\Models\Ticket;
 use App\Models\TicketNote;
 use App\Models\TicketStatusLog;
@@ -272,6 +273,18 @@ class TeknisiController extends Controller
             'note' => $noteText,
         ]);
 
+        // Kirim email resmi selesai ke Pelapor/Guest jika status resolved
+        if ($status === 'resolved') {
+            $guestEmail = $ticket->guest_email ?? $ticket->email ?? $ticket->creator?->email;
+            if (!empty($guestEmail)) {
+                try {
+                    Mail::to($guestEmail)->send(new TicketResolvedMail($ticket->fresh(['unit', 'technician'])));
+                } catch (\Exception $e) {
+                    \Log::error('MAIL PELAPOR GAGAL (TEKNISI RESOLVED): ' . $e->getMessage());
+                }
+            }
+        }
+
         try {
             Mail::raw(
                 "Halo Tim Admin & Supervisor,\n\nStatus tiket {$ticket->ticket_number} telah diupdate oleh Teknisi:\n" .
@@ -284,7 +297,7 @@ class TeknisiController extends Controller
                 }
             );
         } catch (\Exception $e) {
-            // Lewati jika ada kendala log email[cite: 6]
+            // Lewati jika ada kendala log email
         }
 
         return redirect()->route('teknisi.dashboard', ['ticket_id' => $ticket->id])

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Supervisor;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TicketResolvedMail;
 use App\Models\Category;
 use App\Models\Priority;
 use App\Models\Ticket;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -338,6 +340,16 @@ public function reviewTicket(Request $request, Ticket $ticket): \Illuminate\Http
             'changed_by' => \Illuminate\Support\Facades\Auth::id(),
             'note' => 'Perbaikan software telah diverifikasi dan DISETUJUI oleh Supervisor IT: ' . ($validated['supervisor_notes'] ?? 'Kodingan & fungsi berjalan normal.'),
         ]);
+
+        // Kirim email notifikasi selesai ke Pelapor/Guest
+        $guestEmail = $ticket->guest_email ?? $ticket->email ?? $ticket->creator?->email;
+        if (!empty($guestEmail)) {
+            try {
+                Mail::to($guestEmail)->send(new TicketResolvedMail($ticket->fresh(['unit', 'technician'])));
+            } catch (\Exception $e) {
+                \Log::error('MAIL PELAPOR GAGAL (SUPERVISOR APPROVE): ' . $e->getMessage());
+            }
+        }
 
         return back()->with('success', "Tiket [{$ticket->ticket_number}] berhasil disetujui dan dinyatakan selesai.");
     } else {

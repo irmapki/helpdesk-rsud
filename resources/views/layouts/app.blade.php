@@ -37,15 +37,22 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-[#f8fafc] text-slate-800 h-full overflow-hidden">
-        <!-- Alpine.js Responsive State -->
+        <!-- Alpine.js Responsive State & Real-time Live Notification Engine -->
         <div x-data="{
             isDesktop: window.innerWidth >= 1024,
             desktopExpanded: window.__sidebarExpanded !== undefined ? window.__sidebarExpanded : (localStorage.getItem('sidebar_expanded') !== 'false'),
             mobileOpen: false,
             hasLoaded: false,
             unreadCount: 0,
+            pendingCount: {{ \App\Models\Ticket::where(fn($q) => $q->where('validation_status', 'pending')->orWhere('status', 'open')->orWhere('status', 'Menunggu Validasi'))->count() }},
+            myActiveCount: {{ auth()->check() ? \App\Models\Ticket::where('assigned_to', auth()->id())->whereIn('status', ['assigned', 'in_progress'])->count() : 0 }},
             notifications: [],
             notificationOpen: false,
+            dismissedIds: JSON.parse(localStorage.getItem('dismissed_ticket_notifs') || '[]'),
+            lastSeenId: null,
+            toastVisible: false,
+            toastData: null,
+            toastTimer: null,
 
             init() {
                 this.$nextTick(() => {
@@ -53,49 +60,92 @@
                         this.hasLoaded = true;
                     }, 100);
                 });
-                this.fetchUnreadCount();
-                setInterval(() => this.fetchUnreadCount(), 7000);
+                this.fetchNotifications(true);
+                setInterval(() => this.fetchNotifications(false), 5000);
             },
 
-            fetchUnreadCount() {
+            fetchNotifications(isInitial = false) {
                 fetch('{{ route('tickets.live-check') }}', {
                     headers: { 'Accept': 'application/json' }
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data) {
-                        if (typeof data.unread_count !== 'undefined') {
-                            this.unreadCount = data.unread_count;
-                        }
-                        if (Array.isArray(data.notifications)) {
-                            this.notifications = data.notifications;
+                    if (!data) return;
+                    
+                    if (typeof data.pending_count !== 'undefined') {
+                        this.pendingCount = data.pending_count;
+                    }
+                    if (typeof data.my_active_count !== 'undefined') {
+                        this.myActiveCount = data.my_active_count;
+                    }
+
+                    const rawList = Array.isArray(data.notifications) ? data.notifications : [];
+                    
+                    // Filter notifikasi yang belum di-dismiss oleh user
+                    const activeList = rawList.filter(item => !this.dismissedIds.includes(item.id));
+                    this.notifications = activeList;
+                    this.unreadCount = activeList.length;
+
+                    const latestId = data.latest_id || (rawList[0] ? rawList[0].id : null);
+                    if (latestId) {
+                        if (isInitial || this.lastSeenId === null) {
+                            this.lastSeenId = latestId;
+                        } else if (latestId > this.lastSeenId) {
+                            this.lastSeenId = latestId;
+                            const latestItem = data.latest_ticket || rawList[0];
+                            if (latestItem && !this.dismissedIds.includes(latestItem.id)) {
+                                this.showToast(latestItem);
+                                if (typeof playNotificationSound === 'function') {
+                                    playNotificationSound();
+                                }
+                            }
                         }
                     }
-                }).catch(e => {});
+                })
+                .catch(e => {});
             },
 
-            markAsRead(notifId) {
-                fetch('/notifications/' + notifId + '/read', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=&quot;csrf-token&quot;]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    }
-                }).then(() => {
-                    this.fetchUnreadCount();
-                });
+            showToast(ticket) {
+                this.toastData = ticket;
+                this.toastVisible = true;
+                if (this.toastTimer) clearTimeout(this.toastTimer);
+                this.toastTimer = setTimeout(() => {
+                    this.toastVisible = false;
+                }, 12000);
             },
 
-            deleteNotification(notifId) {
-                fetch('/notifications/' + notifId, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=&quot;csrf-token&quot;]').getAttribute('content'),
-                        'Accept': 'application/json'
+            dismissNotif(id) {
+                if (!this.dismissedIds.includes(id)) {
+                    this.dismissedIds.push(id);
+                    if (this.dismissedIds.length > 100) this.dismissedIds.shift();
+                    localStorage.setItem('dismissed_ticket_notifs', JSON.stringify(this.dismissedIds));
+                }
+                this.notifications = this.notifications.filter(n => n.id !== id);
+                this.unreadCount = this.notifications.length;
+                if (this.toastData && this.toastData.id === id) {
+                    this.toastVisible = false;
+                }
+            },
+
+            dismissAll() {
+                this.notifications.forEach(n => {
+                    if (!this.dismissedIds.includes(n.id)) {
+                        this.dismissedIds.push(n.id);
                     }
-                }).then(() => {
-                    this.fetchUnreadCount();
                 });
+                localStorage.setItem('dismissed_ticket_notifs', JSON.stringify(this.dismissedIds));
+                this.notifications = [];
+                this.unreadCount = 0;
+                this.toastVisible = false;
+            },
+
+            openTicket(url, id) {
+                if (id) {
+                    this.dismissNotif(id);
+                }
+                this.toastVisible = false;
+                this.notificationOpen = false;
+                window.location.href = url;
             },
 
             toggleSidebar() {
@@ -285,15 +335,15 @@
                                             <svg class="w-5 h-5 {{ request()->routeIs('admin.tickets.*') ? 'text-emerald-800' : 'text-teal-300 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path>
                                             </svg>
-                                            <template x-if="unreadCount > 0">
-                                                <span class="absolute -top-1.5 -right-2 bg-red-600 text-white font-black text-[9px] min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center shadow-md border border-white animate-pulse" x-text="unreadCount"></span>
+                                            <template x-if="pendingCount > 0">
+                                                <span class="absolute -top-1.5 -right-2 bg-amber-400 text-slate-950 font-black text-[9px] min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center shadow-md border border-white animate-pulse" x-text="pendingCount"></span>
                                             </template>
                                         </div>
 
                                         <span class="truncate flex-1 flex items-center justify-between" x-show="desktopExpanded || !isDesktop">
                                             <span>Manajemen & Triage</span>
-                                            <template x-if="unreadCount > 0">
-                                                <span class="bg-red-600 text-white font-black text-[10px] px-1.5 py-0.5 rounded-full shadow-sm ml-1" x-text="unreadCount"></span>
+                                            <template x-if="pendingCount > 0">
+                                                <span class="bg-amber-400 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full shadow-xs ml-1" x-text="pendingCount"></span>
                                             </template>
                                         </span>
                                     </a>
@@ -313,10 +363,20 @@
                                     <a href="{{ route('teknisi.dashboard') }}" @click="closeMobile()" title="Tiket Saya & Workboard"
                                         class="group relative flex items-center gap-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-colors duration-150 {{ request()->routeIs('teknisi.dashboard') ? 'bg-white text-emerald-950 shadow-md shadow-black/15 font-black' : 'text-emerald-100/90 hover:bg-white/10 hover:text-white' }}"
                                         :class="{ 'justify-center px-0': !desktopExpanded && isDesktop }">
-                                        <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('teknisi.dashboard') ? 'text-emerald-800' : 'text-teal-300 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path>
-                                        </svg>
-                                        <span class="truncate" x-show="desktopExpanded || !isDesktop">Tiket Saya & Workboard</span>
+                                        <div class="relative shrink-0 flex items-center justify-center">
+                                            <svg class="w-5 h-5 {{ request()->routeIs('teknisi.dashboard') ? 'text-emerald-800' : 'text-teal-300 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path>
+                                            </svg>
+                                            <template x-if="myActiveCount > 0">
+                                                <span class="absolute -top-1.5 -right-2 bg-emerald-400 text-slate-950 font-black text-[9px] min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center shadow-md border border-white" x-text="myActiveCount"></span>
+                                            </template>
+                                        </div>
+                                        <span class="truncate flex-1 flex items-center justify-between" x-show="desktopExpanded || !isDesktop">
+                                            <span>Tiket Saya & Workboard</span>
+                                            <template x-if="myActiveCount > 0">
+                                                <span class="bg-emerald-400 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full shadow-xs ml-1" x-text="myActiveCount"></span>
+                                            </template>
+                                        </span>
                                     </a>
 
                                     <a href="{{ route('teknisi.riwayat') }}" @click="closeMobile()" title="Riwayat Penanganan"
@@ -453,7 +513,7 @@
                         </button>
 
                         <!-- DROPDOWN NOTIFIKASI LONCENG -->
-                        <div class="relative" x-data="{ notificationOpen: false }">
+                        <div class="relative">
                             <button @click="notificationOpen = !notificationOpen" title="Notifikasi Tiket Masuk" 
                                 class="relative p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 active:scale-95 transition-all duration-150 flex items-center justify-center shadow-xs cursor-pointer">
                                 <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -466,27 +526,38 @@
 
                             <!-- Panel Dropdown Notifikasi -->
                             <div x-show="notificationOpen" @click.away="notificationOpen = false" x-cloak
-                                class="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden">
+                                class="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200/90 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden">
                                 <div class="px-4 py-2.5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                                    <span class="font-black text-xs text-slate-800 uppercase tracking-wider">Notifikasi Tiket Masuk</span>
-                                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full" x-text="unreadCount + ' Baru'"></span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-black text-xs text-slate-800 uppercase tracking-wider">Notifikasi Tiket Masuk</span>
+                                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full" x-text="unreadCount + ' Baru'"></span>
+                                    </div>
+                                    <template x-if="notifications.length > 0">
+                                        <button @click="dismissAll()" class="text-[11px] text-slate-500 hover:text-rose-600 font-bold transition">
+                                            Bersihkan
+                                        </button>
+                                    </template>
                                 </div>
 
-                                <div class="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                                <div class="max-h-80 overflow-y-auto divide-y divide-slate-100 custom-scrollbar">
                                     <template x-for="notif in notifications" :key="notif.id">
-                                        <div class="p-3.5 hover:bg-slate-50 transition flex items-start justify-between gap-3"
-                                            :class="notif.read_at ? 'opacity-60 bg-white' : 'bg-emerald-50/40'">
-                                            <a :href="notif.data.url || '{{ route('admin.tickets.index') }}'" 
-                                               @click="markAsRead(notif.id); notificationOpen = false;"
-                                               class="flex-1 text-xs text-slate-700 min-w-0">
-                                                <p class="font-black text-emerald-900 truncate" x-text="notif.data.ticket_number || 'Tiket Baru'"></p>
-                                                <p class="text-slate-600 mt-0.5 line-clamp-2" x-text="notif.data.message || 'Ada aduan pengaduan baru dari guest.'"></p>
-                                                <span class="text-[10px] text-slate-400 mt-1 block" x-text="notif.created_at_human || 'Baru saja'"></span>
-                                            </a>
+                                        <div class="p-3.5 hover:bg-emerald-50/40 transition flex items-start justify-between gap-3 bg-white group cursor-pointer"
+                                             @click="openTicket(notif.url, notif.id)">
+                                            <div class="flex-1 min-w-0 text-left">
+                                                <div class="flex items-center gap-2 flex-wrap mb-1">
+                                                    <span class="font-mono font-black text-xs text-emerald-900 bg-emerald-100/90 px-2 py-0.5 rounded-md" x-text="notif.ticket_number"></span>
+                                                    <span class="text-[10px] text-slate-400 font-medium ml-auto" x-text="notif.time"></span>
+                                                </div>
+                                                <p class="font-bold text-xs text-slate-900 line-clamp-1 group-hover:text-emerald-900 transition" x-text="notif.title"></p>
+                                                <p class="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1 truncate">
+                                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                                    <span class="truncate" x-text="notif.unit"></span>
+                                                </p>
+                                            </div>
 
-                                            <div class="flex flex-col items-center gap-1.5 shrink-0">
-                                                <button @click="deleteNotification(notif.id)" title="Hapus Notifikasi"
-                                                    class="text-slate-400 hover:text-rose-600 p-1 rounded-lg hover:bg-rose-50 transition cursor-pointer">
+                                            <div class="flex flex-col items-center gap-1 shrink-0 pt-0.5">
+                                                <button @click.stop="dismissNotif(notif.id)" title="Hapus dari notifikasi"
+                                                    class="text-slate-300 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition cursor-pointer">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2.000 2.000 0 0116.138 21H7.862a2.000 2.000 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                     </svg>
@@ -496,11 +567,28 @@
                                     </template>
 
                                     <template x-if="notifications.length === 0">
-                                        <div class="p-6 text-center text-xs text-slate-400 font-semibold">
-                                            Tidak ada notifikasi tiket saat ini.
+                                        <div class="p-8 text-center text-xs text-slate-400 font-semibold space-y-2">
+                                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            </div>
+                                            <p>Semua notifikasi telah dibaca.</p>
                                         </div>
                                     </template>
                                 </div>
+
+                                @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('super_admin')))
+                                    <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
+                                        <a href="{{ route('admin.tickets.index') }}" @click="notificationOpen = false" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition">
+                                            Lihat Semua Tiket &rarr;
+                                        </a>
+                                    </div>
+                                @elseif(auth()->check() && auth()->user()->hasRole('teknisi'))
+                                    <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
+                                        <a href="{{ route('teknisi.dashboard') }}" @click="notificationOpen = false" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition">
+                                            Buka Workboard Tiket &rarr;
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -560,6 +648,63 @@
                 </main>
             </div>
 
+            <!-- FLOATING LIVE TICKET TOAST POP-UP (MUNCUL OTOMATIS SAAT ADA TIKET MASUK REAL-TIME) -->
+            <div x-show="toastVisible" 
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="translate-y-[-20px] opacity-0 scale-95"
+                 x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="translate-y-[-10px] opacity-0 scale-95"
+                 class="fixed top-5 right-5 z-50 max-w-sm sm:max-w-md w-full bg-slate-900/95 backdrop-blur-md text-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-emerald-500/40 shadow-emerald-950/50 select-none">
+                <div class="flex items-start gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-900/40 animate-pulse">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                                @if(auth()->check() && auth()->user()->hasRole('teknisi') && !auth()->user()->hasRole('admin'))
+                                    Tugas Baru Diberikan
+                                @else
+                                    Tiket Baru Masuk
+                                @endif
+                            </span>
+                            <span class="text-[10px] text-slate-400 font-mono" x-text="toastData ? toastData.time : 'Baru saja'"></span>
+                        </div>
+
+                        <h4 class="font-black text-sm text-emerald-400 mt-1.5 font-mono tracking-wider" x-text="toastData ? toastData.ticket_number : ''"></h4>
+                        <p class="font-bold text-xs text-slate-100 mt-0.5 line-clamp-1" x-text="toastData ? toastData.title : ''"></p>
+                        
+                        <p class="text-[11px] text-slate-300 font-medium mt-1 flex items-center gap-1.5 truncate">
+                            <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            <span class="truncate" x-text="toastData ? toastData.unit : ''"></span>
+                        </p>
+
+                        <div class="mt-3.5 flex items-center gap-2 pt-2 border-t border-white/10">
+                            <a :href="toastData ? toastData.url : '#'" 
+                               @click="openTicket(toastData.url, toastData.id)"
+                               class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs px-4 py-2 rounded-xl transition shadow-md flex items-center gap-1.5 cursor-pointer">
+                                <span>Buka & Tindak Lanjuti</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                            <button @click="toastVisible = false" 
+                                    class="text-xs font-bold text-slate-400 hover:text-white px-3 py-2 rounded-xl hover:bg-white/10 transition cursor-pointer">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+
+                    <button @click="toastVisible = false" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
         </div>
 
         <script>
@@ -598,35 +743,6 @@
             function testNotificationSound() {
                 playNotificationSound();
             }
-
-            let lastSeenTicketId = null;
-            let isFirstCheck = true;
-
-            function checkIncomingTickets() {
-                fetch('{{ route('tickets.live-check') }}', {
-                    headers: { 'Accept': 'application/json' }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (!data || !data.latest_id) return;
-                    if (isFirstCheck) {
-                        lastSeenTicketId = data.latest_id;
-                        isFirstCheck = false;
-                        return;
-                    }
-                    if (data.latest_id > lastSeenTicketId) {
-                        lastSeenTicketId = data.latest_id;
-                        playNotificationSound();
-                    }
-                })
-                .catch(err => {});
-            }
-
-            document.encode = null;
-            document.addEventListener('DOMContentLoaded', () => {
-                checkIncomingTickets();
-                setInterval(checkIncomingTickets, 7000);
-            });
         </script>
     </body>
 </html>
