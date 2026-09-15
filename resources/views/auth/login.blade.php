@@ -121,61 +121,11 @@
                     <span>Masuk ke Dashboard</span>
                 </button>
             </form>
-
-            <!-- Demo credentials -->
-            <div class="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-slate-100 min-w-0">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 mb-3 min-w-0">
-                    <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-500 break-words">⚡ Akun demo (klik untuk isi otomatis)</span>
-                    <span class="text-[10px] sm:text-[11px] text-teal-600 font-semibold bg-teal-50 px-2 py-0.5 rounded-full shrink-0 self-start sm:self-auto">Password: password</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-0">
-                    <button type="button" onclick="fillCredentials('superadmin@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 text-left transition-all min-w-0">
-                        <span class="text-xs font-bold text-purple-900 block break-words">👑 Super Admin</span>
-                        <span class="text-[11px] text-purple-700/80 block mt-0.5 break-all">superadmin@rsud.test</span>
-                    </button>
-
-                    <button type="button" onclick="fillCredentials('admin@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 hover:border-blue-300 text-left transition-all min-w-0">
-                        <span class="text-xs font-bold text-blue-900 block break-words">📋 Admin</span>
-                        <span class="text-[11px] text-blue-700/80 block mt-0.5 break-all">admin@rsud.test</span>
-                    </button>
-
-                    <button type="button" onclick="fillCredentials('teknisi@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 text-left transition-all min-w-0">
-                        <span class="text-xs font-bold text-emerald-900 block break-words">🔧 Teknisi</span>
-                        <span class="text-[11px] text-emerald-700/80 block mt-0.5 break-all">teknisi@rsud.test</span>
-                    </button>
-
-                    <button type="button" onclick="fillCredentials('supervisor@rsud.test', 'password')"
-                        class="p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100 hover:border-amber-300 text-left transition-all min-w-0">
-                        <span class="text-xs font-bold text-amber-900 block break-words">📊 Supervisor</span>
-                        <span class="text-[11px] text-amber-700/80 block mt-0.5 break-all">supervisor@rsud.test</span>
-                    </button>
-                </div>
-            </div>
         </div>
 
-        <div class="mt-6 text-center text-[11px] sm:text-xs text-slate-400 break-words">
-            Sistem Informasi IT Helpdesk RSUD
+        <div class="mt-8 text-center text-[11px] sm:text-xs text-slate-400 break-words">
+            Sistem Informasi IT Helpdesk &amp; Ticketing RSUD RAA Soewondo
         </div>
     </div>
 </div>
-
-<script>
-    function fillCredentials(email, password) {
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-
-        emailInput.value = email;
-        passwordInput.value = password || 'password';
-
-        emailInput.dispatchEvent(new Event('input', { bubbles: true }));
-        passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-        emailInput.classList.add('ring-2', 'ring-teal-500');
-        setTimeout(() => emailInput.classList.remove('ring-2', 'ring-teal-500'), 600);
-    }
-</script>
 @endsection
