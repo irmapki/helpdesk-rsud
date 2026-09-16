@@ -73,6 +73,79 @@ class TicketController extends Controller
 
         $tickets = $query->latest()->paginate(12)->withQueryString();
 
+        // Data khusus untuk Papan Kanban (semua tiket aktif yang sesuai filter pencarian)
+        $kanbanQuery = Ticket::with(['category', 'priority', 'unit', 'technician', 'creator']);
+        if ($request->filled('category_id')) {
+            $kanbanQuery->where('category_id', $request->category_id);
+        }
+        if ($request->filled('priority_id')) {
+            $kanbanQuery->where('priority_id', $request->priority_id);
+        }
+        if ($request->filled('unit_id')) {
+            $kanbanQuery->where('unit_id', $request->unit_id);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $kanbanQuery->where(function ($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('title', 'like', "%{$search}%")
+                  ->orWhere('guest_name', 'like', "%{$search}%")
+                  ->orWhereHas('creator', function ($qc) use ($search) {
+                      $qc->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $allKanbanTickets = $kanbanQuery->latest()->get();
+
+        $kanbanColumns = [
+            'pending' => [
+                'id' => 'pending',
+                'title' => '1. Antrean Masuk',
+                'color' => 'amber',
+                'dotColor' => 'bg-amber-500',
+                'borderColor' => 'border-amber-400',
+                'badgeClass' => 'bg-amber-100 text-amber-900 border-amber-300',
+                'tickets' => $allKanbanTickets->where('status', 'open')->values(),
+            ],
+            'assigned' => [
+                'id' => 'assigned',
+                'title' => '2. Ditugaskan',
+                'color' => 'sky',
+                'dotColor' => 'bg-sky-500',
+                'borderColor' => 'border-sky-400',
+                'badgeClass' => 'bg-sky-100 text-sky-900 border-sky-300',
+                'tickets' => $allKanbanTickets->where('status', 'assigned')->values(),
+            ],
+            'in_progress' => [
+                'id' => 'in_progress',
+                'title' => '3. Sedang Dikerjakan',
+                'color' => 'indigo',
+                'dotColor' => 'bg-indigo-500',
+                'borderColor' => 'border-indigo-500',
+                'badgeClass' => 'bg-indigo-100 text-indigo-900 border-indigo-300',
+                'tickets' => $allKanbanTickets->where('status', 'in_progress')->values(),
+            ],
+            'pending_review' => [
+                'id' => 'pending_review',
+                'title' => '4. Review Supervisor',
+                'color' => 'purple',
+                'dotColor' => 'bg-purple-500',
+                'borderColor' => 'border-purple-400',
+                'badgeClass' => 'bg-purple-100 text-purple-900 border-purple-300',
+                'tickets' => $allKanbanTickets->where('status', 'pending_review')->values(),
+            ],
+            'resolved' => [
+                'id' => 'resolved',
+                'title' => '5. Selesai Ditangani',
+                'color' => 'emerald',
+                'dotColor' => 'bg-emerald-500',
+                'borderColor' => 'border-emerald-500',
+                'badgeClass' => 'bg-emerald-100 text-emerald-900 border-emerald-300',
+                'tickets' => $allKanbanTickets->whereIn('status', ['resolved', 'closed'])->values(),
+            ],
+        ];
+
         $categories = Category::all();
         $priorities = Priority::all();
         $units = Unit::all();
@@ -91,6 +164,7 @@ class TicketController extends Controller
 
         return view('admin.tickets.index', compact(
             'tickets',
+            'kanbanColumns',
             'categories',
             'priorities',
             'units',
