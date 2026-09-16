@@ -1,5 +1,9 @@
 <x-app-layout>
-    <div class="space-y-6 max-w-full overflow-x-hidden pb-10">
+    <div x-data="{ isNavigating: false }" 
+         x-init="setTimeout(() => isNavigating = true, 50)"
+         class="space-y-6 max-w-full overflow-x-hidden pb-10 transition-all duration-300 transform"
+         :class="isNavigating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'">
+         
         <!-- Header & Action -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="min-w-0">

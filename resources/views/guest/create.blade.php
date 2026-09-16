@@ -77,9 +77,10 @@
                                 <label for="unit_id" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 truncate">
                                     Unit / Instalasi / Ruangan <span class="text-rose-500">*</span>
                                 </label>
+                                <!-- Disamakan menggunakan bg-slate-50/60 agar transparan dan serasi -->
                                 <select name="unit_id" id="unit_id" required onchange="toggleCustomUnitInput(this.value)"
                                     class="w-full rounded-xl border-slate-200 bg-slate-50/60 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 focus:bg-white transition @error('unit_id') border-rose-500 @enderror truncate">
-                                    <option value="">-- Pilih Unit / Ruangan RSUD --</option>
+                                    <option value="" disabled {{ old('unit_id') ? '' : 'selected' }} class="text-slate-400">-- Pilih unit/ruangan RSUD --</option>
                                     @foreach ($units as $unit)
                                         <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
                                             {{ $unit->name }} {{ $unit->location ? "({$unit->location})" : '' }}
@@ -114,7 +115,7 @@
                                 </label>
                                 <select name="category_id" id="category_id" required
                                     class="w-full rounded-xl border-slate-200 bg-slate-50/60 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 focus:bg-white transition @error('category_id') border-rose-500 @enderror truncate">
-                                    <option value="">-- Pilih Kategori Kendala --</option>
+                                    <option value="" disabled {{ old('category_id') ? '' : 'selected' }} class="text-slate-400">-- Pilih Kategori Kendala --</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
@@ -132,8 +133,9 @@
                                 </label>
                                 <select name="priority_id" id="priority_id"
                                     class="w-full rounded-xl border-slate-200 bg-slate-50/60 text-xs sm:text-sm font-medium focus:border-emerald-600 focus:ring-emerald-600 focus:bg-white transition truncate">
+                                    <option value="" disabled {{ old('priority_id') ? '' : 'selected' }} class="text-slate-400">-- Pilih Tingkat Urgensi --</option>
                                     @foreach ($priorities as $priority)
-                                        <option value="{{ $priority->id }}" {{ old('priority_id', 2) == $priority->id ? 'selected' : '' }}>
+                                        <option value="{{ $priority->id }}" {{ old('priority_id') == $priority->id ? 'selected' : '' }}>
                                             {{ $priority->name }} (Target SLA: {{ $priority->sla_hours }} Jam)
                                         </option>
                                     @endforeach
@@ -181,19 +183,16 @@
                                     Unggah Bukti Kendala (Foto &amp; Video)
                                 </label>
 
-                                <!-- Kotak interaktif upload file, foto kamera, dan paste clipboard -->
                                 <div id="drop-zone" contenteditable="true" onpaste="handlePaste(event)"
                                     class="w-full border border-slate-200 bg-slate-50/60 rounded-2xl p-3 sm:p-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none transition group cursor-text relative">
                                     
                                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5 w-full sm:w-auto min-w-0 pointer-events-none order-1">
-                                        <!-- Tombol 1: Pilih File dari Galeri / Folder -->
                                         <button type="button" onclick="event.stopPropagation(); document.getElementById('attachments').click();" 
                                             class="pointer-events-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-800 text-white text-xs font-bold hover:bg-emerald-900 transition shrink-0 shadow-sm active:scale-95 cursor-pointer">
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                             <span>Pilih File</span>
                                         </button>
 
-                                        <!-- Tombol 2: Ambil Foto Kamera Langsung (HP / Webcam Laptop) -->
                                         <button type="button" onclick="event.stopPropagation(); triggerCamera();" 
                                             class="pointer-events-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-700 text-white text-xs font-bold hover:bg-teal-800 transition shrink-0 shadow-sm active:scale-95 cursor-pointer">
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -205,17 +204,14 @@
                                         </span>
                                     </div>
 
-                                    <!-- Span tersembunyi di awal baris agar kursor fokus di sisi kiri -->
                                     <span id="cursor-anchor" class="inline-block w-0 h-0 overflow-hidden select-none outline-none focus:outline-none order-0 shrink-0"></span>
 
                                     <div class="text-[11px] text-slate-400 font-medium text-left sm:text-right shrink-0 pointer-events-none select-none order-2 sm:order-2 ml-auto">
                                         Klik &amp; tekan <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-slate-700 bg-white border border-slate-200 rounded shadow-2xs">Ctrl+V</kbd> untuk paste gambar
                                     </div>
 
-                                    <!-- Input file galeri tersembunyi -->
                                     <div class="hidden">
                                         <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,video/*,.heic,.heif" onchange="handleFileSelect(event)">
-                                        <!-- Input kamera native mobile -->
                                         <input type="file" id="camera-native-input" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
                                     </div>
                                 </div>
@@ -273,12 +269,10 @@
                 <button type="button" onclick="closeWebcamModal()" class="text-slate-400 hover:text-slate-700 font-bold text-lg p-1">&times;</button>
             </div>
 
-            <!-- Area Video Live Preview -->
             <div class="relative bg-black rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
                 <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover transition-transform duration-200"></video>
                 <canvas id="webcam-canvas" class="hidden"></canvas>
                 
-                <!-- Tombol Switch Mirror di atas Frame Video -->
                 <button type="button" id="mirror-toggle-btn" onclick="toggleMirrorMode()" class="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg backdrop-blur-md transition flex items-center gap-1.5 shadow-md">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                     <span id="mirror-status-text">Mirror: OFF</span>
@@ -300,7 +294,7 @@
     <script>
         let selectedFiles = [];
         let webcamStream = null;
-        let isMirrorEnabled = false; // Status awal Mirror (OFF)
+        let isMirrorEnabled = false;
 
         function toggleCustomUnitInput(value) {
             const wrapper = document.getElementById('custom_unit_wrapper');
@@ -315,7 +309,6 @@
             }
         }
 
-        // Fungsi untuk mengaktifkan/menonaktifkan mode mirror secara live
         function toggleMirrorMode() {
             isMirrorEnabled = !isMirrorEnabled;
             const video = document.getElementById('webcam-video');
@@ -330,15 +323,12 @@
             }
         }
 
-        // Pemicu Kamera: Jika mobile langsung buka kamera HP, jika laptop/desktop buka modal Webcam
         function triggerCamera() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (isMobile) {
-                // Di HP: picu kamera bawaan HP secara instan
                 document.getElementById('camera-native-input').click();
             } else {
-                // Di Laptop: buka live webcam modal jika didukung browser
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     openWebcamModal();
                 } else {
@@ -351,7 +341,6 @@
             const modal = document.getElementById('webcam-modal');
             const video = document.getElementById('webcam-video');
             
-            // Set default mirror ke OFF saat pertama kali buka modal
             isMirrorEnabled = false;
             video.style.transform = 'scaleX(1)';
             document.getElementById('mirror-status-text').textContent = 'Mirror: OFF';
@@ -396,7 +385,6 @@
             const ctx = canvas.getContext('2d');
 
             ctx.save();
-            // Jika mode mirror aktif saat menjepret, balikkan hasil render canvas agar sesuai dengan preview
             if (isMirrorEnabled) {
                 ctx.scale(-1, 1);
                 ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
@@ -417,7 +405,6 @@
             }, 'image/jpeg', 0.88);
         }
 
-        // Paksa kursor selalu fokus di awal (sebelah kiri tombol) saat area diklik di luar tombol
         document.getElementById('drop-zone').addEventListener('click', function(e) {
             if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
                 const range = document.createRange();
@@ -438,7 +425,6 @@
             updateFileInputAndPreview();
         }
 
-        // Tangkap Paste (Ctrl+V) gambar dari clipboard
         function handlePaste(event) {
             const items = (event.clipboardData || event.originalEvent.clipboardData).items;
             let added = false;
