@@ -60,8 +60,10 @@
                         this.hasLoaded = true;
                     }, 100);
                 });
+                @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('teknisi')))
                 this.fetchNotifications(true);
                 setInterval(() => this.fetchNotifications(false), 5000);
+                @endif
             },
 
             fetchNotifications(isInitial = false) {
@@ -483,106 +485,162 @@
                             </svg>
                         </button>
 
-                        <div class="min-w-0">
-                            <h2 class="text-xs sm:text-base font-black text-slate-900 truncate">
-                                @if(request()->routeIs('admin.*'))
-                                    Dashboard Admin RSUD (Triage &amp; Dispatch)
-                                @elseif(request()->routeIs('superadmin.*'))
-                                    Dashboard Super Admin RSUD
-                                @elseif(request()->routeIs('supervisor.*'))
-                                    Dashboard Supervisor IT
-                                @elseif(request()->routeIs('teknisi.*'))
-                                    Dashboard Teknisi IT RSUD
-                                @else
-                                    Dashboard Petugas Helpdesk
-                                @endif
-                            </h2>
-                            <p class="hidden sm:block text-[11px] text-slate-500 font-semibold truncate">
-                                RSUD RAA Soewondo IT Helpdesk &amp; Ticketing
-                            </p>
-                        </div>
+                        <!-- Vertical divider -->
+                        <div class="hidden sm:block h-6 w-[1px] bg-slate-200 shrink-0"></div>
+
+                        <!-- BREADCRUMB CONTEXT BAR (Ramping, Bersih & Modern) -->
+                        <nav aria-label="Breadcrumb" class="min-w-0 flex items-center gap-1.5 sm:gap-2 text-xs">
+                            @php
+                                $roleLabel = 'Helpdesk';
+                                if (request()->routeIs('superadmin.*')) {
+                                    $roleLabel = 'Super Admin';
+                                } elseif (request()->routeIs('admin.*')) {
+                                    $roleLabel = 'Admin Helpdesk';
+                                } elseif (request()->routeIs('teknisi.*')) {
+                                    $roleLabel = 'Teknisi IT';
+                                } elseif (request()->routeIs('supervisor.*')) {
+                                    $roleLabel = 'Supervisor IT';
+                                }
+
+                                $pageName = 'Dashboard';
+                                if (request()->routeIs('superadmin.dashboard') || request()->routeIs('admin.dashboard') || request()->routeIs('supervisor.dashboard')) {
+                                    $pageName = 'Dashboard';
+                                } elseif (request()->routeIs('superadmin.users.*')) {
+                                    $pageName = 'Kelola User';
+                                } elseif (request()->routeIs('superadmin.technicians.*')) {
+                                    $pageName = 'Data Teknisi';
+                                } elseif (request()->routeIs('superadmin.units.*')) {
+                                    $pageName = 'Master Unit RSUD';
+                                } elseif (request()->routeIs('superadmin.categories.*')) {
+                                    $pageName = 'Master Kategori';
+                                } elseif (request()->routeIs('superadmin.priorities.*')) {
+                                    $pageName = 'SLA & Prioritas';
+                                } elseif (request()->routeIs('superadmin.roles.*')) {
+                                    $pageName = 'Kelola Role';
+                                } elseif (request()->routeIs('admin.tickets.show')) {
+                                    $pageName = 'Triage & Detail Tiket';
+                                } elseif (request()->routeIs('admin.tickets.*')) {
+                                    $pageName = 'Manajemen & Triage Tiket';
+                                } elseif (request()->routeIs('teknisi.dashboard')) {
+                                    $pageName = 'Workboard Penanganan';
+                                } elseif (request()->routeIs('teknisi.riwayat')) {
+                                    $pageName = 'Riwayat Tiket Selesai';
+                                } elseif (request()->routeIs('supervisor.monitoring-sla')) {
+                                    $pageName = 'Monitoring SLA';
+                                } elseif (request()->routeIs('supervisor.laporan-tiket*') || request()->routeIs('supervisor.filter-periode*')) {
+                                    $pageName = 'Laporan Tiket';
+                                } elseif (request()->routeIs('supervisor.statistik*')) {
+                                    $pageName = 'Statistik Kinerja IT';
+                                } elseif (request()->routeIs('profile.*')) {
+                                    $pageName = 'Profil Pengguna';
+                                }
+                            @endphp
+
+                            <!-- Root / Home Icon -->
+                            <a href="{{ route('dashboard') }}" class="text-slate-400 hover:text-emerald-800 transition flex items-center gap-1 font-semibold shrink-0" title="Kembali ke Beranda Utama">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                <span class="hidden md:inline text-[11px] text-slate-500 font-bold uppercase tracking-wider">Helpdesk</span>
+                            </a>
+
+                            <!-- Separator -->
+                            <svg class="w-3 h-3 text-slate-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+
+                            <!-- Role Scope -->
+                            <span class="text-slate-400 font-semibold text-xs shrink-0 hidden sm:inline">{{ $roleLabel }}</span>
+
+                            <!-- Separator -->
+                            <svg class="w-3 h-3 text-slate-300 shrink-0 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+
+                            <!-- Active Page Name Badge -->
+                            <span class="text-slate-800 font-black text-xs sm:text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-xl border border-slate-200/90 shadow-xs truncate max-w-[180px] sm:max-w-[280px]">
+                                {{ $pageName }}
+                            </span>
+                        </nav>
                     </div>
 
-                    <div class="flex items-center space-x-2 sm:space-x-3.5 shrink-0">
-                        <!-- DROPDOWN NOTIFIKASI LONCENG -->
-                        <div class="relative">
-                            <button @click="notificationOpen = !notificationOpen" title="Notifikasi Tiket Masuk" 
-                                class="relative p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 active:scale-95 transition-all duration-150 flex items-center justify-center shadow-xs cursor-pointer">
-                                <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                                </svg>
-                                <template x-if="unreadCount > 0">
-                                    <span class="absolute -top-1 -right-1 bg-red-600 text-white font-black text-[10px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-md border border-white animate-pulse" x-text="unreadCount"></span>
-                                </template>
-                            </button>
-
-                            <!-- Panel Dropdown Notifikasi -->
-                            <div x-show="notificationOpen" @click.away="notificationOpen = false" x-cloak
-                                class="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200/90 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden">
-                                <div class="px-4 py-2.5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-black text-xs text-slate-800 uppercase tracking-wider">Notifikasi Tiket Masuk</span>
-                                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full" x-text="unreadCount + ' Baru'"></span>
-                                    </div>
-                                    <template x-if="notifications.length > 0">
-                                        <button @click="dismissAll()" class="text-[11px] text-slate-500 hover:text-rose-600 font-bold transition">
-                                            Bersihkan
-                                        </button>
+                    <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                        {{-- LONCENG NOTIFIKASI HANYA UNTUK OPERASIONAL TIKET (ADMIN & TEKNISI) --}}
+                        @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('teknisi')))
+                            <!-- DROPDOWN NOTIFIKASI LONCENG -->
+                            <div class="relative">
+                                <button @click="notificationOpen = !notificationOpen" title="Notifikasi Tiket Masuk" 
+                                    class="relative p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 active:scale-95 transition-all duration-150 flex items-center justify-center shadow-xs cursor-pointer">
+                                    <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    <template x-if="unreadCount > 0">
+                                        <span class="absolute -top-1 -right-1 bg-red-600 text-white font-black text-[10px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-md border border-white animate-pulse" x-text="unreadCount"></span>
                                     </template>
-                                </div>
+                                </button>
 
-                                <div class="max-h-80 overflow-y-auto divide-y divide-slate-100 custom-scrollbar">
-                                    <template x-for="notif in notifications" :key="notif.id">
-                                        <div class="p-3.5 hover:bg-emerald-50/40 transition flex items-start justify-between gap-3 bg-white group cursor-pointer"
-                                             @click="openTicket(notif.url, notif.id)">
-                                            <div class="flex-1 min-w-0 text-left">
-                                                <div class="flex items-center gap-2 flex-wrap mb-1">
-                                                    <span class="font-mono font-black text-xs text-emerald-900 bg-emerald-100/90 px-2 py-0.5 rounded-md" x-text="notif.ticket_number"></span>
-                                                    <span class="text-[10px] text-slate-400 font-medium ml-auto" x-text="notif.time"></span>
+                                <!-- Panel Dropdown Notifikasi -->
+                                <div x-show="notificationOpen" @click.away="notificationOpen = false" x-cloak
+                                    class="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200/90 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden">
+                                    <div class="px-4 py-2.5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-black text-xs text-slate-800 uppercase tracking-wider">Notifikasi Tiket Masuk</span>
+                                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full" x-text="unreadCount + ' Baru'"></span>
+                                        </div>
+                                        <template x-if="notifications.length > 0">
+                                            <button @click="dismissAll()" class="text-[11px] text-slate-500 hover:text-rose-600 font-bold transition">
+                                                Bersihkan
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="max-h-80 overflow-y-auto divide-y divide-slate-100 custom-scrollbar">
+                                        <template x-for="notif in notifications" :key="notif.id">
+                                            <div class="p-3.5 hover:bg-emerald-50/40 transition flex items-start justify-between gap-3 bg-white group cursor-pointer"
+                                                 @click="openTicket(notif.url, notif.id)">
+                                                <div class="flex-1 min-w-0 text-left">
+                                                    <div class="flex items-center gap-2 flex-wrap mb-1">
+                                                        <span class="font-mono font-black text-xs text-emerald-900 bg-emerald-100/90 px-2 py-0.5 rounded-md" x-text="notif.ticket_number"></span>
+                                                        <span class="text-[10px] text-slate-400 font-medium ml-auto" x-text="notif.time"></span>
+                                                    </div>
+                                                    <p class="font-bold text-xs text-slate-900 line-clamp-1 group-hover:text-emerald-900 transition" x-text="notif.title"></p>
+                                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1 truncate">
+                                                        <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                                        <span class="truncate" x-text="notif.unit"></span>
+                                                    </p>
                                                 </div>
-                                                <p class="font-bold text-xs text-slate-900 line-clamp-1 group-hover:text-emerald-900 transition" x-text="notif.title"></p>
-                                                <p class="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1 truncate">
-                                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                                    <span class="truncate" x-text="notif.unit"></span>
-                                                </p>
-                                            </div>
 
-                                            <div class="flex flex-col items-center gap-1 shrink-0 pt-0.5">
-                                                <button @click.stop="dismissNotif(notif.id)" title="Hapus dari notifikasi"
-                                                    class="text-slate-300 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition cursor-pointer">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2.000 2.000 0 0116.138 21H7.862a2.000 2.000 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                    </svg>
-                                                </button>
+                                                <div class="flex flex-col items-center gap-1 shrink-0 pt-0.5">
+                                                    <button @click.stop="dismissNotif(notif.id)" title="Hapus dari notifikasi"
+                                                        class="text-slate-300 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition cursor-pointer">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2.000 2.000 0 0116.138 21H7.862a2.000 2.000 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </template>
+                                        </template>
 
-                                    <template x-if="notifications.length === 0">
-                                        <div class="p-8 text-center text-xs text-slate-400 font-semibold space-y-2">
-                                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        <template x-if="notifications.length === 0">
+                                            <div class="p-8 text-center text-xs text-slate-400 font-semibold space-y-2">
+                                                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                </div>
+                                                <p>Semua notifikasi telah dibaca.</p>
                                             </div>
-                                            <p>Semua notifikasi telah dibaca.</p>
+                                        </template>
+                                    </div>
+
+                                    @if(auth()->check() && auth()->user()->hasRole('admin'))
+                                        <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
+                                            <a href="{{ route('admin.tickets.index') }}" @click="notificationOpen = false" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition">
+                                                Lihat Semua Tiket &rarr;
+                                            </a>
                                         </div>
-                                    </template>
+                                    @elseif(auth()->check() && auth()->user()->hasRole('teknisi'))
+                                        <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
+                                            <a href="{{ route('teknisi.dashboard') }}" @click="notificationOpen = false" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition">
+                                                Buka Workboard Tiket &rarr;
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
-
-                                @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('super_admin')))
-                                    <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
-                                        <a href="{{ route('admin.tickets.index') }}" @click="notificationOpen = false" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition">
-                                            Lihat Semua Tiket &rarr;
-                                        </a>
-                                    </div>
-                                @elseif(auth()->check() && auth()->user()->hasRole('teknisi'))
-                                    <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
-                                        <a href="{{ route('teknisi.dashboard') }}" @click="notificationOpen = false" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 transition">
-                                            Buka Workboard Tiket &rarr;
-                                        </a>
-                                    </div>
-                                @endif
                             </div>
-                        </div>
+                        @endif
 
                         <span class="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs shrink-0">
                             <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse shrink-0"></span>
@@ -640,6 +698,7 @@
                 </main>
             </div>
 
+            @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('teknisi')))
             <!-- FLOATING LIVE TICKET TOAST POP-UP (MUNCUL OTOMATIS SAAT ADA TIKET MASUK REAL-TIME) -->
             <div x-show="toastVisible" 
                  x-cloak
@@ -649,9 +708,9 @@
                  x-transition:leave="transition ease-in duration-200 transform"
                  x-transition:leave-start="opacity-100 scale-100"
                  x-transition:leave-end="translate-y-[-10px] opacity-0 scale-95"
-                 class="fixed top-5 right-5 z-50 max-w-sm sm:max-w-md w-full bg-slate-900/95 backdrop-blur-md text-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-emerald-500/40 shadow-emerald-950/50 select-none">
+                 class="fixed top-5 right-5 z-50 max-w-sm sm:max-w-md w-full bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border border-emerald-300/80 shadow-emerald-950/15 ring-1 ring-slate-950/5 select-none">
                 <div class="flex items-start gap-3.5">
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-900/40 animate-pulse">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 flex items-center justify-center text-white shrink-0 shadow-md shadow-emerald-800/30 animate-pulse">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                         </svg>
@@ -659,43 +718,44 @@
 
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-xs">
                                 @if(auth()->check() && auth()->user()->hasRole('teknisi') && !auth()->user()->hasRole('admin'))
                                     Tugas Baru Diberikan
                                 @else
                                     Tiket Baru Masuk
                                 @endif
                             </span>
-                            <span class="text-[10px] text-slate-400 font-mono" x-text="toastData ? toastData.time : 'Baru saja'"></span>
+                            <span class="text-[11px] text-slate-400 font-medium ml-auto" x-text="toastData ? toastData.time : 'Baru saja'"></span>
                         </div>
 
-                        <h4 class="font-black text-sm text-emerald-400 mt-1.5 font-mono tracking-wider" x-text="toastData ? toastData.ticket_number : ''"></h4>
-                        <p class="font-bold text-xs text-slate-100 mt-0.5 line-clamp-1" x-text="toastData ? toastData.title : ''"></p>
+                        <h4 class="font-black text-sm text-emerald-900 mt-1 font-mono tracking-wider" x-text="toastData ? toastData.ticket_number : ''"></h4>
+                        <p class="font-bold text-xs text-slate-900 mt-0.5 line-clamp-1" x-text="toastData ? toastData.title : ''"></p>
                         
-                        <p class="text-[11px] text-slate-300 font-medium mt-1 flex items-center gap-1.5 truncate">
-                            <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <p class="text-[11px] text-slate-600 font-semibold mt-1 flex items-center gap-1.5 truncate">
+                            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                             <span class="truncate" x-text="toastData ? toastData.unit : ''"></span>
                         </p>
 
-                        <div class="mt-3.5 flex items-center gap-2 pt-2 border-t border-white/10">
+                        <div class="mt-3.5 flex items-center gap-2 pt-2.5 border-t border-slate-100">
                             <a :href="toastData ? toastData.url : '#'" 
                                @click="openTicket(toastData.url, toastData.id)"
-                               class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs px-4 py-2 rounded-xl transition shadow-md flex items-center gap-1.5 cursor-pointer">
+                               class="bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs px-4 py-2 rounded-xl transition shadow-sm shadow-emerald-900/20 flex items-center gap-1.5 cursor-pointer">
                                 <span>Buka & Tindak Lanjuti</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
                             <button @click="toastVisible = false" 
-                                    class="text-xs font-bold text-slate-400 hover:text-white px-3 py-2 rounded-xl hover:bg-white/10 transition cursor-pointer">
+                                    class="text-xs font-bold text-slate-500 hover:text-slate-800 px-3 py-2 rounded-xl hover:bg-slate-100 transition cursor-pointer">
                                 Tutup
                             </button>
                         </div>
                     </div>
 
-                    <button @click="toastVisible = false" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer">
+                    <button @click="toastVisible = false" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
             </div>
+            @endif
 
         </div>
 

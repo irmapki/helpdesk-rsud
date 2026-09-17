@@ -440,16 +440,25 @@ class TicketController extends Controller
     {
         $user = $request->user();
 
-        // Jika teknisi: tampilkan tiket yang baru di-assign ke dirinya yang statusnya 'assigned'
+        // Jika teknisi: tampilkan tiket yang ditugaskan ke dirinya
         if ($user && ($user->hasRole('teknisi') && !$user->hasRole('admin') && !$user->hasRole('super_admin'))) {
             $tickets = Ticket::with(['unit', 'category', 'priority'])
                 ->where('assigned_to', $user->id)
-                ->where('status', 'assigned')
-                ->latest('assigned_at')
+                ->whereIn('status', ['assigned', 'in_progress'])
+                ->latest('updated_at')
                 ->take(10)
                 ->get();
 
             $type = 'assigned_task';
+        } elseif ($user && ($user->hasRole('supervisor') && !$user->hasRole('admin') && !$user->hasRole('super_admin'))) {
+            // Jika supervisor: tampilkan tiket software yang butuh review approval
+            $tickets = Ticket::with(['unit', 'category', 'priority'])
+                ->where('status', 'pending_review')
+                ->latest('updated_at')
+                ->take(10)
+                ->get();
+
+            $type = 'supervisor_review';
         } else {
             // Default: Admin / Super Admin (Tiket baru masuk yang pending / open / perlu validasi)
             $tickets = Ticket::with(['unit', 'category', 'priority'])
@@ -466,9 +475,11 @@ class TicketController extends Controller
         }
 
         $notifications = $tickets->map(function($ticket) use ($user) {
-            $url = ($user && $user->hasRole('teknisi') && !$user->hasRole('admin'))
-                ? route('teknisi.dashboard', ['ticket_id' => $ticket->id])
-                : route('admin.tickets.show', $ticket->id);
+            $url = match(true) {
+                $user && $user->hasRole('teknisi') && !$user->hasRole('admin') => route('teknisi.dashboard', ['ticket_id' => $ticket->id]),
+                $user && $user->hasRole('supervisor') && !$user->hasRole('admin') => route('supervisor.dashboard'),
+                default => route('admin.tickets.show', $ticket->id),
+            };
 
             return [
                 'id' => $ticket->id,
