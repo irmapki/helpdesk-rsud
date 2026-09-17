@@ -7,12 +7,16 @@ use App\Models\Category;
 use App\Models\Priority;
 use App\Models\Role;
 use App\Models\Ticket;
+use App\Models\TicketNote;
+use App\Models\TicketStatusLog;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -190,10 +194,51 @@ class UserController extends Controller
                 ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        $user->delete();
+        $userName = $user->name;
 
-        return redirect()->route('superadmin.users.index')
-            ->with('success', 'User berhasil dihapus.');
+        try {
+            DB::transaction(function () use ($user) {
+                // 1. Jika teknisi memiliki tiket aktif yang sedang ditangani, kembalikan ke Antrean Terbuka (Pool)
+                Ticket::where('assigned_to', $user->id)
+                    ->whereIn('status', ['assigned', 'in_progress'])
+                    ->update([
+                        'assigned_to' => null,
+                        'status' => 'open',
+                    ]);
+
+                // 2. Set null untuk tiket historis lainnya yang pernah ditangani / dibuat oleh user ini
+                Ticket::where('assigned_to', $user->id)->update(['assigned_to' => null]);
+                Ticket::where('created_by', $user->id)->update(['created_by' => null]);
+
+                // 3. Set null pada histori status logs
+                TicketStatusLog::where('changed_by', $user->id)->update(['changed_by' => null]);
+
+                // 4. Bersihkan catatan internal milik user
+                TicketNote::where('user_id', $user->id)->delete();
+
+                // 5. Bersihkan data relasi tim / pivot
+                DB::table('ticket_collaborators')->where('user_id', $user->id)->delete();
+                if (Schema::hasTable('ticket_technician')) {
+                    DB::table('ticket_technician')->where('user_id', $user->id)->delete();
+                }
+
+                // 6. Bersihkan Spatie roles & notifikasi
+                $user->roles()->detach();
+                if (method_exists($user, 'notifications')) {
+                    $user->notifications()->delete();
+                }
+
+                // 7. Hapus user
+                $user->delete();
+            });
+
+            return redirect()->route('superadmin.users.index')
+                ->with('success', "Akun pengguna {$userName} berhasil dihapus.");
+        } catch (\Exception $e) {
+            \Log::error('GAGAL HAPUS USER: ' . $e->getMessage());
+            return redirect()->route('superadmin.users.index')
+                ->with('error', 'Gagal menghapus user: ' . $e->getMessage());
+        }
     }
 
     public function toggleStatus(User $user): RedirectResponse
