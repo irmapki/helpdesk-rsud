@@ -350,7 +350,7 @@
                 @endif
 
                 <!-- 2. ASSIGN TECHNICIAN BOX -->
-                @if ($ticket->status !== 'rejected' && $ticket->status !== 'closed')
+                @if ($ticket->validation_status !== 'pending' && $ticket->status !== 'rejected' && $ticket->status !== 'closed')
                     <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
                         <div class="flex items-center justify-between">
                             <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
