@@ -81,15 +81,16 @@
             </div>
         </div>
 
-        <!-- Konten Grid: Daftar Tiket & Detail -->
+        <!-- Konten Grid: Daftar Tiket & Detail (Diubah proporsinya menjadi 5:7 agar tidak bentrok) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start min-w-0">
-            <!-- Kolom Kiri: Daftar Tiket (7 cols) -->
-            <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
+            
+            <!-- Kolom Kiri: Daftar Tiket (5 cols) -->
+            <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
                 
                 <!-- Main Scope Switcher (Tiket Saya / Belum Diambil / Tiket Tim) -->
                 <div class="flex flex-wrap items-center gap-2 pb-3 border-b border-slate-100">
                     <a href="{{ route('teknisi.dashboard', ['scope' => 'my']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? 'my') === 'my' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        class="px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? 'my') === 'my' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         <span>Tiket Saya</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($scope ?? 'my') === 'my' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
@@ -98,7 +99,7 @@
                     </a>
 
                     <a href="{{ route('teknisi.dashboard', ['scope' => 'available']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'available' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        class="px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? '') === 'available' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                         <span>Belum Diambil</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($scope ?? '') === 'available' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900' }}">
@@ -107,9 +108,9 @@
                     </a>
 
                     <a href="{{ route('teknisi.dashboard', ['scope' => 'team']) }}"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($scope ?? '') === 'team' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                        class="px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ ($scope ?? '') === 'team' ? 'bg-[#0f333a] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        <span>Tiket Tim</span>
+                        <span>Tim</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($scope ?? '') === 'team' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">
                             {{ $teamTicketsCount ?? 0 }}
                         </span>
@@ -193,17 +194,17 @@
                             </div>
                             <h3 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1 break-words">{{ $t->title }}</h3>
                             <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 font-medium gap-1">
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    {{ $t->unit->name ?? 'Unit Umum' }} &bull; {{ $t->category->name ?? 'Kategori' }}
+                                <span class="flex items-center gap-1 truncate max-w-[180px]">
+                                    <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <span class="truncate">{{ $t->unit->name ?? 'Unit Umum' }}</span>
                                 </span>
                                 <span class="text-[11px] flex items-center gap-1 text-slate-500">
                                     @if($t->technician)
-                                        <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                        Teknisi: <strong class="text-slate-700">{{ $t->technician->name }}</strong>
+                                        <svg class="w-3.5 h-3.5 text-teal-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <span class="truncate max-w-[100px]">{{ $t->technician->name }}</span>
                                     @else
                                         <span class="inline-flex items-center gap-1 text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                                            <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             Siap Diklaim
                                         </span>
                                     @endif
@@ -238,8 +239,8 @@
                 </div>
             </div>
 
-            <!-- Kolom Kanan: Detail Tiket & Form Aksi Teknisi (5 cols) -->
-            <div class="lg:col-span-5 space-y-6 min-w-0">
+            <!-- Kolom Kanan: Detail Tiket & Form Aksi Teknisi (7 cols) -->
+            <div class="lg:col-span-7 space-y-6 min-w-0">
                 @if ($selectedTicket)
                     <!-- Detail Tiket & Ubah Status -->
                     <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4 min-w-0">
